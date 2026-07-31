@@ -1,0 +1,16 @@
+{
+  "name": "We Care For You",
+  "short_name": "WeCare",
+  "description": "AI-Powered Care Coordination Platform for Senior Citizens",
+  "theme_color": "#1E6FBF",
+  "background_color": "#FFFFFF",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/",
+  "start_url": "/",
+  "icons": [
+    { "src": "/icons/icon-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icons/icon-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "categories": ["health", "medical", "lifestyle"]
+}
