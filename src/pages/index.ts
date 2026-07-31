@@ -6,4 +6,5 @@ export { ProviderRegisterPage } from './auth/provider-register-page';
 export { ForgotPasswordPage } from './auth/forgot-password-page';
 export { OnboardingPage } from './auth/onboarding-page';
 export { PortalPage } from './portal/portal-page';
+export { PortalRouter } from './portal/portal-router';
 export { NotFoundPage } from './not-found/not-found-page';

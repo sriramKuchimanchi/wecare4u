@@ -3,8 +3,9 @@ import { PublicLayout } from '@/layouts/public/public-layout';
 import { PortalLayout } from '@/layouts/portal/portal-layout';
 import {
   LandingPage, LoginPage, RegisterPage, FamilyRegisterPage, ProviderRegisterPage,
-  ForgotPasswordPage, OnboardingPage, PortalPage, NotFoundPage,
+  ForgotPasswordPage, OnboardingPage, NotFoundPage,
 } from '@/pages';
+import { PortalRouter } from '@/pages/portal/portal-router';
 import { RequireAuth, RedirectIfAuth, RequireOnboarding } from '@/components/shared/route-guards';
 import { ROUTES } from '@/constants/routes';
 
@@ -48,8 +49,8 @@ export const routes: RouteObject[] = [
       </RequireAuth>
     ),
     children: [
-      { index: true, element: <PortalPage /> },
-      { path: '*', element: <PortalPage /> },
+      { index: true, element: <PortalRouter /> },
+      { path: '*', element: <PortalRouter /> },
     ],
   },
   {

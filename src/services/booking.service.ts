@@ -1,27 +1,33 @@
-import type { ApiResult, Booking, PaginatedResponse, PaginationParams } from '@/types';
+import type { ApiResult, CareRequest, Appointment, PaginatedResponse } from '@/types';
 import { mockRequest, mockListRequest, unwrap, createId, nowISO } from '@/lib/mock-api';
-import { mockBookings } from '@/utils/mock-data';
+import { mockCareRequests, mockAppointments } from '@/utils/mock-data';
+
+const requests = [...mockCareRequests];
+const appointments = [...mockAppointments];
 
 export const bookingService = {
-  async list(params: PaginationParams = {}): Promise<ApiResult<PaginatedResponse<Booking>>> {
-    return mockListRequest(mockBookings, { page: params.page, pageSize: params.pageSize });
+  async listRequests(familyId: string): Promise<ApiResult<CareRequest[]>> {
+    const items = requests.filter((r) => r.familyId === familyId);
+    return mockRequest(items, { latency: 350 });
   },
-  async get(id: string): Promise<ApiResult<Booking>> {
-    const booking = mockBookings.find((b) => b.id === id);
-    if (!booking) return { success: false, error: { code: 'NOT_FOUND', message: 'Booking not found' } };
-    return mockRequest(booking);
+  async submitRequest(input: Omit<CareRequest, 'id' | 'createdAt' | 'updatedAt'>): Promise<ApiResult<CareRequest>> {
+    const req: CareRequest = { ...input, id: createId('cr'), createdAt: nowISO(), updatedAt: nowISO() };
+    requests.push(req);
+    return mockRequest(req, { latency: 600 });
   },
-  async create(input: Omit<Booking, 'id' | 'createdAt' | 'updatedAt'>): Promise<ApiResult<Booking>> {
-    const booking: Booking = { ...input, id: createId('book'), createdAt: nowISO(), updatedAt: nowISO() };
-    return mockRequest(booking);
+  async cancelRequest(id: string): Promise<ApiResult<{ ok: true }>> {
+    const idx = requests.findIndex((r) => r.id === id);
+    if (idx !== -1) requests[idx] = { ...requests[idx], status: 'cancelled', updatedAt: nowISO() };
+    return mockRequest({ ok: true as const }, { latency: 300 });
   },
-  async update(id: string, patch: Partial<Booking>): Promise<ApiResult<Booking>> {
-    const booking = mockBookings.find((b) => b.id === id);
-    if (!booking) return { success: false, error: { code: 'NOT_FOUND', message: 'Booking not found' } };
-    return mockRequest({ ...booking, ...patch, updatedAt: nowISO() });
+  async listAppointments(familyId: string): Promise<ApiResult<Appointment[]>> {
+    const items = appointments.filter((a) => a.familyId === familyId);
+    return mockRequest(items, { latency: 350 });
   },
-  async remove(id: string): Promise<ApiResult<{ ok: true }>> {
-    return mockRequest({ ok: true as const }, { latency: 150 });
+  async listUpcomingAppointments(familyId: string): Promise<ApiResult<Appointment[]>> {
+    const now = new Date();
+    const items = appointments.filter((a) => a.familyId === familyId && a.status === 'upcoming' && new Date(a.scheduledAt) >= now);
+    return mockRequest(items, { latency: 300 });
   },
   unwrap,
 };

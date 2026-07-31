@@ -26,7 +26,7 @@ import {
   Maximize, Minimize, ZoomIn, ZoomOut, Expand, Shrink, Compass,
   Navigation, MapPinned, Map, Globe2, Plane, Rocket, Ship, Train,
   Bus, CarFront, Bike, Footprints, Accessibility,
-  Construction, SkipForward,
+  Construction, SkipForward, Pencil, CheckCheck, HeartPulse, Wrench,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -54,7 +54,7 @@ export const icons = {
   Maximize, Minimize, ZoomIn, ZoomOut, Expand, Shrink, Compass,
   Navigation, MapPinned, Map, Globe2, Plane, Rocket, Ship, Train,
   Bus, CarFront, Bike, Footprints, Accessibility,
-  Construction, SkipForward,
+  Construction, SkipForward, Pencil, CheckCheck, HeartPulse, Wrench,
 } as const;
 
 // Re-export individual icons for direct named imports
@@ -82,7 +82,7 @@ export {
   Maximize, Minimize, ZoomIn, ZoomOut, Expand, Shrink, Compass,
   Navigation, MapPinned, Map, Globe2, Plane, Rocket, Ship, Train,
   Bus, CarFront, Bike, Footprints, Accessibility,
-  Construction, SkipForward,
+  Construction, SkipForward, Pencil, CheckCheck, HeartPulse, Wrench,
 };
 
 export type IconName = keyof typeof icons;

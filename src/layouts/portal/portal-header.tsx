@@ -53,10 +53,10 @@ export const PortalHeader = ({ onToggleSidebar, className }: PortalHeaderProps) 
       </div>
 
       <div className="flex items-center gap-1.5">
-        <Button variant="ghost" size="icon" aria-label="Search" className="hidden sm:inline-flex">
+        <Button variant="ghost" size="icon" aria-label="Search" className="hidden sm:inline-flex" onClick={() => navigate(role ? `/portal/${role}/search` : '/login')}>
           <Search className="h-5 w-5" />
         </Button>
-        <Button variant="ghost" size="icon" aria-label="Notifications" className="relative">
+        <Button variant="ghost" size="icon" aria-label="Notifications" className="relative" onClick={() => navigate(role ? `/portal/${role}/notifications` : '/login')}>
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
             <span className="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-secondary px-1 text-2xs font-bold text-secondary-foreground">

@@ -38,28 +38,19 @@ export const NAV_CONFIG: Record<UserRole, NavConfig> = {
         label: 'Overview',
         items: [
           placeholder('Home', '/portal/family', 'Home'),
-          placeholder('Care Members', '/portal/family/members', 'Users'),
-          placeholder('Bookings', '/portal/family/bookings', 'Calendar', 3),
-          placeholder('Medical Records', '/portal/family/records', 'FileText'),
-        ],
-      },
-      {
-        id: 'services',
-        label: 'Services',
-        items: [
-          placeholder('Find Care', '/portal/family/find-care', 'Stethoscope'),
-          placeholder('Pharmacy', '/portal/family/pharmacy', 'Pill'),
-          placeholder('Laboratory', '/portal/family/lab', 'FlaskConical'),
-          placeholder('Transport', '/portal/family/transport', 'Car'),
-        ],
-      },
-      {
-        id: 'support',
-        label: 'Support',
-        items: [
-          placeholder('Emergency', '/portal/family/emergency', 'Siren'),
+          placeholder('Request Care', '/portal/family/request-care', 'HandHeart'),
           placeholder('Timeline', '/portal/family/timeline', 'History'),
-          placeholder('Messages', '/portal/family/messages', 'MessageSquare'),
+          placeholder('Notifications', '/portal/family/notifications', 'Bell'),
+          placeholder('Profile', '/portal/family/profile', 'User'),
+        ],
+      },
+      {
+        id: 'manage',
+        label: 'Manage',
+        items: [
+          placeholder('Family Members', '/portal/family/members', 'Users'),
+          placeholder('Appointments', '/portal/family/appointments', 'Calendar'),
+          placeholder('Search', '/portal/family/search', 'Search'),
         ],
       },
     ],
