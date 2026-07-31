@@ -1,5 +1,4 @@
 import { forwardRef } from 'react';
-import type { ControllerProps } from 'react-hook-form';
 import { useFormContext, Controller } from 'react-hook-form';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -19,14 +18,16 @@ export const FieldError = ({ message }: { message?: string }) =>
 
 export const TextField = forwardRef<HTMLInputElement, BaseFieldProps & React.InputHTMLAttributes<HTMLInputElement>>(
   ({ name, label, hint, required, className, ...rest }, ref) => {
-    const { register, formState: { errors } } = useFormContext();
-    const error = errors[name]?.message as string | undefined;
+    const formContext = useFormContext();
+    const registerProps = formContext ? formContext.register(name) : {};
+    const error = formContext?.formState?.errors?.[name]?.message as string | undefined;
+
     return (
       <div className={cn('flex flex-col gap-1.5', className)}>
         <Label htmlFor={name} className="text-sm font-medium">
           {label}{required && <span className="ml-0.5 text-destructive">*</span>}
         </Label>
-        <Input id={name} {...register(name)} ref={ref} aria-invalid={Boolean(error)} {...rest} />
+        <Input id={name} name={name} {...registerProps} ref={ref} aria-invalid={Boolean(error)} {...rest} />
         {hint && !error && <p className="text-xs text-muted-foreground">{hint}</p>}
         <FieldError message={error} />
       </div>
@@ -37,14 +38,16 @@ TextField.displayName = 'TextField';
 
 export const TextAreaField = forwardRef<HTMLTextAreaElement, BaseFieldProps & React.TextareaHTMLAttributes<HTMLTextAreaElement>>(
   ({ name, label, hint, required, className, ...rest }, ref) => {
-    const { register, formState: { errors } } = useFormContext();
-    const error = errors[name]?.message as string | undefined;
+    const formContext = useFormContext();
+    const registerProps = formContext ? formContext.register(name) : {};
+    const error = formContext?.formState?.errors?.[name]?.message as string | undefined;
+
     return (
       <div className={cn('flex flex-col gap-1.5', className)}>
         <Label htmlFor={name} className="text-sm font-medium">
           {label}{required && <span className="ml-0.5 text-destructive">*</span>}
         </Label>
-        <Textarea id={name} {...register(name)} ref={ref} aria-invalid={Boolean(error)} {...rest} />
+        <Textarea id={name} name={name} {...registerProps} ref={ref} aria-invalid={Boolean(error)} {...rest} />
         {hint && !error && <p className="text-xs text-muted-foreground">{hint}</p>}
         <FieldError message={error} />
       </div>
@@ -53,56 +56,82 @@ export const TextAreaField = forwardRef<HTMLTextAreaElement, BaseFieldProps & Re
 );
 TextAreaField.displayName = 'TextAreaField';
 
-type SelectFieldProps = BaseFieldProps & {
+type SelectFieldProps = BaseFieldProps & React.SelectHTMLAttributes<HTMLSelectElement> & {
   options: { value: string; label: string }[];
   placeholder?: string;
 };
 
-export const SelectField = ({ name, label, hint, required, options, placeholder, className }: SelectFieldProps) => {
-  const { control, formState: { errors } } = useFormContext();
-  const error = errors[name]?.message as string | undefined;
+export const SelectField = ({ name, label, hint, required, options, placeholder, className, ...rest }: SelectFieldProps) => {
+  const formContext = useFormContext();
+  const error = formContext?.formState?.errors?.[name]?.message as string | undefined;
+
+  if (formContext) {
+    return (
+      <div className={cn('flex flex-col gap-1.5', className)}>
+        <Label htmlFor={name} className="text-sm font-medium">
+          {label}{required && <span className="ml-0.5 text-destructive">*</span>}
+        </Label>
+        <Controller
+          control={formContext.control}
+          name={name}
+          render={({ field }) => (
+            <select
+              id={name}
+              value={field.value ?? ''}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+              aria-invalid={Boolean(error)}
+              className="h-10 rounded-md border border-input bg-surface px-3 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/30"
+              {...rest}
+            >
+              {placeholder && <option value="">{placeholder}</option>}
+              {options.map((o) => (
+                <option key={o.value} value={o.value}>{o.label}</option>
+              ))}
+            </select>
+          )}
+        />
+        {hint && !error && <p className="text-xs text-muted-foreground">{hint}</p>}
+        <FieldError message={error} />
+      </div>
+    );
+  }
+
   return (
     <div className={cn('flex flex-col gap-1.5', className)}>
       <Label htmlFor={name} className="text-sm font-medium">
         {label}{required && <span className="ml-0.5 text-destructive">*</span>}
       </Label>
-      <Controller
-        control={control}
+      <select
+        id={name}
         name={name}
-        render={({ field }) => (
-          <select
-            id={name}
-            value={field.value ?? ''}
-            onChange={field.onChange}
-            onBlur={field.onBlur}
-            aria-invalid={Boolean(error)}
-            className="h-10 rounded-md border border-input bg-surface px-3 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/30"
-          >
-            {placeholder && <option value="">{placeholder}</option>}
-            {options.map((o) => (
-              <option key={o.value} value={o.value}>{o.label}</option>
-            ))}
-          </select>
-        )}
-      />
-      {hint && !error && <p className="text-xs text-muted-foreground">{hint}</p>}
-      <FieldError message={error} />
+        className="h-10 rounded-md border border-input bg-surface px-3 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/30"
+        {...rest}
+      >
+        {placeholder && <option value="">{placeholder}</option>}
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>{o.label}</option>
+        ))}
+      </select>
+      {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
     </div>
   );
 };
 
-type CheckboxFieldProps = BaseFieldProps & {
+type CheckboxFieldProps = BaseFieldProps & React.InputHTMLAttributes<HTMLInputElement> & {
   checkboxLabel: string;
 };
 
-export const CheckboxField = ({ name, label, hint, checkboxLabel, className }: CheckboxFieldProps) => {
-  const { register, formState: { errors } } = useFormContext();
-  const error = errors[name]?.message as string | undefined;
+export const CheckboxField = ({ name, label, hint, checkboxLabel, className, ...rest }: CheckboxFieldProps) => {
+  const formContext = useFormContext();
+  const registerProps = formContext ? formContext.register(name) : {};
+  const error = formContext?.formState?.errors?.[name]?.message as string | undefined;
+
   return (
     <div className={cn('flex flex-col gap-1.5', className)}>
-      <Label className="text-sm font-medium">{label}</Label>
-      <label className="flex items-start gap-2 text-sm text-muted-foreground">
-        <input type="checkbox" {...register(name)} className="mt-0.5 h-4 w-4 rounded border-input text-primary focus:ring-ring" />
+      {label && <Label className="text-sm font-medium">{label}</Label>}
+      <label className="flex items-start gap-2 text-sm text-muted-foreground cursor-pointer">
+        <input type="checkbox" id={name} name={name} {...registerProps} className="mt-0.5 h-4 w-4 rounded border-input text-primary focus:ring-ring" {...rest} />
         <span>{checkboxLabel}</span>
       </label>
       {hint && !error && <p className="text-xs text-muted-foreground">{hint}</p>}

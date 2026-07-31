@@ -68,7 +68,14 @@ export type Gender = 'male' | 'female' | 'other';
 export type MemberStatus = 'active' | 'inactive';
 
 export type EmergencyContact = {
-  name: string; relationship: string; phone: string; isPrimary?: boolean;
+  id?: ID;
+  name: string;
+  relationship: string;
+  phone: string;
+  isPrimary?: boolean;
+  priority?: 'primary' | 'secondary' | 'normal';
+  preferredLanguage?: string;
+  avatarUrl?: string;
 };
 
 export type InsuranceInfo = {
@@ -112,12 +119,13 @@ export type CareCategory = {
   icon: string;
   description: string;
   color: string;
+  estimatedResponseTime?: string;
 };
 
 export type CareProviderType =
   | 'home-care' | 'nursing' | 'physiotherapy' | 'pharmacy' | 'laboratory'
   | 'transport' | 'medical-visit' | 'emergency' | 'doctor' | 'hospital'
-  | 'caregiver' | 'electrician' | 'plumber' | 'housekeeping';
+  | 'caregiver' | 'electrician' | 'plumber' | 'housekeeping' | 'other';
 
 export type ProviderEmployee = {
   id: ID; name: string; role: string; experience: string;
@@ -154,26 +162,46 @@ export type CareProvider = BaseEntity & {
   estimatedArrivalMinutes?: number;
   availability?: 'available' | 'busy' | 'offline';
   photos?: string[];
+  businessHours?: string;
+  coverageArea?: string;
+  languagesSpoken?: string[];
+  emergencyAvailable?: boolean;
 };
 
 // ── Care Requests ────────────────────────────────────────────────────────
 
 export type CareRequestStatus =
-  | 'pending' | 'accepted' | 'assigned' | 'on-way' | 'in-progress'
-  | 'completed' | 'cancelled';
+  | 'requested' | 'accepted' | 'professional_assigned' | 'on_the_way'
+  | 'arrived' | 'in_progress' | 'completed' | 'cancelled' | 'pending';
+
+export type CareRequestTimelineStep = {
+  status: CareRequestStatus;
+  title: string;
+  timestamp: ISODateString;
+  description?: string;
+};
 
 export type CareRequest = BaseEntity & {
   familyId: ID;
   memberId?: ID;
+  memberName?: string;
   providerId?: ID;
+  providerName?: string;
   employeeId?: ID;
+  employeeName?: string;
+  employeeRole?: string;
+  employeePhone?: string;
   category: string;
+  categoryLabel?: string;
   status: CareRequestStatus;
   scheduledAt: ISODateString;
   notes?: string;
   address?: Address;
   estimatedCost?: number;
   currency?: string;
+  rating?: number;
+  estimatedArrivalMinutes?: number;
+  timeline?: CareRequestTimelineStep[];
 };
 
 // ── Appointments ──────────────────────────────────────────────────────────
@@ -193,18 +221,87 @@ export type Appointment = BaseEntity & {
   location?: string;
 };
 
-// ── Bookings (legacy) ─────────────────────────────────────────────────────
-export type BookingStatus = 'pending' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled' | 'failed';
-export type Booking = BaseEntity & {
-  familyId: ID; providerId: ID; serviceType: CareProviderType;
-  scheduledAt: ISODateString; status: BookingStatus; notes?: string; employeeId?: ID;
+// ── Emergency SOS & Live Activity ─────────────────────────────────────────
+
+export type EmergencyWorkflowStep =
+  | 'sos_triggered'
+  | 'location_detected'
+  | 'coordinator_activated'
+  | 'provider_found'
+  | 'professional_assigned'
+  | 'ambulance_assigned'
+  | 'hospital_notified'
+  | 'contacts_notified'
+  | 'live_updates'
+  | 'resolved';
+
+export type EmergencyStepDetail = {
+  step: EmergencyWorkflowStep;
+  title: string;
+  description: string;
+  completedAt?: ISODateString;
+  status: 'pending' | 'in-progress' | 'completed';
 };
 
-// ── Emergency ─────────────────────────────────────────────────────────────
-export type EmergencyStatus = 'triggered' | 'acknowledged' | 'dispatched' | 'resolved' | 'false-alarm';
-export type Emergency = BaseEntity & {
-  familyId: ID; type: string; status: EmergencyStatus;
-  location?: Address; resolvedAt?: ISODateString; notes?: string;
+export type EmergencySession = BaseEntity & {
+  familyId: ID;
+  memberId?: ID;
+  memberName?: string;
+  status: 'active' | 'resolved' | 'cancelled';
+  currentStepIndex: number;
+  steps: EmergencyStepDetail[];
+  location: Address & { lat?: number; lng?: number };
+  assignedProvider?: { id: string; name: string; phone: string; etaMinutes: number };
+  assignedProfessional?: { id: string; name: string; role: string; phone: string };
+  assignedAmbulance?: { vehicleNumber: string; driverName: string; phone: string; etaMinutes: number };
+  notifiedHospital?: { name: string; phone: string; address: string };
+  notifiedContactsCount: number;
+  trackingCoords?: { lat: number; lng: number };
+};
+
+// ── AI Assistant & Smart Actions ──────────────────────────────────────────
+
+export type SmartActionType =
+  | 'request_care'
+  | 'emergency_sos'
+  | 'call_emergency_contact'
+  | 'view_nearby_hospitals'
+  | 'view_care_providers'
+  | 'schedule_appointment'
+  | 'medication_reminder';
+
+export type SmartActionCard = {
+  id: string;
+  label: string;
+  actionType: SmartActionType;
+  icon?: string;
+  tone?: 'primary' | 'secondary' | 'danger';
+  payload?: Record<string, unknown>;
+};
+
+export type AiChatMessage = {
+  id: string;
+  sender: 'user' | 'assistant';
+  text: string;
+  timestamp: ISODateString;
+  actions?: SmartActionCard[];
+};
+
+// ── Medication Reminders ──────────────────────────────────────────────────
+
+export type MedicationStatus = 'pending' | 'taken' | 'skipped' | 'snoozed';
+
+export type MedicationReminder = BaseEntity & {
+  familyId: ID;
+  memberId: ID;
+  memberName: string;
+  medicineName: string;
+  dosage: string;
+  time: string;
+  frequency: string;
+  status: MedicationStatus;
+  instructions?: string;
+  lastActionAt?: ISODateString;
 };
 
 // ── Timeline ──────────────────────────────────────────────────────────────
@@ -248,3 +345,20 @@ export type AppSettings = {
   timezone: string;
   notifications: { email: boolean; push: boolean; sms: boolean };
 };
+
+// ── Booking ──────────────────────────────────────────────────────────────────
+export type BookingStatus = 'pending' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled';
+export type Booking = BaseEntity & {
+  familyId: ID;
+  providerId: ID;
+  serviceType: string;
+  scheduledAt: ISODateString;
+  status: BookingStatus;
+  employeeId?: ID;
+  notes?: string;
+  estimatedCost?: number;
+  currency?: string;
+};
+
+// ── Emergency (alias) ─────────────────────────────────────────────────────────
+export type Emergency = EmergencySession;

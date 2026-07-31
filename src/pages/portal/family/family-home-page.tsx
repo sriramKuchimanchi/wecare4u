@@ -53,15 +53,15 @@ export const FamilyHomePage = () => {
   return (
     <div className="flex flex-col gap-6">
       {/* Welcome Banner */}
-      <div className="flex flex-col gap-3 rounded-xl border border-border bg-primary p-5 text-primary-foreground md:p-6">
+      <div className="flex flex-col gap-3 rounded-xl border border-border bg-primary p-5 text-primary-foreground md:p-6 shadow-sm">
         <div className="flex items-center justify-between gap-3">
           <div className="flex flex-col gap-1">
-            <p className="text-sm text-primary-foreground/80">{formatDate(today, 'EEEE, MMMM d')}</p>
+            <p className="text-xs font-medium uppercase tracking-wider text-secondary">{formatDate(today, 'EEEE, MMMM d')}</p>
             <h1 className="text-2xl font-bold md:text-3xl">Hello, {firstName}</h1>
-            <p className="text-sm text-primary-foreground/80">Here&apos;s your family&apos;s care overview for today.</p>
+            <p className="text-sm text-primary-foreground/90">Here&apos;s your family&apos;s care overview for today.</p>
           </div>
-          <div className="hidden h-16 w-16 items-center justify-center rounded-full bg-white/15 md:flex">
-            <Heart className="h-8 w-8" />
+          <div className="hidden h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white/10 p-2 md:flex">
+            <img src="/logo.png" alt="We Care For You" className="h-full w-full object-contain brightness-0 invert" />
           </div>
         </div>
       </div>

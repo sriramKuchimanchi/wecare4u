@@ -27,6 +27,7 @@ import {
   Navigation, MapPinned, Map, Globe2, Plane, Rocket, Ship, Train,
   Bus, CarFront, Bike, Footprints, Accessibility,
   Construction, SkipForward, Pencil, CheckCheck, HeartPulse, Wrench,
+  CheckCircle2, XCircle, ShieldAlert, Bot, Image, Truck, ShieldCheck,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -55,6 +56,7 @@ export const icons = {
   Navigation, MapPinned, Map, Globe2, Plane, Rocket, Ship, Train,
   Bus, CarFront, Bike, Footprints, Accessibility,
   Construction, SkipForward, Pencil, CheckCheck, HeartPulse, Wrench,
+  CheckCircle2, XCircle, ShieldAlert, Bot, Image, Truck, ShieldCheck,
 } as const;
 
 // Re-export individual icons for direct named imports
@@ -83,6 +85,7 @@ export {
   Navigation, MapPinned, Map, Globe2, Plane, Rocket, Ship, Train,
   Bus, CarFront, Bike, Footprints, Accessibility,
   Construction, SkipForward, Pencil, CheckCheck, HeartPulse, Wrench,
+  CheckCircle2, XCircle, ShieldAlert, Bot, Image, Truck, ShieldCheck,
 };
 
 export type IconName = keyof typeof icons;

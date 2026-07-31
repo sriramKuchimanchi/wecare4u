@@ -52,7 +52,7 @@ export const PortalSidebar = ({ onNavigate, className }: PortalSidebarProps) => 
   const config = getNavConfig(role ?? 'family');
 
   return (
-    <aside className={cn('flex h-full w-full flex-col overflow-y-auto bg-surface p-3', className)}>
+    <aside className={cn('flex h-full w-full flex-col overflow-y-auto bg-surface p-4', className)}>
       <nav className="flex flex-col gap-2">
         {config.sections.map((section) => (
           <SectionBlock key={section.id} section={section} onNavigate={onNavigate} />

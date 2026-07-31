@@ -10,7 +10,7 @@ export const emergencyService = {
     const emergency: Emergency = {
       ...input,
       id: createId('emr'),
-      status: 'triggered',
+      status: 'active',
       createdAt: nowISO(),
       updatedAt: nowISO(),
     };

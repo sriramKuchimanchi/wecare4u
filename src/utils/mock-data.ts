@@ -16,18 +16,19 @@ export const mockUsers: User[] = [
 ];
 
 export const mockCareCategories: CareCategory[] = [
-  { id: 'doctor', label: 'Doctor', icon: 'Stethoscope', description: 'Home visit or clinic consultation', color: 'primary' },
-  { id: 'hospital', label: 'Hospital', icon: 'Building2', description: 'Hospital admission or emergency', color: 'secondary' },
-  { id: 'home-nurse', label: 'Home Nurse', icon: 'HeartPulse', description: 'Professional nursing at home', color: 'primary' },
-  { id: 'caregiver', label: 'Caregiver', icon: 'Users', description: 'Daily living support & companionship', color: 'secondary' },
-  { id: 'medicine', label: 'Medicine Delivery', icon: 'Pill', description: 'Prescription & OTC delivery', color: 'primary' },
-  { id: 'laboratory', label: 'Diagnostic Lab', icon: 'FlaskConical', description: 'At-home sample collection', color: 'secondary' },
-  { id: 'ambulance', label: 'Ambulance', icon: 'Ambulance', description: 'Emergency medical transport', color: 'primary' },
-  { id: 'transport', label: 'Transportation', icon: 'Car', description: 'Safe rides to appointments', color: 'secondary' },
-  { id: 'electrician', label: 'Electrician', icon: 'Zap', description: 'Electrical repairs & safety', color: 'primary' },
-  { id: 'plumber', label: 'Plumber', icon: 'Wrench', description: 'Plumbing repairs & maintenance', color: 'secondary' },
-  { id: 'housekeeping', label: 'Housekeeping', icon: 'Home', description: 'Cleaning & household management', color: 'primary' },
-  { id: 'physiotherapy', label: 'Physiotherapy', icon: 'Activity', description: 'Rehabilitation & physical therapy', color: 'secondary' },
+  { id: 'doctor', label: 'Doctor', icon: 'Stethoscope', description: 'Home visit or clinic consultation', color: 'primary', estimatedResponseTime: '15-30 mins' },
+  { id: 'hospital', label: 'Hospital', icon: 'Building2', description: 'Hospital admission or emergency care', color: 'secondary', estimatedResponseTime: 'Immediate' },
+  { id: 'caregiver', label: 'Caregiver', icon: 'Users', description: 'Daily living support & companionship', color: 'primary', estimatedResponseTime: '30-45 mins' },
+  { id: 'home-nurse', label: 'Home Nurse', icon: 'HeartPulse', description: 'Professional nursing at home', color: 'secondary', estimatedResponseTime: '20-40 mins' },
+  { id: 'medicine', label: 'Medicine Delivery', icon: 'Pill', description: 'Prescription & OTC delivery', color: 'primary', estimatedResponseTime: '30-60 mins' },
+  { id: 'laboratory', label: 'Diagnostic Lab', icon: 'FlaskConical', description: 'At-home sample collection', color: 'secondary', estimatedResponseTime: '1-2 hours' },
+  { id: 'ambulance', label: 'Ambulance', icon: 'Ambulance', description: 'Emergency medical transport', color: 'primary', estimatedResponseTime: '5-10 mins' },
+  { id: 'transport', label: 'Transportation', icon: 'Car', description: 'Safe rides to appointments', color: 'secondary', estimatedResponseTime: '15-20 mins' },
+  { id: 'electrician', label: 'Electrician', icon: 'Zap', description: 'Electrical repairs & safety check', color: 'primary', estimatedResponseTime: '30-45 mins' },
+  { id: 'plumber', label: 'Plumber', icon: 'Wrench', description: 'Plumbing repairs & maintenance', color: 'secondary', estimatedResponseTime: '30-45 mins' },
+  { id: 'housekeeping', label: 'Housekeeping', icon: 'Home', description: 'Cleaning & household management', color: 'primary', estimatedResponseTime: '1-2 hours' },
+  { id: 'physiotherapy', label: 'Physiotherapy', icon: 'Activity', description: 'Rehabilitation & physical therapy', color: 'secondary', estimatedResponseTime: '45-60 mins' },
+  { id: 'other', label: 'Other', icon: 'HandHeart', description: 'Custom care & special assistance', color: 'primary', estimatedResponseTime: '20-30 mins' },
 ];
 
 export const mockFamilyMembers: FamilyMember[] = [
@@ -160,7 +161,7 @@ export const mockCareRequests: CareRequest[] = [
   },
   {
     id: 'cr_2', familyId: 'fam_1', memberId: 'mem_2', providerId: 'prov_4',
-    category: 'physiotherapy', status: 'in-progress',
+    category: 'physiotherapy', status: 'in_progress',
     scheduledAt: now(), notes: 'Arthritis physiotherapy session.',
     estimatedCost: 250, currency: 'AED',
     createdAt: daysAgo(1), updatedAt: hoursAgo(2),

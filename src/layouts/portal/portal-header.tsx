@@ -39,11 +39,9 @@ export const PortalHeader = ({ onToggleSidebar, className }: PortalHeaderProps) 
         <Button variant="ghost" size="icon" onClick={onToggleSidebar} aria-label="Toggle sidebar" className="lg:hidden">
           <Menu className="h-5 w-5" />
         </Button>
-        <Link to="/" className="flex items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <Heart className="h-4 w-4" />
-          </span>
-          <span className="hidden text-sm font-bold text-foreground sm:block">{APP_NAME}</span>
+        <Link to="/" className="flex items-center gap-2.5">
+          <img src="/logo.png" alt="We Care For You" className="h-9 w-auto object-contain" />
+          <span className="hidden text-base font-bold tracking-tight text-primary sm:block">{APP_NAME}</span>
         </Link>
         {role && (
           <Badge variant="secondary" className="hidden md:inline-flex">

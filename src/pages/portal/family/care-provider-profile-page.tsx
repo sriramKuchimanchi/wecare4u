@@ -1,32 +1,27 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
-  ArrowLeft, Star, MapPin, Phone, Mail, Clock, BadgeCheck, Calendar, ArrowRight, Loader2, Users,
+  ArrowLeft, Star, MapPin, Phone, Mail, Clock, BadgeCheck, Users, Shield, Globe, Image as ImageIcon, Siren,
 } from '@/config/icons';
-import { PageHeader, SectionHeader, EmptyState, StatusIndicator } from '@/components/shared';
+import { PageHeader, SectionHeader, EmptyState } from '@/components/shared';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Skeleton, SkeletonText } from '@/components/shared/skeleton';
-import { useCareProvider, useSubmitCareRequestMutation, useFamilyMembers } from '@/hooks/use-family-portal';
-import { useToast } from '@/hooks/use-toast';
-import { formatDate, formatRelative } from '@/utils/date';
+import { useCareProvider } from '@/hooks/use-family-portal';
+import { RequestCareWizardModal } from '@/components/care-coordination/RequestCareWizardModal';
+import { formatRelative } from '@/utils/date';
 import { cn } from '@/lib/utils';
+
 
 export const CareProviderProfilePage = () => {
   const { providerId } = useParams<{ providerId: string }>();
   const navigate = useNavigate();
   const { data: provider, isLoading } = useCareProvider(providerId ?? '');
-  const { data: members = [] } = useFamilyMembers();
-  const submitRequest = useSubmitCareRequestMutation();
-  const { toast } = useToast();
 
+  const [wizardOpen, setWizardOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<string | null>(null);
-  const [selectedMember, setSelectedMember] = useState<string | null>(null);
-  const [selectedDate, setSelectedDate] = useState('');
-  const [selectedTime, setSelectedTime] = useState('');
-  const [notes, setNotes] = useState('');
 
   if (isLoading) {
     return (
@@ -41,207 +36,188 @@ export const CareProviderProfilePage = () => {
   if (!provider) {
     return (
       <Card>
-        <EmptyState icon={Users} title="Provider not found" description="This care provider could not be found." action={<Button onClick={() => navigate('/portal/family/request-care')}>Back to categories</Button>} />
+        <EmptyState
+          icon={Users}
+          title="Provider not found"
+          description="This care provider could not be found."
+          action={<Button onClick={() => navigate('/portal/family/request-care')}>Back to Request Care</Button>}
+        />
       </Card>
     );
   }
 
-  const handleSubmit = async () => {
-    if (!selectedDate || !selectedTime) {
-      toast({ title: 'Select date & time', description: 'Please choose when you need care.', variant: 'destructive' });
-      return;
-    }
-    const scheduledAt = new Date(`${selectedDate}T${selectedTime}`).toISOString();
-    await submitRequest.mutateAsync({
-      familyId: 'fam_1',
-      memberId: selectedMember ?? undefined,
-      providerId: provider.id,
-      employeeId: selectedEmployee ?? undefined,
-      category: provider.type,
-      status: 'pending',
-      scheduledAt,
-      notes,
-      estimatedCost: provider.startingPrice,
-      currency: provider.currency,
-    });
-    navigate('/portal/family');
-  };
-
   return (
     <div className="flex flex-col gap-6">
       <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="w-fit">
-        <ArrowLeft className="mr-1 h-4 w-4" /> Back to providers
+        <ArrowLeft className="mr-1 h-4 w-4" /> Back to Care Providers
       </Button>
 
-      {/* Header */}
-      <Card className="flex flex-col gap-4 p-5 md:flex-row md:items-start">
-        <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-primary/10 text-primary">
-          <Users className="h-8 w-8" />
+      {/* Hero Header */}
+      <Card className="flex flex-col gap-5 p-6 md:flex-row md:items-start bg-card border-border shadow-sm">
+        <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary font-black text-2xl">
+          {provider.name.charAt(0)}
         </div>
         <div className="flex flex-1 flex-col gap-2">
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-2xl font-bold text-foreground">{provider.name}</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">{provider.name}</h1>
             {provider.isVerified && (
-              <Badge variant="secondary" className="gap-1">
-                <BadgeCheck className="h-3.5 w-3.5" /> Verified
+              <Badge variant="secondary" className="gap-1 bg-secondary/15 text-secondary-foreground font-bold">
+                <BadgeCheck className="h-4 w-4" /> Verified Partner
+              </Badge>
+            )}
+            {provider.emergencyAvailable !== false && (
+              <Badge variant="destructive" className="gap-1">
+                <Siren className="h-3.5 w-3.5" /> 24×7 Emergency Ready
               </Badge>
             )}
           </div>
+
           {provider.rating && (
-            <span className="flex items-center gap-1 text-sm text-muted-foreground">
-              <Star className="h-4 w-4 text-secondary fill-secondary" />
-              <span className="font-medium text-foreground">{provider.rating}</span>
-              ({provider.reviewCount ?? 0} reviews)
+            <span className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
+              <Star className="h-4 w-4 fill-secondary text-secondary" />
+              <span>{provider.rating}</span>
+              <span className="text-muted-foreground">({provider.reviewCount ?? 0} reviews)</span>
             </span>
           )}
-          {provider.description && <p className="text-sm text-muted-foreground">{provider.description}</p>}
-          <div className="flex flex-wrap gap-3 pt-1 text-xs text-muted-foreground">
-            {provider.distanceKm != null && <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" /> {provider.distanceKm} km away</span>}
-            {provider.experienceYears != null && <span>{provider.experienceYears} years experience</span>}
-            {provider.startingPrice != null && <span>From {provider.currency} {provider.startingPrice}</span>}
-            <StatusIndicator
-              label={provider.availability === 'available' ? 'Available now' : provider.availability === 'busy' ? 'Currently busy' : 'Offline'}
-              tone={provider.availability === 'available' ? 'success' : provider.availability === 'busy' ? 'warning' : 'neutral'}
-            />
+
+          <p className="text-sm text-muted-foreground leading-relaxed">{provider.description}</p>
+
+          <div className="flex flex-wrap gap-4 pt-2 text-xs text-muted-foreground border-t border-border mt-2">
+            <span className="flex items-center gap-1"><MapPin className="h-4 w-4 text-primary" /> {provider.distanceKm ?? 2.4} km away</span>
+            <span className="flex items-center gap-1"><Clock className="h-4 w-4 text-secondary" /> ~{provider.estimatedArrivalMinutes ?? 20} min arrival</span>
+            <span>{provider.experienceYears ?? 10} years experience</span>
+            <span className="font-bold text-primary">From {provider.currency ?? 'AED'} {provider.startingPrice ?? 150}</span>
           </div>
         </div>
+
+        <Button onClick={() => setWizardOpen(true)} size="lg" className="bg-primary text-primary-foreground font-bold shrink-0 shadow-md">
+          Request Care Now
+        </Button>
       </Card>
 
-      {/* Contact & Location */}
-      <section className="flex flex-col gap-3">
-        <SectionHeader title="Contact & Location" />
-        <Card className="grid gap-4 p-5 sm:grid-cols-2">
-          <div className="flex items-center gap-2 text-sm"><Phone className="h-4 w-4 text-muted-foreground" /> {provider.contact.phone}</div>
-          {provider.contact.email && <div className="flex items-center gap-2 text-sm"><Mail className="h-4 w-4 text-muted-foreground" /> {provider.contact.email}</div>}
-          <div className="flex items-center gap-2 text-sm"><MapPin className="h-4 w-4 text-muted-foreground" /> {provider.address.line1}, {provider.address.city}</div>
-          {provider.estimatedArrivalMinutes != null && <div className="flex items-center gap-2 text-sm"><Clock className="h-4 w-4 text-muted-foreground" /> ~{provider.estimatedArrivalMinutes} min arrival</div>}
+      {/* Organization Overview & Key Info */}
+      <div className="grid gap-6 md:grid-cols-2">
+        <Card className="flex flex-col gap-4 p-5">
+          <SectionHeader title="Organization Overview" />
+          <div className="flex flex-col gap-3 text-sm">
+            <div className="flex items-center gap-2">
+              <Phone className="h-4 w-4 text-primary" />
+              <span className="font-medium text-foreground">{provider.contact.phone}</span>
+            </div>
+            {provider.contact.email && (
+              <div className="flex items-center gap-2">
+                <Mail className="h-4 w-4 text-primary" />
+                <span className="text-muted-foreground">{provider.contact.email}</span>
+              </div>
+            )}
+            <div className="flex items-center gap-2">
+              <MapPin className="h-4 w-4 text-primary" />
+              <span className="text-muted-foreground">{provider.address.line1}, {provider.address.city}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Clock className="h-4 w-4 text-primary" />
+              <span className="text-muted-foreground">Business Hours: {provider.businessHours || '24/7 Care Operations'}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Globe className="h-4 w-4 text-primary" />
+              <span className="text-muted-foreground">Languages Spoken: {provider.languagesSpoken?.join(', ') || 'English, Arabic, Hindi, Tagalog'}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Shield className="h-4 w-4 text-primary" />
+              <span className="text-muted-foreground">Coverage Area: {provider.coverageArea || 'Greater Dubai & Abu Dhabi Metro Areas'}</span>
+            </div>
+          </div>
         </Card>
-      </section>
 
-      {/* Services */}
+        {/* Gallery / Photos Placeholder */}
+        <Card className="flex flex-col gap-4 p-5">
+          <SectionHeader title="Facility & Care Gallery" />
+          <div className="grid grid-cols-3 gap-2">
+            {[1, 2, 3, 4, 5, 6].map((idx) => (
+              <div key={idx} className="flex h-20 items-center justify-center rounded-xl bg-muted text-muted-foreground border border-border">
+                <ImageIcon className="h-6 w-6 opacity-40" />
+              </div>
+            ))}
+          </div>
+        </Card>
+      </div>
+
+      {/* Services Offered */}
       <section className="flex flex-col gap-3">
-        <SectionHeader title="Services Offered" />
+        <SectionHeader title="Services Offered" description="Comprehensive care solutions provided" />
         <div className="flex flex-wrap gap-2">
-          {provider.services.map((s) => <Badge key={s} variant="outline" className="text-sm">{s}</Badge>)}
+          {provider.services.map((s) => (
+            <Badge key={s} variant="outline" className="px-3 py-1 text-sm bg-surface">
+              ✓ {s}
+            </Badge>
+          ))}
         </div>
       </section>
 
-      {/* Employees / Professionals */}
+      {/* Available Professionals */}
       {provider.employees && provider.employees.length > 0 && (
         <section className="flex flex-col gap-3">
-          <SectionHeader title="Available Professionals" description="Choose who should provide care" />
+          <SectionHeader title="Available Professionals" description="Choose who should provide care for your family" />
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {provider.employees.map((emp) => {
-              const active = selectedEmployee === emp.id;
+              const isSelected = selectedEmployee === emp.id;
               return (
-                <button
+                <Card
                   key={emp.id}
-                  type="button"
-                  onClick={() => setSelectedEmployee(active ? null : emp.id)}
-                  className={cn(
-                    'flex items-start gap-3 rounded-xl border bg-card p-4 text-left transition-all',
-                    active ? 'border-primary ring-1 ring-primary/20' : 'border-border hover:border-primary',
-                  )}
+                  className={cn('flex items-start gap-3 p-4 cursor-pointer transition-all', isSelected && 'border-primary ring-2 ring-primary/20')}
+                  onClick={() => setSelectedEmployee(isSelected ? null : emp.id)}
                 >
                   <Avatar className="h-12 w-12 border border-border">
-                    <AvatarFallback className="bg-primary/10 text-xs font-semibold text-primary">
+                    <AvatarFallback className="bg-primary/10 text-xs font-bold text-primary">
                       {emp.name.split(' ').map((n) => n[0]).slice(0, 2).join('')}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex flex-1 flex-col gap-0.5">
-                    <span className="text-sm font-semibold text-foreground">{emp.name}</span>
+                    <span className="text-sm font-bold text-foreground">{emp.name}</span>
                     <span className="text-xs text-muted-foreground">{emp.role} · {emp.experience}</span>
-                    {emp.rating && <span className="text-xs text-muted-foreground">{emp.rating} ★</span>}
-                    {emp.availability && <span className="mt-0.5 text-xs text-success">{emp.availability}</span>}
+                    {emp.rating && <span className="text-xs font-medium text-secondary">★ {emp.rating}</span>}
+                    {emp.availability && <span className="mt-1 text-2xs font-semibold text-success">{emp.availability}</span>}
                   </div>
-                </button>
+                </Card>
               );
             })}
           </div>
         </section>
       )}
 
-      {/* Request Care Form */}
-      <section className="flex flex-col gap-4">
-        <SectionHeader title="Request Care" description="Select date, time and add any notes" />
-        <Card className="flex flex-col gap-4 p-5">
-          {/* Family member */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium">For whom?</label>
-            <select
-              value={selectedMember ?? ''}
-              onChange={(e) => setSelectedMember(e.target.value || null)}
-              className="h-10 rounded-md border border-input bg-surface px-3 text-sm focus:border-primary focus:outline-none"
-            >
-              <option value="">Myself / Family</option>
-              {members.map((m) => <option key={m.id} value={m.id}>{m.name} ({m.relationship})</option>)}
-            </select>
-          </div>
-
-          {/* Date & Time */}
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium">Date</label>
-              <input
-                type="date"
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-                min={new Date().toISOString().split('T')[0]}
-                className="h-10 rounded-md border border-input bg-surface px-3 text-sm focus:border-primary focus:outline-none"
-              />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium">Time</label>
-              <input
-                type="time"
-                value={selectedTime}
-                onChange={(e) => setSelectedTime(e.target.value)}
-                className="h-10 rounded-md border border-input bg-surface px-3 text-sm focus:border-primary focus:outline-none"
-              />
-            </div>
-          </div>
-
-          {/* Notes */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium">Additional notes</label>
-            <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="Describe the care needed, symptoms, or any special instructions…"
-              rows={3}
-              className="rounded-md border border-input bg-surface px-3 py-2 text-sm focus:border-primary focus:outline-none"
-            />
-          </div>
-
-          <Button onClick={handleSubmit} disabled={submitRequest.isPending} className="w-full">
-            {submitRequest.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ArrowRight className="mr-2 h-4 w-4" />}
-            Submit Care Request
-          </Button>
-        </Card>
-      </section>
-
-      {/* Reviews */}
+      {/* Ratings & Reviews */}
       {provider.reviews && provider.reviews.length > 0 && (
         <section className="flex flex-col gap-3">
-          <SectionHeader title="Reviews" description={`What families say about ${provider.name}`} />
-          <div className="flex flex-col gap-2">
+          <SectionHeader title="Ratings & Reviews" description={`What families say about ${provider.name}`} />
+          <div className="flex flex-col gap-3">
             {provider.reviews.map((review) => (
               <Card key={review.id} className="flex flex-col gap-2 p-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-semibold text-foreground">{review.reviewerName}</span>
+                  <span className="text-sm font-bold text-foreground">{review.reviewerName}</span>
                   <span className="flex items-center gap-0.5">
                     {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} className={cn('h-3.5 w-3.5', i < review.rating ? 'text-secondary fill-secondary' : 'text-muted-foreground/30')} />
+                      <Star
+                        key={i}
+                        className={cn('h-3.5 w-3.5', i < review.rating ? 'text-secondary fill-secondary' : 'text-muted-foreground/30')}
+                      />
                     ))}
                   </span>
                 </div>
-                <p className="text-sm text-muted-foreground">{review.comment}</p>
-                <span className="text-xs text-muted-foreground">{formatRelative(review.createdAt)}</span>
+                <p className="text-xs text-muted-foreground leading-relaxed">{review.comment}</p>
+                <span className="text-2xs text-muted-foreground">{formatRelative(review.createdAt)}</span>
               </Card>
             ))}
           </div>
         </section>
       )}
+
+      {/* 7-Step Request Care Wizard Modal */}
+      <RequestCareWizardModal
+        open={wizardOpen}
+        onOpenChange={setWizardOpen}
+        initialCategory={provider.type === 'home-care' ? 'caregiver' : provider.type}
+        initialProviderId={provider.id}
+      />
     </div>
   );
 };

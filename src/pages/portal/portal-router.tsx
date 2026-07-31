@@ -5,6 +5,11 @@ import { FamilyMemberFormPage } from './family/family-member-form-page';
 import { FamilyMemberProfilePage } from './family/family-member-profile-page';
 import { RequestCarePage } from './family/request-care-page';
 import { CareProviderProfilePage } from './family/care-provider-profile-page';
+import { CareRequestDetailPage } from './family/care-request-detail-page';
+import { FamilyEmergencyPage } from './family/family-emergency-page';
+import { EmergencyContactsPage } from './family/emergency-contacts-page';
+import { AiAssistantPage } from './family/ai-assistant-page';
+import { RecentRequestsPage } from './family/recent-requests-page';
 import { FamilyTimelinePage } from './family/family-timeline-page';
 import { FamilyNotificationsPage } from './family/family-notifications-page';
 import { FamilyProfilePage } from './family/family-profile-page';
@@ -41,6 +46,32 @@ const FamilyPortalRouter = ({ sub }: { sub: string[] }) => {
   if (first === 'request-care') {
     if (second) return <CareProviderProfilePage />;
     return <RequestCarePage />;
+  }
+
+  // /care-requests
+  if (first === 'care-requests') {
+    if (second) return <CareRequestDetailPage />;
+    return <RecentRequestsPage />;
+  }
+
+  // /recent-requests
+  if (first === 'recent-requests') {
+    return <RecentRequestsPage />;
+  }
+
+  // /emergency
+  if (first === 'emergency') {
+    return <FamilyEmergencyPage />;
+  }
+
+  // /emergency-contacts
+  if (first === 'emergency-contacts') {
+    return <EmergencyContactsPage />;
+  }
+
+  // /ai-assistant or /assistant
+  if (first === 'ai-assistant' || first === 'assistant') {
+    return <AiAssistantPage />;
   }
 
   // /members

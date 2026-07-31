@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   User, Users, Shield, MapPin, Bell, Globe, Lock, LogOut, Pencil, ChevronRight, Phone, Mail,
@@ -27,13 +28,15 @@ const ToggleRow = ({ label, description, defaultOn }: { label: string; descripti
 };
 
 const Toggle = ({ defaultOn }: { defaultOn?: boolean }) => {
+  const [on, setOn] = useState(Boolean(defaultOn));
   return (
     <button
       type="button"
-      className={cn('relative h-6 w-11 rounded-full transition-colors', defaultOn ? 'bg-primary' : 'bg-muted')}
-      aria-pressed={defaultOn}
+      onClick={() => setOn((v) => !v)}
+      className={cn('relative h-6 w-11 shrink-0 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring', on ? 'bg-primary' : 'bg-muted')}
+      aria-pressed={on}
     >
-      <span className={cn('absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform', defaultOn ? 'translate-x-5' : 'translate-x-0.5')} />
+      <span className={cn('absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow-sm ring-0 transition-transform', on ? 'translate-x-5' : 'translate-x-0')} />
     </button>
   );
 };
