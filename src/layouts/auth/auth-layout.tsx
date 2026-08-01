@@ -17,14 +17,14 @@ type AuthLayoutProps = {
 export const AuthLayout = ({ title, subtitle, children, footer }: AuthLayoutProps) => (
   <div className="flex min-h-dvh flex-col bg-background md:flex-row">
     {/* Brand panel */}
-    <aside className="relative hidden flex-col justify-between overflow-hidden bg-primary p-10 text-primary-foreground md:flex md:w-1/2 lg:p-16">
+    <aside className="relative hidden flex-col items-center justify-between overflow-hidden bg-primary p-10 text-center text-primary-foreground md:flex md:w-1/2 lg:p-16">
       <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 20% 20%, white 0, transparent 40%), radial-gradient(circle at 80% 80%, white 0, transparent 35%)' }} />
       <div className="absolute -bottom-24 -right-24 h-72 w-72 rounded-full border border-white/10 bg-white/5" />
-      <Link to="/" className="relative flex items-center gap-2.5">
-        <img src="/logo.png" alt="We Care For You" className="h-12 w-12 rounded-xl object-contain" />
+      <Link to="/" className="relative mx-auto flex w-fit items-center gap-2.5">
+        <img src="/logo2.png" alt="We Care For You" className="h-12 w-12 rounded-xl object-contain" />
         <span className="text-lg font-bold">{APP_NAME}</span>
       </Link>
-      <div className="relative flex flex-col gap-4">
+      <div className="relative flex flex-col items-center gap-4 text-center">
           <div className="mb-2 flex h-11 w-11 items-center justify-center rounded-xl bg-secondary/20 text-secondary">
             <HeartPulse className="h-6 w-6" />
           </div>
@@ -46,8 +46,8 @@ export const AuthLayout = ({ title, subtitle, children, footer }: AuthLayoutProp
         <Link to="/" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
           <ArrowLeft className="h-4 w-4" /> Home
         </Link>
-        <Link to="/" className="flex items-center gap-2">
-          <img src="/logo.png" alt="We Care For You" className="h-8 w-8 object-contain" />
+        <Link to="/" className="mx-auto flex items-center gap-2">
+          <img src="/logo2.png" alt="We Care For You" className="h-8 w-8 object-contain" />
           <span className="text-sm font-bold text-foreground">{APP_NAME}</span>
         </Link>
       </div>
