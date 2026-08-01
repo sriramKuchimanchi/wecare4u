@@ -171,8 +171,19 @@ export type CareProvider = BaseEntity & {
 // ── Care Requests ────────────────────────────────────────────────────────
 
 export type CareRequestStatus =
-  | 'requested' | 'accepted' | 'professional_assigned' | 'on_the_way'
-  | 'arrived' | 'in_progress' | 'completed' | 'cancelled' | 'pending';
+  | 'pending'
+  | 'accepted'
+  | 'employee_assigned'
+  | 'professional_assigned'
+  | 'on_the_way'
+  | 'arrived'
+  | 'in_progress'
+  | 'completed'
+  | 'awaiting_review'
+  | 'cancelled'
+  | 'requested';
+
+export type CareRequestPriority = 'urgent' | 'emergency' | 'standard' | 'scheduled';
 
 export type CareRequestTimelineStep = {
   status: CareRequestStatus;
@@ -183,7 +194,9 @@ export type CareRequestTimelineStep = {
 
 export type CareRequest = BaseEntity & {
   familyId: ID;
+  familyName?: string;
   memberId?: ID;
+  patientName?: string;
   memberName?: string;
   providerId?: ID;
   providerName?: string;
@@ -193,14 +206,18 @@ export type CareRequest = BaseEntity & {
   employeePhone?: string;
   category: string;
   categoryLabel?: string;
+  priority?: CareRequestPriority;
   status: CareRequestStatus;
   scheduledAt: ISODateString;
   notes?: string;
+  medicalNotes?: string;
+  internalNotes?: string[];
   address?: Address;
   estimatedCost?: number;
   currency?: string;
   rating?: number;
   estimatedArrivalMinutes?: number;
+  estimatedDuration?: string;
   timeline?: CareRequestTimelineStep[];
 };
 
@@ -334,9 +351,101 @@ export type MedicalRecord = BaseEntity & {
 };
 
 // ── Employee ──────────────────────────────────────────────────────────────
+export type EmployeeAvailabilityStatus = 'available' | 'busy' | 'offline' | 'on_leave' | 'emergency_duty';
+
+export type EmployeeDocumentItem = {
+  id: ID;
+  title: string;
+  type: string;
+  fileUrl: string;
+  uploadedAt: ISODateString;
+  status: 'verified' | 'pending' | 'rejected';
+};
+
 export type Employee = BaseEntity & {
-  name: string; role: string; providerId?: ID; contact: ContactInfo;
-  avatarUrl?: string; specialization?: string[];
+  name: string;
+  role: string;
+  department?: string;
+  experience?: string;
+  licenseNumber?: string;
+  providerId?: ID;
+  contact: ContactInfo;
+  address?: Address;
+  languages?: string[];
+  availability: EmployeeAvailabilityStatus;
+  workingDays?: string[];
+  workingHours?: string;
+  governmentIdType?: GovernmentIdType;
+  governmentIdNumber?: string;
+  certificates?: string[];
+  emergencyContact?: EmergencyContact;
+  status: 'active' | 'inactive' | 'deactivated';
+  avatarUrl?: string;
+  rating?: number;
+  reviewCount?: number;
+  assignedRequestsCount?: number;
+  completedRequestsCount?: number;
+  documents?: EmployeeDocumentItem[];
+  specialization?: string[];
+};
+
+// ── Care Provider Additional Models ──────────────────────────────────────
+export type ProviderServiceItem = {
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+  icon: string;
+  enabled: boolean;
+  pricing: { amount: number; unit: string; currency: string };
+  responseTime: string;
+  coverageArea: string;
+};
+
+export type AvailabilityConfig = {
+  businessHours: { day: string; open: string; close: string; isClosed: boolean }[];
+  emergencyAvailable: boolean;
+  holidaySchedule: { date: string; name: string; isClosed: boolean }[];
+  closedDays: string[];
+  coverageRadiusKm: number;
+};
+
+export type OrganizationProfile = {
+  id: ID;
+  logoUrl?: string;
+  name: string;
+  registrationNumber: string;
+  gstNumber?: string;
+  verificationStatus: VerificationStatus;
+  address: Address;
+  contact: ContactInfo;
+  website: string;
+  businessHours: string;
+  serviceCategories: string[];
+};
+
+export type ProviderDocument = {
+  id: ID;
+  title: string;
+  type: 'registration' | 'gst' | 'license' | 'insurance' | 'employee' | 'other';
+  fileName: string;
+  fileUrl: string;
+  uploadedAt: ISODateString;
+  verificationStatus: VerificationStatus;
+  notes?: string;
+};
+
+export type ServiceNote = {
+  id: ID;
+  requestId: ID;
+  employeeId: ID;
+  visitNotes: string;
+  observations: string;
+  recommendations: string;
+  followUpNeeded: boolean;
+  followUpDetails?: string;
+  attachments?: { name: string; url: string }[];
+  createdAt: ISODateString;
 };
 
 // ── App Settings ──────────────────────────────────────────────────────────

@@ -1,4 +1,3 @@
-import { forwardRef } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { UseFormReturn, FieldValues, DefaultValues } from 'react-hook-form';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -14,21 +13,31 @@ type FormWrapperProps<TFormValues extends FieldValues> = {
   children: (form: UseFormReturn<TFormValues>) => React.ReactNode;
 };
 
-export function FormWrapper<TFormValues extends FieldValues>(
-  { schema, defaultValues, onSubmit, onError, className, children }: FormWrapperProps<TFormValues>,
-  ref: React.Ref<HTMLFormElement>,
-) {
+export function FormWrapper<TFormValues extends FieldValues>({
+  schema,
+  defaultValues,
+  onSubmit,
+  onError,
+  className,
+  children,
+}: FormWrapperProps<TFormValues>) {
   const form = useForm<TFormValues>({
     resolver: zodResolver(schema),
     defaultValues,
-    mode: 'onTouched',
+    mode: 'onSubmit',
   });
 
   return (
     <FormProvider {...form}>
       <form
-        ref={ref}
-        onSubmit={form.handleSubmit(async (values) => onSubmit(values), (errors) => onError?.(errors as Record<string, unknown>))}
+        onSubmit={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          form.handleSubmit(
+            async (values) => onSubmit(values),
+            (errors) => onError?.(errors as Record<string, unknown>),
+          )(e);
+        }}
         className={cn('flex flex-col gap-4', className)}
         noValidate
       >
@@ -38,8 +47,4 @@ export function FormWrapper<TFormValues extends FieldValues>(
   );
 }
 
-export const FormWrapperForwarded = forwardRef(FormWrapper) as <TFormValues extends FieldValues>(
-  props: FormWrapperProps<TFormValues> & { ref?: React.Ref<HTMLFormElement> },
-) => React.ReactElement;
-
-export default FormWrapperForwarded;
+export default FormWrapper;

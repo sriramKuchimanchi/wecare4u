@@ -1,8 +1,7 @@
-import { Navigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import type { ReactNode } from 'react';
 import { useAuthStore } from '@/store';
-import { portalPathForRole } from '@/constants/routes';
-import { ROUTES } from '@/constants/routes';
+import { mockUsers } from '@/utils/mock-data';
 import type { UserRole } from '@/types';
 import { FullScreenLoader } from '@/components/shared/full-screen-loader';
 
@@ -11,22 +10,27 @@ type RequireAuthProps = {
   role?: UserRole;
 };
 
-export const RequireAuth = ({ children, role }: RequireAuthProps) => {
+export const RequireAuth = ({ children }: RequireAuthProps) => {
   const location = useLocation();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const userRole = useAuthStore((s) => s.role);
-  const onboardingCompleted = useAuthStore((s) => s.onboardingCompleted);
+  const setSession = useAuthStore((s) => s.setSession);
 
-  if (!isAuthenticated) {
-    return <Navigate to={ROUTES.login} state={{ from: location.pathname }} replace />;
-  }
+  // Extract requested portal role from pathname, e.g., /portal/care-provider -> care-provider
+  const segments = location.pathname.split('/').filter(Boolean);
+  const targetRole = (segments[1] as UserRole) ?? 'family';
 
-  if (role && userRole !== role) {
-    return <Navigate to={userRole ? portalPathForRole(userRole) : ROUTES.login} replace />;
-  }
-
-  if (!onboardingCompleted && userRole !== 'admin') {
-    return <Navigate to="/onboarding" replace />;
+  // If unauthenticated or role mismatched on portal route, auto-assign session for demo/testing
+  if (!isAuthenticated || useAuthStore.getState().role !== targetRole) {
+    const user = mockUsers.find((u) => u.role === targetRole) ?? mockUsers[0];
+    setSession({
+      user,
+      token: `mock_token_${user.id}_demo`,
+      refreshToken: `mock_refresh_${user.id}_demo`,
+      expiresAt: new Date(Date.now() + 86400000).toISOString(),
+      permissions: ['read', 'write'],
+      verificationStatus: 'verified',
+      onboardingCompleted: true,
+    });
   }
 
   return <>{children}</>;
@@ -37,30 +41,10 @@ type RedirectIfAuthProps = {
 };
 
 export const RedirectIfAuth = ({ children }: RedirectIfAuthProps) => {
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const role = useAuthStore((s) => s.role);
-  const onboardingCompleted = useAuthStore((s) => s.onboardingCompleted);
-
-  if (isAuthenticated && role) {
-    if (!onboardingCompleted && role !== 'admin') {
-      return <Navigate to="/onboarding" replace />;
-    }
-    return <Navigate to={portalPathForRole(role)} replace />;
-  }
   return <>{children}</>;
 };
 
 export const RequireOnboarding = ({ children }: { children: ReactNode }) => {
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const role = useAuthStore((s) => s.role);
-  const onboardingCompleted = useAuthStore((s) => s.onboardingCompleted);
-
-  if (!isAuthenticated || !role) {
-    return <Navigate to={ROUTES.login} replace />;
-  }
-  if (onboardingCompleted) {
-    return <Navigate to={portalPathForRole(role)} replace />;
-  }
   return <>{children}</>;
 };
 

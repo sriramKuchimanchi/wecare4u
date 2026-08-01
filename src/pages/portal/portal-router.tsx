@@ -1,4 +1,8 @@
 import { useLocation } from 'react-router-dom';
+import { PortalPage } from './portal-page';
+import type { UserRole } from '@/types';
+
+// ─── Family Portal ────────────────────────────────────────────────────────────
 import { FamilyHomePage } from './family/family-home-page';
 import { FamilyMembersPage } from './family/family-members-page';
 import { FamilyMemberFormPage } from './family/family-member-form-page';
@@ -15,8 +19,28 @@ import { FamilyNotificationsPage } from './family/family-notifications-page';
 import { FamilyProfilePage } from './family/family-profile-page';
 import { FamilySearchPage } from './family/family-search-page';
 import { FamilyAppointmentsPage } from './family/family-appointments-page';
-import { PortalPage } from './portal-page';
-import type { UserRole } from '@/types';
+
+// ─── Care Provider Portal ─────────────────────────────────────────────────────
+import { CareProviderDashboard } from './care-provider/care-provider-dashboard';
+import { CareRequestsListPage } from './care-provider/care-requests-list-page';
+import { CareRequestDetailPage as ProviderCareRequestDetailPage } from './care-provider/care-request-detail-page';
+import { EmployeeManagementPage } from './care-provider/employee-management-page';
+import { EmployeeProfilePage } from './care-provider/employee-profile-page';
+import { AvailabilityPage } from './care-provider/availability-page';
+import { ServicesManagementPage } from './care-provider/services-management-page';
+import { ReviewsPage } from './care-provider/reviews-page';
+import { DocumentsPage } from './care-provider/documents-page';
+import { OrganizationProfilePage } from './care-provider/organization-profile-page';
+import { SchedulePage } from './care-provider/schedule-page';
+import { ProviderSettingsPage } from './care-provider/provider-settings-page';
+
+// ─── Employee Portal ───────────────────────────────────────────────────────────
+import { EmployeeDashboard } from './employee/employee-dashboard';
+import { EmployeeRequestDetailPage } from './employee/employee-request-detail-page';
+import { EmployeeSchedulePage } from './employee/employee-schedule-page';
+import { EmployeeAvailabilityPage } from './employee/employee-availability-page';
+import { EmployeeNotificationsPage } from './employee/employee-notifications-page';
+import { EmployeeSearchPage } from './employee/employee-search-page';
 
 /**
  * Renders the correct portal page based on role + pathname.
@@ -28,53 +52,34 @@ export const PortalRouter = () => {
   const role = (segments[1] as UserRole) ?? 'family';
   const sub = segments.slice(2); // e.g. ['members', 'mem_1']
 
-  if (role === 'family') {
-    return <FamilyPortalRouter sub={sub} />;
-  }
+  if (role === 'family') return <FamilyPortalRouter sub={sub} />;
+  if (role === 'care-provider') return <CareProviderPortalRouter sub={sub} />;
+  if (role === 'employee') return <EmployeePortalRouter sub={sub} />;
 
-  // Other roles still show the placeholder
   return <PortalPage />;
 };
 
+// ─────────────────────────────────────────────────────────────────────────────
 const FamilyPortalRouter = ({ sub }: { sub: string[] }) => {
   const [first, second, third] = sub;
 
-  // Home (no sub-segments)
   if (!first) return <FamilyHomePage />;
 
-  // /request-care
   if (first === 'request-care') {
     if (second) return <CareProviderProfilePage />;
     return <RequestCarePage />;
   }
 
-  // /care-requests
   if (first === 'care-requests') {
     if (second) return <CareRequestDetailPage />;
     return <RecentRequestsPage />;
   }
 
-  // /recent-requests
-  if (first === 'recent-requests') {
-    return <RecentRequestsPage />;
-  }
+  if (first === 'recent-requests') return <RecentRequestsPage />;
+  if (first === 'emergency') return <FamilyEmergencyPage />;
+  if (first === 'emergency-contacts') return <EmergencyContactsPage />;
+  if (first === 'ai-assistant' || first === 'assistant') return <AiAssistantPage />;
 
-  // /emergency
-  if (first === 'emergency') {
-    return <FamilyEmergencyPage />;
-  }
-
-  // /emergency-contacts
-  if (first === 'emergency-contacts') {
-    return <EmergencyContactsPage />;
-  }
-
-  // /ai-assistant or /assistant
-  if (first === 'ai-assistant' || first === 'assistant') {
-    return <AiAssistantPage />;
-  }
-
-  // /members
   if (first === 'members') {
     if (second === 'new') return <FamilyMemberFormPage />;
     if (second && third === 'edit') return <FamilyMemberFormPage />;
@@ -82,23 +87,59 @@ const FamilyPortalRouter = ({ sub }: { sub: string[] }) => {
     return <FamilyMembersPage />;
   }
 
-  // /timeline
   if (first === 'timeline') return <FamilyTimelinePage />;
-
-  // /notifications
   if (first === 'notifications') return <FamilyNotificationsPage />;
-
-  // /profile
   if (first === 'profile') return <FamilyProfilePage />;
-
-  // /search
   if (first === 'search') return <FamilySearchPage />;
-
-  // /appointments
   if (first === 'appointments') return <FamilyAppointmentsPage />;
 
-  // fallback
   return <FamilyHomePage />;
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+const CareProviderPortalRouter = ({ sub }: { sub: string[] }) => {
+  const [first, second] = sub;
+
+  if (!first) return <CareProviderDashboard />;
+
+  if (first === 'requests') {
+    if (second) return <ProviderCareRequestDetailPage />;
+    return <CareRequestsListPage />;
+  }
+
+  if (first === 'employees') {
+    if (second) return <EmployeeProfilePage />;
+    return <EmployeeManagementPage />;
+  }
+
+  if (first === 'availability') return <AvailabilityPage />;
+  if (first === 'services') return <ServicesManagementPage />;
+  if (first === 'reviews') return <ReviewsPage />;
+  if (first === 'documents') return <DocumentsPage />;
+  if (first === 'organization' || first === 'profile') return <OrganizationProfilePage />;
+  if (first === 'schedule') return <SchedulePage />;
+  if (first === 'settings') return <ProviderSettingsPage />;
+
+  return <CareProviderDashboard />;
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+const EmployeePortalRouter = ({ sub }: { sub: string[] }) => {
+  const [first, second] = sub;
+
+  if (!first) return <EmployeeDashboard />;
+
+  if (first === 'requests') {
+    if (second) return <EmployeeRequestDetailPage />;
+    return <EmployeeDashboard />;
+  }
+
+  if (first === 'schedule') return <EmployeeSchedulePage />;
+  if (first === 'availability') return <EmployeeAvailabilityPage />;
+  if (first === 'notifications') return <EmployeeNotificationsPage />;
+  if (first === 'search') return <EmployeeSearchPage />;
+
+  return <EmployeeDashboard />;
 };
 
 export default PortalRouter;

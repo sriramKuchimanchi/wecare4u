@@ -10,7 +10,7 @@ export const APP_TAGLINE = 'AI-Powered Care Coordination Platform';
 export const APP_DESCRIPTION =
   'Connecting families with verified care providers for healthcare, emergency response, home care, transportation, pharmacies, laboratories and more.';
 
-export const SUPPORT_EMAIL = 'support@wecareforyou.app';
+export const SUPPORT_EMAIL = 'support@wecare4you.app';
 export const SUPPORT_PHONE = '+1 (800) 000-0000';
 
 export const ROLES: UserRole[] = ['family', 'care-provider', 'employee', 'admin'];

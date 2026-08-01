@@ -213,7 +213,7 @@ export const CareRequestDetailPage = () => {
             </div>
             <div className="flex justify-between border-b border-border pb-2">
               <span className="text-muted-foreground">Estimated Cost</span>
-              <span className="font-bold text-primary">{request.currency || 'AED'} {request.estimatedCost || 150}</span>
+              <span className="font-bold text-primary">{request.currency || '₹'} {request.estimatedCost || 1500}</span>
             </div>
             <div className="flex justify-between border-b border-border pb-2">
               <span className="text-muted-foreground">Estimated Arrival</span>

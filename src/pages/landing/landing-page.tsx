@@ -330,7 +330,7 @@ export const LandingPage = () => (
           <Button asChild size="lg" variant="secondary">
             <Link to="/register">Get started today <ArrowRight className="ml-2 h-4 w-4" /></Link>
           </Button>
-          <Button asChild size="lg" variant="outline" className="border-white/30 bg-white/10 text-primary-foreground hover:bg-white/20">
+          <Button asChild size="lg" className="border border-white/40 bg-white/20 text-white hover:bg-white/30 font-semibold backdrop-blur-xs">
             <Link to="/login">Sign in</Link>
           </Button>
         </div>

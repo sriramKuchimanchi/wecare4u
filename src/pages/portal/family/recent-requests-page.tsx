@@ -89,7 +89,7 @@ export const RecentRequestsPage = () => {
                 <span className="flex items-center gap-1">
                   <Calendar className="h-3.5 w-3.5" /> Scheduled: {formatDate(req.scheduledAt, 'PPP')} at {formatTime(req.scheduledAt)}
                 </span>
-                <span className="font-bold text-primary">Est. Cost: {req.currency || 'AED'} {req.estimatedCost || 150}</span>
+                <span className="font-bold text-primary">Est. Cost: {req.currency || '₹'} {req.estimatedCost || 1500}</span>
               </div>
             </Card>
           ))}

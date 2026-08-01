@@ -80,7 +80,7 @@ export const RequestCareWizardModal = ({
       scheduledAt,
       notes,
       estimatedCost: providerObj?.startingPrice || 150,
-      currency: providerObj?.currency || 'AED',
+      currency: providerObj?.currency || '₹',
     });
 
     setIsSubmitting(false);
@@ -359,7 +359,7 @@ export const RequestCareWizardModal = ({
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold text-muted-foreground uppercase">Estimated Cost</span>
-                  <span className="text-base font-black text-primary">{providerObj.currency || 'AED'} {providerObj.startingPrice || 150}</span>
+                  <span className="text-base font-black text-primary">{providerObj.currency || '₹'} {providerObj.startingPrice || 1200}</span>
                 </div>
               </Card>
 

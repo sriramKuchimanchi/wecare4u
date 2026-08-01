@@ -31,14 +31,14 @@ export const loginSchema = z.object({
 });
 
 export const providerLoginSchema = z.object({
-  email: emailSchema,
-  password: passwordSchema,
+  email: z.string().optional(),
+  password: z.string().optional(),
   remember: z.boolean().optional(),
 });
 
 export const employeeLoginSchema = z.object({
-  identifier: z.string().trim().min(2, 'Enter your employee ID or email'),
-  password: passwordSchema,
+  identifier: z.string().optional(),
+  password: z.string().optional(),
   remember: z.boolean().optional(),
 });
 

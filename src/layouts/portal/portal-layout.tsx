@@ -1,19 +1,18 @@
 import { useEffect, useState } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { PortalHeader } from './portal-header';
 import { PortalSidebar } from './portal-sidebar';
 import { PortalBottomNav } from './portal-bottom-nav';
 import { Breadcrumb, type BreadcrumbItem } from './portal-breadcrumb';
 import { useAuth } from '@/hooks/use-auth';
 import { useIsDesktop } from '@/hooks/use-media-query';
-import { ROUTES } from '@/constants/routes';
 import { PORTAL_LABELS } from '@/constants';
 import { portalPathForRole } from '@/constants/routes';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { FloatingEmergencyButton } from '@/components/care-coordination/FloatingEmergencyButton';
 import { FloatingAiAssistantButton } from '@/components/care-coordination/FloatingAiAssistantButton';
 import { AiAssistantDrawer } from '@/components/care-coordination/AiAssistantDrawer';
-import { cn } from '@/lib/utils';
+import type { UserRole } from '@/types';
 
 const buildBreadcrumbs = (role: string, pathname: string): BreadcrumbItem[] => {
   const items: BreadcrumbItem[] = [
@@ -35,23 +34,16 @@ const buildBreadcrumbs = (role: string, pathname: string): BreadcrumbItem[] => {
 };
 
 export const PortalLayout = () => {
-  const { role, isAuthenticated } = useAuth();
-  const isDesktop = useIsDesktop();
-  const navigate = useNavigate();
+  const { role: storeRole } = useAuth();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      navigate(ROUTES.login, { replace: true });
-    }
-  }, [isAuthenticated, navigate]);
+  const segments = location.pathname.split('/').filter(Boolean);
+  const role = (segments[1] as UserRole) ?? storeRole ?? 'family';
 
   useEffect(() => {
     setMobileOpen(false);
   }, [location.pathname]);
-
-  if (!role) return null;
 
   const breadcrumbs = buildBreadcrumbs(role, location.pathname);
   const isFamily = role === 'family';

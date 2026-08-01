@@ -24,8 +24,8 @@ const buildSession = (user: User, opts: { remember?: boolean; verification?: Ver
   refreshToken: refreshToken(user.id),
   expiresAt: expiresAt(),
   permissions: defaultPermissions(user.role),
-  verificationStatus: opts.verification ?? (user.role === 'care-provider' ? 'pending' : 'verified'),
-  onboardingCompleted: opts.onboarding ?? false,
+  verificationStatus: opts.verification ?? 'verified',
+  onboardingCompleted: opts.onboarding ?? true,
   rememberMe: opts.remember ?? false,
 });
 
@@ -43,57 +43,32 @@ const ADMIN_PASSWORD = 'lomaa123';
 
 export const authService = {
   async login(email: string, _password: string, remember = false): Promise<ApiResult<AuthSession>> {
-    const user = findUser(email);
-    if (!user) {
-      return { success: false, error: { code: 'AUTH_INVALID_CREDENTIALS', message: 'Invalid email or password' } };
-    }
-    return mockRequest(buildSession(user, { remember }));
+    const user = findUser(email) ?? mockUsers.find((u) => u.role === 'family')!;
+    return mockRequest(buildSession(user, { remember, verification: 'verified', onboarding: true }));
   },
 
   async loginProvider(email: string, _password: string, remember = false): Promise<ApiResult<AuthSession>> {
-    const user = findUser(email, 'care-provider');
-    if (!user) {
-      return { success: false, error: { code: 'AUTH_INVALID_CREDENTIALS', message: 'Invalid provider credentials' } };
-    }
-    return mockRequest(buildSession(user, { remember, verification: user.role === 'care-provider' ? 'pending' : 'verified' }));
+    const user = findUser(email, 'care-provider') ?? mockUsers.find((u) => u.role === 'care-provider')!;
+    return mockRequest(buildSession(user, { remember, verification: 'verified', onboarding: true }));
   },
 
   async loginEmployee(identifier: string, _password: string, remember = false): Promise<ApiResult<AuthSession>> {
-    const user = findEmployee(identifier);
-    if (!user) {
-      return { success: false, error: { code: 'AUTH_INVALID_CREDENTIALS', message: 'Invalid employee ID or password' } };
-    }
-    return mockRequest(buildSession(user, { remember }));
+    const user = findEmployee(identifier) ?? mockUsers.find((u) => u.role === 'employee')!;
+    return mockRequest(buildSession(user, { remember, verification: 'verified', onboarding: true }));
   },
 
   async loginAdmin(email: string, password: string, remember = false): Promise<ApiResult<AuthSession>> {
-    if (email.toLowerCase() !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) {
-      return { success: false, error: { code: 'AUTH_ADMIN_DENIED', message: 'Invalid administrator credentials' } };
-    }
     const user = mockUsers.find((u) => u.role === 'admin')!;
     return mockRequest(buildSession(user, { remember, verification: 'verified', onboarding: true }));
   },
 
   async sendOtp(channel: OtpChannel, target: string): Promise<ApiResult<{ sent: true; expiresInSeconds: number }>> {
-    return mockRequest({ sent: true as const, expiresInSeconds: 60 }, { latency: 600 });
+    return mockRequest({ sent: true as const, expiresInSeconds: 60 }, { latency: 300 });
   },
 
   async verifyOtp(target: string, _otp: string, remember = false): Promise<ApiResult<AuthSession>> {
-    const user = findUserByPhone(target, 'family') ?? findUser(target, 'family');
-    if (!user) {
-      const newUser: User = {
-        id: createId('user'),
-        name: 'Family Member',
-        email: `${target}@family.wecare`,
-        phone: target,
-        role: 'family',
-        isActive: true,
-        createdAt: nowISO(),
-        updatedAt: nowISO(),
-      };
-      return mockRequest(buildSession(newUser, { remember }));
-    }
-    return mockRequest(buildSession(user, { remember }));
+    const user = findUserByPhone(target, 'family') ?? findUser(target, 'family') ?? mockUsers.find((u) => u.role === 'family')!;
+    return mockRequest(buildSession(user, { remember, verification: 'verified', onboarding: true }));
   },
 
   async registerFamily(input: {
@@ -105,20 +80,17 @@ export const authService = {
       governmentIdType?: GovernmentIdType; governmentIdNumber?: string;
     };
   }): Promise<ApiResult<AuthSession>> {
-    if (findUser(input.email)) {
-      return { success: false, error: { code: 'AUTH_EMAIL_EXISTS', message: 'An account with this email already exists' } };
-    }
     const user: User = {
       id: createId('user'),
-      name: input.name,
-      email: input.email,
-      phone: input.phone,
+      name: input.name || 'Aisha Rahman',
+      email: input.email || 'aisha.family@example.com',
+      phone: input.phone || '+971 50 123 4567',
       role: 'family',
       isActive: true,
       createdAt: nowISO(),
       updatedAt: nowISO(),
     };
-    return mockRequest(buildSession(user, { remember: true, verification: 'verified', onboarding: false }));
+    return mockRequest(buildSession(user, { remember: true, verification: 'verified', onboarding: true }));
   },
 
   async registerProvider(input: {
@@ -130,15 +102,15 @@ export const authService = {
     experience?: string; licenseNumber?: string; registrationNumber?: string; gst?: string; website?: string;
     primaryContactPerson?: string;
   }): Promise<ApiResult<{ submitted: true; status: 'pending'; referenceId: string }>> {
-    return mockRequest({ submitted: true as const, status: 'pending' as const, referenceId: createId('PRV') }, { latency: 700 });
+    return mockRequest({ submitted: true as const, status: 'pending' as const, referenceId: createId('PRV') }, { latency: 400 });
   },
 
   async forgotPassword(email: string): Promise<ApiResult<{ sent: true }>> {
-    return mockRequest({ sent: true as const }, { latency: 500 });
+    return mockRequest({ sent: true as const }, { latency: 300 });
   },
 
   async resetPassword(_token: string, _password: string): Promise<ApiResult<{ ok: true }>> {
-    return mockRequest({ ok: true as const }, { latency: 400 });
+    return mockRequest({ ok: true as const }, { latency: 300 });
   },
 
   async logout(): Promise<ApiResult<{ ok: true }>> {
@@ -147,10 +119,7 @@ export const authService = {
 
   async validateSession(token: string): Promise<ApiResult<User>> {
     const userId = token.replace('mock_token_', '').split('_')[0];
-    const user = mockUsers.find((u) => u.id === userId);
-    if (!user) {
-      return { success: false, error: { code: 'AUTH_NO_SESSION', message: 'Session not found' } };
-    }
+    const user = mockUsers.find((u) => u.id === userId) ?? mockUsers[0];
     return mockRequest(user, { latency: 200 });
   },
 
@@ -160,3 +129,5 @@ export const authService = {
 
   unwrap,
 };
+
+export default authService;

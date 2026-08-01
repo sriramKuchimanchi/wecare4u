@@ -86,7 +86,7 @@ export const CareProviderProfilePage = () => {
             <span className="flex items-center gap-1"><MapPin className="h-4 w-4 text-primary" /> {provider.distanceKm ?? 2.4} km away</span>
             <span className="flex items-center gap-1"><Clock className="h-4 w-4 text-secondary" /> ~{provider.estimatedArrivalMinutes ?? 20} min arrival</span>
             <span>{provider.experienceYears ?? 10} years experience</span>
-            <span className="font-bold text-primary">From {provider.currency ?? 'AED'} {provider.startingPrice ?? 150}</span>
+            <span className="font-bold text-primary">From {provider.currency ?? '₹'} {provider.startingPrice ?? 1200}</span>
           </div>
         </div>
 
