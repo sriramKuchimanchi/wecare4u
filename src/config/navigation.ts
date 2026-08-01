@@ -103,21 +103,33 @@ export const NAV_CONFIG: Record<UserRole, NavConfig> = {
     role: 'admin',
     sections: [
       {
-        id: 'main',
+        id: 'overview',
         label: 'Overview',
         items: [
           placeholder('Dashboard', '/portal/admin', 'LayoutDashboard'),
           placeholder('Families', '/portal/admin/families', 'Users'),
-          placeholder('Providers', '/portal/admin/providers', 'Building2'),
+          placeholder('Care Providers', '/portal/admin/providers', 'Building2'),
           placeholder('Employees', '/portal/admin/employees', 'Briefcase'),
         ],
       },
       {
-        id: 'system',
-        label: 'System',
+        id: 'operations',
+        label: 'Operations',
         items: [
-          placeholder('Bookings', '/portal/admin/bookings', 'Calendar'),
-          placeholder('Emergency Log', '/portal/admin/emergency', 'Siren'),
+          placeholder('Care Requests', '/portal/admin/requests', 'ClipboardList'),
+          placeholder('Emergency Center', '/portal/admin/emergency', 'Siren'),
+          placeholder('Verification', '/portal/admin/verification', 'ShieldCheck'),
+          placeholder('Documents', '/portal/admin/documents', 'FileText'),
+        ],
+      },
+      {
+        id: 'system',
+        label: 'Platform',
+        items: [
+          placeholder('Reviews', '/portal/admin/reviews', 'Star'),
+          placeholder('Notifications', '/portal/admin/notifications', 'Bell'),
+          placeholder('Categories', '/portal/admin/categories', 'Tags'),
+          placeholder('Timeline', '/portal/admin/timeline', 'History'),
           placeholder('Analytics', '/portal/admin/analytics', 'Activity'),
           placeholder('Settings', '/portal/admin/settings', 'Settings'),
         ],

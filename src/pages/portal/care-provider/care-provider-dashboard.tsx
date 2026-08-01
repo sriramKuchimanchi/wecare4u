@@ -2,10 +2,12 @@ import { useNavigate } from 'react-router-dom';
 import { icons } from '@/config/icons';
 import { Button } from '@/components/ui/button';
 import { useProviderOverviewQuery } from '@/hooks/use-portal-queries';
+import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
 
 export const CareProviderDashboard = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { data: overview, isLoading } = useProviderOverviewQuery();
 
   if (isLoading || !overview) {
@@ -17,6 +19,7 @@ export const CareProviderDashboard = () => {
   }
 
   const { todayOverview, employeeStats, revenueSummary, ratingSummary, recentNotifications } = overview;
+  const orgName = user?.name ?? 'Care Provider Portal';
 
   return (
     <div className="space-y-6 pb-8">
@@ -26,7 +29,7 @@ export const CareProviderDashboard = () => {
           <div className="flex items-center gap-2 text-primary-foreground/80 text-xs font-semibold uppercase tracking-wider">
             <icons.Building2 className="h-4 w-4" /> Operational Dashboard
           </div>
-          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight mt-1">Aastha Senior Home Care Portal</h1>
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight mt-1">{orgName}</h1>
           <p className="text-sm text-primary-foreground/90 mt-1 max-w-xl">
             Real-time operational portal for care requests, staff dispatching, service schedules and patient emergency alerts.
           </p>

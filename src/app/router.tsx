@@ -6,7 +6,6 @@ import {
   ForgotPasswordPage, OnboardingPage, NotFoundPage,
 } from '@/pages';
 import { PortalRouter } from '@/pages/portal/portal-router';
-import { RequireAuth, RedirectIfAuth, RequireOnboarding } from '@/components/shared/route-guards';
 import { ROUTES } from '@/constants/routes';
 
 export const routes: RouteObject[] = [
@@ -19,35 +18,31 @@ export const routes: RouteObject[] = [
   },
   {
     path: ROUTES.login,
-    element: <RedirectIfAuth><LoginPage /></RedirectIfAuth>,
+    element: <LoginPage />,
   },
   {
     path: ROUTES.register,
-    element: <RedirectIfAuth><RegisterPage /></RedirectIfAuth>,
+    element: <RegisterPage />,
   },
   {
     path: '/register/family',
-    element: <RedirectIfAuth><FamilyRegisterPage /></RedirectIfAuth>,
+    element: <FamilyRegisterPage />,
   },
   {
     path: '/register/care-provider',
-    element: <RedirectIfAuth><ProviderRegisterPage /></RedirectIfAuth>,
+    element: <ProviderRegisterPage />,
   },
   {
     path: '/forgot-password',
-    element: <RedirectIfAuth><ForgotPasswordPage /></RedirectIfAuth>,
+    element: <ForgotPasswordPage />,
   },
   {
     path: '/onboarding',
-    element: <RequireOnboarding><OnboardingPage /></RequireOnboarding>,
+    element: <OnboardingPage />,
   },
   {
     path: '/portal/:role',
-    element: (
-      <RequireAuth>
-        <PortalLayout />
-      </RequireAuth>
-    ),
+    element: <PortalLayout />,
     children: [
       { index: true, element: <PortalRouter /> },
       { path: '*', element: <PortalRouter /> },

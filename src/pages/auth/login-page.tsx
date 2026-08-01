@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Loader2, Heart, Users, Briefcase, Shield, ArrowLeft, ArrowRight, Sparkles } from '@/config/icons';
+import { Loader2, Heart, Users, Briefcase, Shield, ArrowLeft, ArrowRight } from '@/config/icons';
 import { AuthLayout } from '@/layouts';
 import { FormWrapper, TextField, CheckboxField } from '@/components/shared';
 import { Button } from '@/components/ui/button';
@@ -13,13 +13,9 @@ import {
   useLoginProviderMutation, useLoginEmployeeMutation, useLoginAdminMutation,
   useSendOtpMutation, useVerifyOtpMutation,
 } from '@/hooks/use-auth-mutations';
-import { useToast } from '@/hooks/use-toast';
 import { ROUTES } from '@/constants/routes';
 import { ROLE_LABELS } from '@/constants';
 import type { UserRole } from '@/types';
-import { cn } from '@/lib/utils';
-import { useAuthStore } from '@/store';
-import { mockUsers } from '@/utils/mock-data';
 
 type LoginRole = UserRole;
 
@@ -30,68 +26,34 @@ const roleCards: { role: LoginRole; label: string; description: string; icon: ty
   { role: 'admin', label: 'Admin Portal', description: 'Platform administration & metrics.', icon: Shield },
 ];
 
-const useCountdown = (initial: number, active: boolean) => {
-  const [seconds, setSeconds] = useState(initial);
-  useEffect(() => {
-    if (!active) return;
-    setSeconds(initial);
-    const id = setInterval(() => setSeconds((s) => (s > 0 ? s - 1 : 0)), 1000);
-    return () => clearInterval(id);
-  }, [initial, active]);
-  return seconds;
-};
-
 const FamilyLoginForm = () => {
-  const [phone, setPhone] = useState('+971 50 123 4567');
-  const [otp, setOtp] = useState('1234');
+  const [phone, setPhone] = useState('');
+  const [otp, setOtp] = useState('');
   const [otpSent, setOtpSent] = useState(false);
-  const [remember, setRemember] = useState(true);
+  const [remember, setRemember] = useState(false);
   const sendOtp = useSendOtpMutation();
   const verifyOtp = useVerifyOtpMutation();
-  const setSession = useAuthStore((s) => s.setSession);
   const navigate = useNavigate();
-  const countdown = useCountdown(60, otpSent);
-
-  const handleQuickDemoLogin = () => {
-    const user = mockUsers.find((u) => u.role === 'family')!;
-    setSession({
-      user,
-      token: `mock_token_${user.id}`,
-      refreshToken: `mock_refresh_${user.id}`,
-      expiresAt: new Date(Date.now() + 86400000).toISOString(),
-      permissions: ['family:read', 'family:write'],
-      verificationStatus: 'verified',
-      onboardingCompleted: true,
-    });
-    navigate(ROUTES.family, { replace: true });
-  };
 
   const handleSendOtp = async () => {
-    await sendOtp.mutateAsync({ channel: 'sms', target: phone || '+971 50 123 4567' });
+    if (!phone.trim()) return;
+    await sendOtp.mutateAsync({ channel: 'sms', target: phone.trim() });
     setOtpSent(true);
   };
 
   const handleVerify = async () => {
-    await verifyOtp.mutateAsync({ target: phone || '+971 50 123 4567', otp: otp || '1234', remember });
+    if (!phone.trim() || !otp.trim()) return;
+    await verifyOtp.mutateAsync({ target: phone.trim(), otp: otp.trim(), remember });
     navigate(ROUTES.family, { replace: true });
   };
 
   return (
     <div className="flex flex-col gap-4">
-      <Button type="button" onClick={handleQuickDemoLogin} variant="secondary" className="w-full bg-primary/10 text-primary hover:bg-primary/20">
-        <Sparkles className="mr-2 h-4 w-4" /> Instant Demo Sign In (Family)
-      </Button>
-
-      <div className="relative my-1 flex items-center justify-center">
-        <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border" /></div>
-        <span className="relative bg-surface px-2 text-2xs text-muted-foreground uppercase">or enter details</span>
-      </div>
-
       <TextField
         name="phone"
         label="Phone number"
         required
-        placeholder="+971 50 123 4567"
+        placeholder="+91 98200 12345"
         autoComplete="tel"
         value={phone}
         onChange={(e) => setPhone(e.target.value)}
@@ -136,42 +98,18 @@ const FamilyLoginForm = () => {
 const ProviderLoginForm = () => {
   const navigate = useNavigate();
   const login = useLoginProviderMutation();
-  const setSession = useAuthStore((s) => s.setSession);
-
-  const handleQuickDemoLogin = () => {
-    const user = mockUsers.find((u) => u.role === 'care-provider')!;
-    setSession({
-      user,
-      token: `mock_token_${user.id}`,
-      refreshToken: `mock_refresh_${user.id}`,
-      expiresAt: new Date(Date.now() + 86400000).toISOString(),
-      permissions: ['provider:read', 'provider:write'],
-      verificationStatus: 'verified',
-      onboardingCompleted: true,
-    });
-    navigate(ROUTES.careProvider, { replace: true });
-  };
 
   const onSubmit = async (values: ProviderLoginInput) => {
-    await login.mutateAsync({ email: values.email || 'omar.provider@example.com', password: values.password || 'password123', remember: values.remember });
+    await login.mutateAsync({ email: values.email, password: values.password, remember: values.remember });
     navigate(ROUTES.careProvider, { replace: true });
   };
 
   return (
     <div className="space-y-4">
-      <Button type="button" onClick={handleQuickDemoLogin} variant="secondary" className="w-full bg-primary/10 text-primary hover:bg-primary/20">
-        <Sparkles className="mr-2 h-4 w-4" /> Instant Demo Sign In (Care Provider)
-      </Button>
-
-      <div className="relative my-1 flex items-center justify-center">
-        <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border" /></div>
-        <span className="relative bg-surface px-2 text-2xs text-muted-foreground uppercase">or enter credentials</span>
-      </div>
-
-      <FormWrapper schema={providerLoginSchema} onSubmit={onSubmit} defaultValues={{ email: 'omar.provider@example.com', password: 'password123', remember: true }}>
+      <FormWrapper schema={providerLoginSchema} onSubmit={onSubmit} defaultValues={{ email: '', password: '', remember: false }}>
         {() => (
           <>
-            <TextField name="email" label="Email" type="email" placeholder="omar.provider@example.com" autoComplete="email" />
+            <TextField name="email" label="Email" type="email" placeholder="vikram.provider@example.com" autoComplete="email" />
             <TextField name="password" label="Password" type="password" placeholder="••••••••" autoComplete="current-password" />
             <div className="flex items-center justify-between">
               <CheckboxField name="remember" label="Remember me" checkboxLabel="Keep me signed in" />
@@ -191,42 +129,18 @@ const ProviderLoginForm = () => {
 const EmployeeLoginForm = () => {
   const navigate = useNavigate();
   const login = useLoginEmployeeMutation();
-  const setSession = useAuthStore((s) => s.setSession);
-
-  const handleQuickDemoLogin = () => {
-    const user = mockUsers.find((u) => u.role === 'employee')!;
-    setSession({
-      user,
-      token: `mock_token_${user.id}`,
-      refreshToken: `mock_refresh_${user.id}`,
-      expiresAt: new Date(Date.now() + 86400000).toISOString(),
-      permissions: ['employee:read'],
-      verificationStatus: 'verified',
-      onboardingCompleted: true,
-    });
-    navigate(ROUTES.employee, { replace: true });
-  };
 
   const onSubmit = async (values: EmployeeLoginInput) => {
-    await login.mutateAsync({ identifier: values.identifier || 'layla.employee@example.com', password: values.password || 'password123', remember: values.remember });
+    await login.mutateAsync({ identifier: values.identifier, password: values.password, remember: values.remember });
     navigate(ROUTES.employee, { replace: true });
   };
 
   return (
     <div className="space-y-4">
-      <Button type="button" onClick={handleQuickDemoLogin} variant="secondary" className="w-full bg-primary/10 text-primary hover:bg-primary/20">
-        <Sparkles className="mr-2 h-4 w-4" /> Instant Demo Sign In (Employee)
-      </Button>
-
-      <div className="relative my-1 flex items-center justify-center">
-        <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border" /></div>
-        <span className="relative bg-surface px-2 text-2xs text-muted-foreground uppercase">or enter credentials</span>
-      </div>
-
-      <FormWrapper schema={employeeLoginSchema} onSubmit={onSubmit} defaultValues={{ identifier: 'layla.employee@example.com', password: 'password123', remember: true }}>
+      <FormWrapper schema={employeeLoginSchema} onSubmit={onSubmit} defaultValues={{ identifier: '', password: '', remember: false }}>
         {() => (
           <>
-            <TextField name="identifier" label="Employee ID or Email" placeholder="EMP-1234 or layla.employee@example.com" autoComplete="username" />
+            <TextField name="identifier" label="Employee ID or Email" placeholder="EMP-1234 or anjali.employee@example.com" autoComplete="username" />
             <TextField name="password" label="Password" type="password" placeholder="••••••••" autoComplete="current-password" />
             <CheckboxField name="remember" label="Remember me" checkboxLabel="Keep me signed in" />
             <Button type="submit" disabled={login.isPending} className="w-full">
@@ -243,34 +157,15 @@ const EmployeeLoginForm = () => {
 const AdminLoginForm = () => {
   const navigate = useNavigate();
   const login = useLoginAdminMutation();
-  const setSession = useAuthStore((s) => s.setSession);
-
-  const handleQuickDemoLogin = () => {
-    const user = mockUsers.find((u) => u.role === 'admin')!;
-    setSession({
-      user,
-      token: `mock_token_${user.id}`,
-      refreshToken: `mock_refresh_${user.id}`,
-      expiresAt: new Date(Date.now() + 86400000).toISOString(),
-      permissions: ['admin:all'],
-      verificationStatus: 'verified',
-      onboardingCompleted: true,
-    });
-    navigate(ROUTES.admin, { replace: true });
-  };
 
   const onSubmit = async (values: AdminLoginInput) => {
-    await login.mutateAsync({ email: values.email || 'admin@lomaa.com', password: values.password || 'lomaa123', remember: values.remember });
+    await login.mutateAsync({ email: values.email, password: values.password, remember: values.remember });
     navigate(ROUTES.admin, { replace: true });
   };
 
   return (
     <div className="space-y-4">
-      <Button type="button" onClick={handleQuickDemoLogin} variant="secondary" className="w-full bg-primary/10 text-primary hover:bg-primary/20">
-        <Sparkles className="mr-2 h-4 w-4" /> Instant Demo Sign In (Admin)
-      </Button>
-
-      <FormWrapper schema={adminLoginSchema} onSubmit={onSubmit} defaultValues={{ email: 'admin@lomaa.com', password: 'lomaa123', remember: true }}>
+      <FormWrapper schema={adminLoginSchema} onSubmit={onSubmit} defaultValues={{ email: '', password: '', remember: false }}>
         {() => (
           <>
             <TextField name="email" label="Admin Email" type="email" placeholder="admin@lomaa.com" autoComplete="email" />
@@ -296,28 +191,16 @@ const roleForms: Record<LoginRole, React.ReactNode> = {
 
 export const LoginPage = () => {
   const [selectedRole, setSelectedRole] = useState<LoginRole | null>(null);
-  const setSession = useAuthStore((s) => s.setSession);
   const navigate = useNavigate();
 
   const handleRoleCardClick = (role: LoginRole) => {
-    // Instant session set and direct navigation to portal for smooth UX
-    const user = mockUsers.find((u) => u.role === role) ?? mockUsers[0];
-    setSession({
-      user,
-      token: `mock_token_${user.id}`,
-      refreshToken: `mock_refresh_${user.id}`,
-      expiresAt: new Date(Date.now() + 86400000).toISOString(),
-      permissions: ['read', 'write'],
-      verificationStatus: 'verified',
-      onboardingCompleted: true,
-    });
-    navigate(ROUTES[role === 'care-provider' ? 'careProvider' : role], { replace: true });
+    setSelectedRole(role);
   };
 
   return (
     <AuthLayout
       title={selectedRole ? `Sign in as ${ROLE_LABELS[selectedRole]}` : 'Welcome back'}
-      subtitle={selectedRole ? 'Enter your credentials to continue.' : 'Select an account type below to log in.'}
+      subtitle={selectedRole ? 'Enter your credentials to continue.' : 'Select your account type below to log in.'}
       footer={
         <>
           New to the platform?{' '}
@@ -340,7 +223,6 @@ export const LoginPage = () => {
               <div className="flex flex-1 flex-col">
                 <span className="text-sm font-semibold text-foreground flex items-center gap-2">
                   {card.label}
-                  <span className="text-2xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium">Click to Login</span>
                 </span>
                 <span className="text-xs text-muted-foreground">{card.description}</span>
               </div>

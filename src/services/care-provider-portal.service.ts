@@ -11,8 +11,6 @@ import type {
 } from '@/types';
 import { mockRequest, createId, nowISO } from '@/lib/mock-api';
 import {
-  mockCareRequests,
-  mockEmployees,
   mockProviderServices,
   mockAvailabilityConfig,
   mockOrganizationProfile,
@@ -21,9 +19,9 @@ import {
   mockServiceNotes,
   mockNotifications,
 } from '@/utils/mock-data';
+import { careRequestRepository, employeeRepository } from '@/services/central-repository';
 
-let requestsStore: CareRequest[] = [...mockCareRequests];
-let employeesStore: Employee[] = [...mockEmployees];
+// Provider-specific local stores (not shared across portals)
 let servicesStore: ProviderServiceItem[] = [...mockProviderServices];
 let availabilityStore: AvailabilityConfig = { ...mockAvailabilityConfig };
 let organizationStore: OrganizationProfile = { ...mockOrganizationProfile };
@@ -31,20 +29,26 @@ let documentsStore: ProviderDocument[] = [...mockProviderDocuments];
 let reviewsStore = [...mockProviderReviewsExtended];
 let serviceNotesStore: ServiceNote[] = [...mockServiceNotes];
 
+// Provider ID for this portal session
+const PROVIDER_ID = 'prov_1';
+
+
 export const careProviderPortalService = {
   // ── Overview / Dashboard ──────────────────────────────────────────────────
   async getDashboardOverview() {
     const today = new Date().toISOString().split('T')[0];
-    const todayRequests = requestsStore.filter((r) => r.scheduledAt.startsWith(today) || r.createdAt.startsWith(today));
-    const pending = requestsStore.filter((r) => r.status === 'pending');
-    const active = requestsStore.filter((r) =>
+    const allProviderRequests = careRequestRepository.getAll({ providerId: PROVIDER_ID }).data;
+    const todayRequests = allProviderRequests.filter((r) => r.scheduledAt?.startsWith(today) || r.createdAt.startsWith(today));
+    const pending = allProviderRequests.filter((r) => r.status === 'pending');
+    const active = allProviderRequests.filter((r) =>
       ['accepted', 'employee_assigned', 'professional_assigned', 'on_the_way', 'arrived', 'in_progress'].includes(r.status)
     );
-    const completed = requestsStore.filter((r) => r.status === 'completed' || r.status === 'awaiting_review');
-    const availableEmployees = employeesStore.filter((e) => e.availability === 'available');
-    const unavailableEmployees = employeesStore.filter((e) => e.availability !== 'available');
+    const completed = allProviderRequests.filter((r) => r.status === 'completed' || r.status === 'awaiting_review');
+    const allProviderEmployees = employeeRepository.getAll({ providerId: PROVIDER_ID }).data;
+    const availableEmployees = allProviderEmployees.filter((e) => e.availability === 'available');
+    const unavailableEmployees = allProviderEmployees.filter((e) => e.availability !== 'available');
 
-    const totalRevenue = completed.reduce((sum, r) => sum + (r.estimatedCost ?? 200), 0) + 14800; // Mocked historical revenue
+    const totalRevenue = completed.reduce((sum, r) => sum + (r.estimatedCost ?? 200), 0) + 14800;
     const avgRating = 4.88;
 
     return mockRequest(
@@ -58,7 +62,7 @@ export const careProviderPortalService = {
         employeeStats: {
           availableCount: availableEmployees.length,
           unavailableCount: unavailableEmployees.length,
-          totalCount: employeesStore.length,
+          totalCount: allProviderEmployees.length,
         },
         revenueSummary: {
           totalRevenue,
@@ -77,106 +81,43 @@ export const careProviderPortalService = {
     );
   },
 
-  // ── Care Requests ────────────────────────────────────────────────────────
+  // ── Care Requests ─────────────────────────────────────────────────────────
+  // All care request reads/writes go through the central repository so changes
+  // are immediately visible in the admin and family portals.
   async getCareRequests(filters?: { status?: string; search?: string; priority?: string }) {
-    let result = [...requestsStore];
-    if (filters?.status && filters.status !== 'all') {
-      result = result.filter((r) => r.status === filters.status);
-    }
-    if (filters?.priority && filters.priority !== 'all') {
-      result = result.filter((r) => r.priority === filters.priority);
-    }
-    if (filters?.search) {
-      const q = filters.search.toLowerCase();
-      result = result.filter(
-        (r) =>
-          r.patientName?.toLowerCase().includes(q) ||
-          r.familyName?.toLowerCase().includes(q) ||
-          r.categoryLabel?.toLowerCase().includes(q) ||
-          r.employeeName?.toLowerCase().includes(q)
-      );
-    }
-    return mockRequest(result, { latency: 300 });
+    const result = careRequestRepository.getAll({ providerId: PROVIDER_ID, ...filters });
+    return mockRequest(result.data, { latency: 300 });
   },
 
   async getCareRequestById(id: string): Promise<ApiResult<CareRequest>> {
-    const found = requestsStore.find((r) => r.id === id);
+    const found = careRequestRepository.getById(id);
     if (!found) return { success: false, error: { code: 'NOT_FOUND', message: 'Care request not found' } };
     return mockRequest(found, { latency: 200 });
   },
 
   async acceptRequest(id: string): Promise<ApiResult<CareRequest>> {
-    const idx = requestsStore.findIndex((r) => r.id === id);
-    if (idx === -1) return { success: false, error: { code: 'NOT_FOUND', message: 'Request not found' } };
-
-    const now = nowISO();
-    const timeline = requestsStore[idx].timeline ? [...requestsStore[idx].timeline!] : [];
-    timeline.push({
-      status: 'accepted',
-      title: 'Care Request Accepted',
-      description: 'Provider accepted the care request. Ready for staff assignment.',
-      timestamp: now,
-    });
-
-    requestsStore[idx] = {
-      ...requestsStore[idx],
-      status: 'accepted',
-      timeline,
-      updatedAt: now,
-    };
-    return mockRequest(requestsStore[idx], { latency: 350 });
+    const updated = careRequestRepository.updateStatus(id, 'accepted');
+    if (!updated) return { success: false, error: { code: 'NOT_FOUND', message: 'Request not found' } };
+    return mockRequest(updated, { latency: 350 });
   },
 
   async rejectRequest(id: string, reason?: string): Promise<ApiResult<CareRequest>> {
-    const idx = requestsStore.findIndex((r) => r.id === id);
-    if (idx === -1) return { success: false, error: { code: 'NOT_FOUND', message: 'Request not found' } };
-
-    const now = nowISO();
-    const timeline = requestsStore[idx].timeline ? [...requestsStore[idx].timeline!] : [];
-    timeline.push({
-      status: 'cancelled',
-      title: 'Request Declined by Provider',
-      description: reason ?? 'Provider was unable to fulfill request at specified time.',
-      timestamp: now,
-    });
-
-    requestsStore[idx] = {
-      ...requestsStore[idx],
-      status: 'cancelled',
-      timeline,
-      updatedAt: now,
-    };
-    return mockRequest(requestsStore[idx], { latency: 350 });
+    const updated = careRequestRepository.updateStatus(id, 'cancelled', { note: reason ?? 'Provider was unable to fulfill request at specified time.' });
+    if (!updated) return { success: false, error: { code: 'NOT_FOUND', message: 'Request not found' } };
+    return mockRequest(updated, { latency: 350 });
   },
 
   async assignEmployee(requestId: string, employeeId: string): Promise<ApiResult<CareRequest>> {
-    const reqIdx = requestsStore.findIndex((r) => r.id === requestId);
-    if (reqIdx === -1) return { success: false, error: { code: 'NOT_FOUND', message: 'Care request not found' } };
-
-    const employee = employeesStore.find((e) => e.id === employeeId);
+    const employee = employeeRepository.getById(employeeId);
     if (!employee) return { success: false, error: { code: 'NOT_FOUND', message: 'Employee not found' } };
-
-    const now = nowISO();
-    const timeline = requestsStore[reqIdx].timeline ? [...requestsStore[reqIdx].timeline!] : [];
-    timeline.push({
-      status: 'employee_assigned',
-      title: `Assigned: ${employee.name}`,
-      description: `${employee.role} ${employee.name} assigned to visit.`,
-      timestamp: now,
-    });
-
-    requestsStore[reqIdx] = {
-      ...requestsStore[reqIdx],
+    const updated = careRequestRepository.updateStatus(requestId, 'employee_assigned', {
       employeeId: employee.id,
       employeeName: employee.name,
       employeeRole: employee.role,
       employeePhone: employee.contact.phone,
-      status: 'employee_assigned',
-      timeline,
-      updatedAt: now,
-    };
-
-    return mockRequest(requestsStore[reqIdx], { latency: 400 });
+    });
+    if (!updated) return { success: false, error: { code: 'NOT_FOUND', message: 'Care request not found' } };
+    return mockRequest(updated, { latency: 400 });
   },
 
   async updateRequestStatus(
@@ -184,85 +125,30 @@ export const careProviderPortalService = {
     status: CareRequestStatus,
     note?: string
   ): Promise<ApiResult<CareRequest>> {
-    const idx = requestsStore.findIndex((r) => r.id === id);
-    if (idx === -1) return { success: false, error: { code: 'NOT_FOUND', message: 'Care request not found' } };
-
-    const now = nowISO();
-    const statusTitles: Record<CareRequestStatus, string> = {
-      pending: 'Pending Acceptance',
-      accepted: 'Care Request Accepted',
-      employee_assigned: 'Staff Assigned',
-      professional_assigned: 'Professional Assigned',
-      on_the_way: 'Professional En Route',
-      arrived: 'Arrived at Patient Address',
-      in_progress: 'Care Service In Progress',
-      completed: 'Care Service Completed',
-      awaiting_review: 'Service Complete - Awaiting Review',
-      cancelled: 'Care Request Cancelled',
-      requested: 'Request Submitted',
-    };
-
-    const timeline = requestsStore[idx].timeline ? [...requestsStore[idx].timeline!] : [];
-    timeline.push({
-      status,
-      title: statusTitles[status] ?? status,
-      description: note ?? `Status updated to ${status.replace(/_/g, ' ')}`,
-      timestamp: now,
-    });
-
-    requestsStore[idx] = {
-      ...requestsStore[idx],
-      status,
-      timeline,
-      updatedAt: now,
-    };
-    return mockRequest(requestsStore[idx], { latency: 350 });
+    const updated = careRequestRepository.updateStatus(id, status, { note });
+    if (!updated) return { success: false, error: { code: 'NOT_FOUND', message: 'Care request not found' } };
+    return mockRequest(updated, { latency: 350 });
   },
 
   async addInternalNote(requestId: string, note: string): Promise<ApiResult<CareRequest>> {
-    const idx = requestsStore.findIndex((r) => r.id === requestId);
-    if (idx === -1) return { success: false, error: { code: 'NOT_FOUND', message: 'Request not found' } };
-
-    const internalNotes = requestsStore[idx].internalNotes ? [...requestsStore[idx].internalNotes!] : [];
-    internalNotes.push(`${nowISO().slice(11, 16)}: ${note}`);
-
-    requestsStore[idx] = {
-      ...requestsStore[idx],
-      internalNotes,
-      updatedAt: nowISO(),
-    };
-    return mockRequest(requestsStore[idx], { latency: 250 });
+    const req = careRequestRepository.getById(requestId);
+    if (!req) return { success: false, error: { code: 'NOT_FOUND', message: 'Request not found' } };
+    const internalNotes = [...(req.internalNotes ?? []), `${nowISO().slice(11, 16)}: ${note}`];
+    (req as any).internalNotes = internalNotes;
+    (req as any).updatedAt = nowISO();
+    return mockRequest(req, { latency: 250 });
   },
 
-  // ── Employee Management ────────────────────────────────────────────────---
+  // ── Employee Management (via central repository) ──────────────────────────
   async getEmployees(filters?: { search?: string; status?: string; availability?: string; department?: string }) {
-    let result = [...employeesStore];
-    if (filters?.status && filters.status !== 'all') {
-      result = result.filter((e) => e.status === filters.status);
-    }
-    if (filters?.availability && filters.availability !== 'all') {
-      result = result.filter((e) => e.availability === filters.availability);
-    }
-    if (filters?.department && filters.department !== 'all') {
-      result = result.filter((e) => e.department === filters.department);
-    }
-    if (filters?.search) {
-      const q = filters.search.toLowerCase();
-      result = result.filter(
-        (e) =>
-          e.name.toLowerCase().includes(q) ||
-          e.role.toLowerCase().includes(q) ||
-          e.department?.toLowerCase().includes(q) ||
-          e.licenseNumber?.toLowerCase().includes(q)
-      );
-    }
-    return mockRequest(result, { latency: 300 });
+    const result = employeeRepository.getAll({ providerId: PROVIDER_ID, ...filters });
+    return mockRequest(result.data, { latency: 300 });
   },
 
   async getEmployeeById(id: string): Promise<ApiResult<Employee>> {
-    const employee = employeesStore.find((e) => e.id === id);
+    const employee = employeeRepository.getById(id);
     if (!employee) return { success: false, error: { code: 'NOT_FOUND', message: 'Employee not found' } };
-    return mockRequest(employee, { latency: 200 });
+    return mockRequest(employee as Employee, { latency: 200 });
   },
 
   async createEmployee(input: Omit<Employee, 'id' | 'createdAt' | 'updatedAt'>): Promise<ApiResult<Employee>> {
@@ -270,7 +156,7 @@ export const careProviderPortalService = {
     const newEmp: Employee = {
       ...input,
       id: createId('emp'),
-      providerId: 'prov_1',
+      providerId: PROVIDER_ID,
       rating: 5.0,
       reviewCount: 0,
       assignedRequestsCount: 0,
@@ -278,33 +164,26 @@ export const careProviderPortalService = {
       createdAt: now,
       updatedAt: now,
     };
-    employeesStore.unshift(newEmp);
+    // Add to the central repository database
+    const { db } = await import('@/services/central-repository');
+    db.getDb().employees.unshift(newEmp);
     return mockRequest(newEmp, { latency: 450 });
   },
 
   async updateEmployee(id: string, patch: Partial<Employee>): Promise<ApiResult<Employee>> {
-    const idx = employeesStore.findIndex((e) => e.id === id);
-    if (idx === -1) return { success: false, error: { code: 'NOT_FOUND', message: 'Employee not found' } };
-
-    employeesStore[idx] = {
-      ...employeesStore[idx],
-      ...patch,
-      updatedAt: nowISO(),
-    };
-    return mockRequest(employeesStore[idx], { latency: 350 });
+    const emp = employeeRepository.getById(id);
+    if (!emp) return { success: false, error: { code: 'NOT_FOUND', message: 'Employee not found' } };
+    Object.assign(emp, { ...patch, updatedAt: nowISO() });
+    return mockRequest(emp as Employee, { latency: 350 });
   },
 
   async toggleEmployeeStatus(id: string): Promise<ApiResult<Employee>> {
-    const idx = employeesStore.findIndex((e) => e.id === id);
-    if (idx === -1) return { success: false, error: { code: 'NOT_FOUND', message: 'Employee not found' } };
-
-    const newStatus = employeesStore[idx].status === 'active' ? 'inactive' : 'active';
-    employeesStore[idx] = {
-      ...employeesStore[idx],
-      status: newStatus,
-      updatedAt: nowISO(),
-    };
-    return mockRequest(employeesStore[idx], { latency: 300 });
+    const emp = employeeRepository.getById(id);
+    if (!emp) return { success: false, error: { code: 'NOT_FOUND', message: 'Employee not found' } };
+    const newStatus = (emp as any).status === 'active' ? 'inactive' : 'active';
+    (emp as any).status = newStatus;
+    (emp as any).updatedAt = nowISO();
+    return mockRequest(emp as Employee, { latency: 300 });
   },
 
   // ── Services ─────────────────────────────────────────────────────────────

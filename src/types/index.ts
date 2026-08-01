@@ -471,3 +471,205 @@ export type Booking = BaseEntity & {
 
 // ── Emergency (alias) ─────────────────────────────────────────────────────────
 export type Emergency = EmergencySession;
+
+// ── Admin Portal Types ────────────────────────────────────────────────────────
+
+export type ProviderVerificationStatus = 'pending' | 'approved' | 'rejected' | 'suspended' | 'under_review';
+
+export type AdminPlatformStats = {
+  totalFamilies: number;
+  totalFamilyMembers: number;
+  totalProviders: number;
+  totalEmployees: number;
+  pendingProviderVerifications: number;
+  pendingEmployeeVerifications: number;
+  todayCareRequests: number;
+  todayEmergencies: number;
+  activeEmergencies: number;
+  completedEmergencies: number;
+  activeCareRequests: number;
+  completedCareRequests: number;
+  pendingReviews: number;
+  platformHealth: number; // 0-100
+};
+
+export type AdminActivity = {
+  id: ID;
+  type: 'family_registered' | 'provider_registered' | 'employee_added' | 'care_requested'
+    | 'sos_triggered' | 'provider_approved' | 'review_submitted' | 'request_completed'
+    | 'emergency_resolved' | 'employee_verified' | 'provider_suspended' | 'document_uploaded';
+  title: string;
+  description: string;
+  actorName?: string;
+  actorRole?: UserRole | 'system';
+  entityId?: ID;
+  entityType?: 'family' | 'provider' | 'employee' | 'request' | 'emergency' | 'review' | 'document';
+  severity?: 'info' | 'warning' | 'critical';
+  createdAt: ISODateString;
+};
+
+export type AdminFamily = Family & {
+  activeRequestsCount: number;
+  totalRequestsCount: number;
+  emergencyCount: number;
+  status: 'active' | 'inactive' | 'flagged';
+  lastActivity?: ISODateString;
+};
+
+export type AdminProvider = CareProvider & {
+  verificationStatus: ProviderVerificationStatus;
+  employeeCount: number;
+  activeRequestsCount: number;
+  totalRequestsCount: number;
+  documentsCount: number;
+  pendingDocuments: number;
+  lastActivity?: ISODateString;
+  rejectionReason?: string;
+  submittedAt?: ISODateString;
+};
+
+export type AdminEmployee = Employee & {
+  providerName?: string;
+  verificationStatus: ProviderVerificationStatus;
+  activeRequestsCount: number;
+};
+
+export type AdminCareRequest = CareRequest & {
+  adminNotes?: string;
+  flagged?: boolean;
+};
+
+export type AdminEmergency = EmergencySession & {
+  priority: 'critical' | 'high' | 'medium';
+  responseTimeMinutes?: number;
+  escalated?: boolean;
+};
+
+export type VerificationDocument = {
+  id: ID;
+  title: string;
+  type: 'registration' | 'gst' | 'license' | 'insurance' | 'employee' | 'certificate' | 'other';
+  fileName: string;
+  fileUrl: string;
+  uploadedAt: ISODateString;
+  status: 'pending' | 'verified' | 'rejected';
+  notes?: string;
+};
+
+export type VerificationRequest = {
+  id: ID;
+  entityType: 'provider' | 'employee';
+  entityId: ID;
+  entityName: string;
+  organizationName?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  submittedAt: ISODateString;
+  status: ProviderVerificationStatus;
+  documents: VerificationDocument[];
+  registrationNumber?: string;
+  gstNumber?: string;
+  licenseNumber?: string;
+  reviewedBy?: string;
+  reviewedAt?: ISODateString;
+  rejectionReason?: string;
+  notes?: string;
+  avatarUrl?: string;
+};
+
+export type ServiceCategory = {
+  id: ID;
+  name: string;
+  icon: string;
+  description: string;
+  color: string;
+  enabled: boolean;
+  providerCount: number;
+  requestCount: number;
+  createdAt: ISODateString;
+};
+
+export type AdminDocument = VerificationDocument & {
+  ownerName: string;
+  ownerType: 'provider' | 'employee';
+  ownerId: ID;
+  providerName?: string;
+};
+
+export type AdminReview = {
+  id: ID;
+  reviewerName: string;
+  reviewerFamilyId?: ID;
+  providerId: ID;
+  providerName: string;
+  employeeId?: ID;
+  employeeName?: string;
+  patientName?: string;
+  rating: number;
+  comment: string;
+  isComplaint: boolean;
+  status: 'pending' | 'responded' | 'flagged' | 'resolved';
+  response?: { text: string; respondedAt: ISODateString };
+  createdAt: ISODateString;
+};
+
+export type AdminNotification = {
+  id: ID;
+  type: 'emergency' | 'verification' | 'system' | 'provider' | 'announcement';
+  title: string;
+  message: string;
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  read: boolean;
+  entityId?: ID;
+  entityType?: string;
+  createdAt: ISODateString;
+};
+
+export type PlatformAnalytics = {
+  familyGrowth: { month: string; count: number }[];
+  providerGrowth: { month: string; count: number }[];
+  employeeGrowth: { month: string; count: number }[];
+  requestTrends: { month: string; total: number; emergency: number; completed: number }[];
+  emergencyTrends: { month: string; count: number; avgResponseMins: number }[];
+  categoryUsage: { category: string; count: number; percentage: number }[];
+  ratingsDistribution: { rating: number; count: number }[];
+  avgResponseTimeMinutes: number;
+  topProviders: { id: ID; name: string; rating: number; requestCount: number }[];
+  topEmployees: { id: ID; name: string; rating: number; completedCount: number }[];
+  mostRequestedServices: { service: string; count: number }[];
+};
+
+export type PlatformSettings = {
+  platformName: string;
+  platformTagline: string;
+  supportEmail: string;
+  supportPhone: string;
+  defaultLanguage: string;
+  timezone: string;
+  currency: string;
+  currencySymbol: string;
+  emergencyResponseTargetMinutes: number;
+  verificationRequiredForProviders: boolean;
+  verificationRequiredForEmployees: boolean;
+  allowSelfRegistration: boolean;
+  maxFamilyMembers: number;
+  notifications: {
+    emailEnabled: boolean;
+    smsEnabled: boolean;
+    pushEnabled: boolean;
+    emergencyAlerts: boolean;
+    verificationAlerts: boolean;
+    systemAlerts: boolean;
+  };
+  theme: {
+    primaryColor: string;
+    accentColor: string;
+    darkModeDefault: boolean;
+  };
+  pwa: {
+    enabled: boolean;
+    offlineSupport: boolean;
+    backgroundSync: boolean;
+  };
+};
+

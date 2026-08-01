@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import {
-  Heart, Siren, Stethoscope, Pill, FlaskConical, Car, Activity, Users, Calendar,
-  Bell, Sparkles, ArrowRight, HandHeart, LifeBuoy, Search, Clock, CheckCircle, Star,
+  Heart, Siren, Pill, Activity, Users, Calendar,
+  Bell, Sparkles, ArrowRight, HandHeart, LifeBuoy, Search, CheckCircle,
 } from '@/config/icons';
 import { PageHeader, SectionHeader, EmptyState, StatusIndicator } from '@/components/shared';
 import { Card } from '@/components/ui/card';
@@ -12,6 +12,7 @@ import { useAuth } from '@/hooks/use-auth';
 import {
   useFamilyMembers, useUpcomingAppointments, useTimeline, useNotifications, useCareRequests,
 } from '@/hooks/use-family-portal';
+import { useMedicationReminderStore } from '@/store/medication-reminder.store';
 import { formatDate, formatTime, formatRelative } from '@/utils/date';
 import { Skeleton, SkeletonText } from '@/components/shared/skeleton';
 import { cn } from '@/lib/utils';
@@ -39,6 +40,8 @@ export const FamilyHomePage = () => {
   const timelineQuery = useTimeline();
   const notificationsQuery = useNotifications();
   const requestsQuery = useCareRequests();
+  const { reminders, updateStatus } = useMedicationReminderStore();
+  const pendingMeds = reminders.filter((r) => r.status === 'pending');
 
   const members = membersQuery.data ?? [];
   const appointments = appointmentsQuery.data ?? [];
@@ -118,7 +121,7 @@ export const FamilyHomePage = () => {
             <h3 className="text-base font-semibold text-foreground">Emergency SOS</h3>
             <p className="text-sm text-muted-foreground">One tap to dispatch coordinated responders to your family.</p>
           </div>
-          <Button variant="destructive" size="sm" className="shrink-0">SOS</Button>
+          <Button variant="destructive" size="sm" className="shrink-0" onClick={() => navigate('/portal/family/emergency')}>SOS</Button>
         </div>
         <div className="flex items-center gap-4 rounded-xl border border-border bg-card p-5">
           <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-secondary/10 text-secondary">
@@ -128,7 +131,7 @@ export const FamilyHomePage = () => {
             <h3 className="text-base font-semibold text-foreground">AI Assistant</h3>
             <p className="text-sm text-muted-foreground">Get personalized care suggestions and timeline summaries.</p>
           </div>
-          <Button variant="outline" size="sm" className="shrink-0">Ask</Button>
+          <Button variant="outline" size="sm" className="shrink-0" onClick={() => navigate('/portal/family/ai-assistant')}>Ask</Button>
         </div>
       </div>
 
@@ -215,21 +218,31 @@ export const FamilyHomePage = () => {
         )}
       </section>
 
-      {/* Medication Reminder */}
+      {/* Medication Reminders */}
       <section className="flex flex-col gap-4">
         <SectionHeader title="Medication Reminders" description="Upcoming medication schedules" />
-        <div className="flex items-center gap-3 rounded-xl border border-warning/20 bg-warning/[0.03] p-4">
-          <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-warning/10 text-warning">
-            <Pill className="h-5 w-5" />
-          </span>
-          <div className="flex flex-1 flex-col gap-0.5">
-            <span className="text-sm font-semibold text-foreground">Insulin — Mohammed Rahman</span>
-            <span className="text-xs text-muted-foreground">Take with breakfast · Every day</span>
+        {pendingMeds.length === 0 ? (
+          <div className="rounded-xl border border-border bg-card">
+            <EmptyState icon={Pill} title="No pending medications" description="All medications are up to date." />
           </div>
-          <Button variant="outline" size="sm" className="shrink-0">
-            <CheckCircle className="mr-1.5 h-4 w-4 text-success" /> Mark taken
-          </Button>
-        </div>
+        ) : (
+          <div className="flex flex-col gap-2">
+            {pendingMeds.slice(0, 3).map((med) => (
+              <div key={med.id} className="flex items-center gap-3 rounded-xl border border-warning/20 bg-warning/[0.03] p-4">
+                <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-warning/10 text-warning">
+                  <Pill className="h-5 w-5" />
+                </span>
+                <div className="flex flex-1 flex-col gap-0.5">
+                  <span className="text-sm font-semibold text-foreground">{med.medicineName} — {med.memberName}</span>
+                  <span className="text-xs text-muted-foreground">{med.frequency} · {med.time}</span>
+                </div>
+                <Button variant="outline" size="sm" className="shrink-0" onClick={() => updateStatus(med.id, 'taken')}>
+                  <CheckCircle className="mr-1.5 h-4 w-4 text-success" /> Mark taken
+                </Button>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Health Timeline Preview */}

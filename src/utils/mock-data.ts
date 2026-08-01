@@ -590,5 +590,234 @@ export const mockBookings: Booking[] = [
   { id: 'book_1', familyId: 'fam_1', providerId: 'prov_1', serviceType: 'home-care', scheduledAt: now(), status: 'completed', employeeId: 'emp_1', createdAt: daysAgo(5), updatedAt: daysAgo(3) },
 ];
 
-export const mockEmergencies: Emergency[] = [];
+export const mockEmergencies: Emergency[] = [
+  {
+    id: 'emer_1', familyId: 'fam_1', memberId: 'mem_1', memberName: 'Ramachandra Sharma',
+    status: 'active', currentStepIndex: 4,
+    steps: [
+      { step: 'sos_triggered', title: 'SOS Triggered', description: 'Emergency SOS activated by family', completedAt: hoursAgo(0.5), status: 'completed' },
+      { step: 'location_detected', title: 'GPS Location Received', description: 'Location: Gokuldham Heights, Flat 402', completedAt: hoursAgo(0.48), status: 'completed' },
+      { step: 'coordinator_activated', title: 'AI Coordinator Activated', description: 'Smart routing initiated', completedAt: hoursAgo(0.45), status: 'completed' },
+      { step: 'provider_found', title: 'Provider Assigned', description: 'Aastha Senior Home Care dispatched', completedAt: hoursAgo(0.4), status: 'completed' },
+      { step: 'professional_assigned', title: 'Employee Assigned', description: 'Dr. Alok Gupta en route', completedAt: hoursAgo(0.35), status: 'completed' },
+      { step: 'ambulance_assigned', title: 'Ambulance Assigned', description: 'MH-02-AB-1234 dispatched', status: 'in-progress' },
+      { step: 'hospital_notified', title: 'Hospital Notified', description: 'Kokilaben Hospital on standby', status: 'pending' },
+      { step: 'contacts_notified', title: 'Contacts Notified', description: 'Emergency contacts alerted', status: 'pending' },
+      { step: 'resolved', title: 'Emergency Resolved', description: 'Patient stabilized', status: 'pending' },
+    ],
+    location: { line1: 'Gokuldham Heights, Flat 402', city: 'Mumbai', state: 'Maharashtra', postalCode: '400063', country: 'India', lat: 19.076, lng: 72.877 },
+    assignedProvider: { id: 'prov_1', name: 'Aastha Senior Home Care', phone: '+91 22 4000 1111', etaMinutes: 8 },
+    assignedProfessional: { id: 'emp_4', name: 'Dr. Alok Gupta', role: 'General Physician', phone: '+91 98110 99900' },
+    assignedAmbulance: { vehicleNumber: 'MH-02-AB-1234', driverName: 'Suresh Patel', phone: '+91 98663 39988', etaMinutes: 6 },
+    notifiedHospital: { name: 'Kokilaben Dhirubhai Ambani Hospital', phone: '+91 22 3099 9999', address: 'Andheri West, Mumbai' },
+    notifiedContactsCount: 2,
+    createdAt: hoursAgo(0.5), updatedAt: hoursAgo(0.2),
+  },
+  {
+    id: 'emer_2', familyId: 'fam_2', memberId: 'mem_6', memberName: 'Lakshmi Nair',
+    status: 'resolved', currentStepIndex: 8,
+    steps: [
+      { step: 'sos_triggered', title: 'SOS Triggered', description: 'Emergency SOS activated', completedAt: daysAgo(1), status: 'completed' },
+      { step: 'location_detected', title: 'GPS Received', description: 'Location confirmed', completedAt: daysAgo(1), status: 'completed' },
+      { step: 'coordinator_activated', title: 'AI Coordinator Activated', description: 'Routing initiated', completedAt: daysAgo(1), status: 'completed' },
+      { step: 'provider_found', title: 'Provider Assigned', description: 'Chaitanya Rehab dispatched', completedAt: daysAgo(1), status: 'completed' },
+      { step: 'professional_assigned', title: 'Employee Assigned', description: 'Nurse Priya Menon assigned', completedAt: daysAgo(1), status: 'completed' },
+      { step: 'ambulance_assigned', title: 'Ambulance Assigned', description: 'Vehicle MH-04-CD-5678', completedAt: daysAgo(1), status: 'completed' },
+      { step: 'hospital_notified', title: 'Hospital Notified', description: 'Lilavati Hospital alerted', completedAt: daysAgo(1), status: 'completed' },
+      { step: 'contacts_notified', title: 'Contacts Notified', description: '3 contacts alerted', completedAt: daysAgo(1), status: 'completed' },
+      { step: 'resolved', title: 'Emergency Resolved', description: 'Patient stabilized and admitted', completedAt: daysAgo(0.9), status: 'completed' },
+    ],
+    location: { line1: 'Bandra Kurla Complex', city: 'Mumbai', state: 'Maharashtra', postalCode: '400051', country: 'India' },
+    assignedProvider: { id: 'prov_4', name: 'Chaitanya Rehab & Physio', phone: '+91 22 4000 4444', etaMinutes: 0 },
+    assignedProfessional: { id: 'emp_6', name: 'Nurse Priya Menon', role: 'Senior Nurse', phone: '+91 98441 22330' },
+    notifiedContactsCount: 3,
+    createdAt: daysAgo(1), updatedAt: daysAgo(0.9),
+  },
+];
+
 export const mockMedicalRecords: any[] = [];
+
+// ── Admin-Specific Mock Data ────────────────────────────────────────────────
+
+export const mockAdminFamilies: any[] = [
+  { id: 'fam_1', userId: 'user_family_1', name: 'Sharma Family', primaryContactName: 'Rajesh Sharma', contact: { phone: '+91 98200 12345', email: 'rajesh.family@example.com' }, address: { line1: 'Gokuldham Heights, Flat 402', city: 'Mumbai', state: 'Maharashtra', postalCode: '400063', country: 'India' }, members: mockFamilyMembers, emergencyContacts: [{ name: 'Dr. V. K. Joshi', relationship: 'Doctor', phone: '+91 22 2840 9999' }], createdAt: daysAgo(90), updatedAt: daysAgo(1), activeRequestsCount: 2, totalRequestsCount: 12, emergencyCount: 1, status: 'active', lastActivity: hoursAgo(2) },
+  { id: 'fam_2', userId: 'user_fam_2', name: 'Nair Family', primaryContactName: 'Krishnan Nair', contact: { phone: '+91 98441 55678', email: 'krishnan.nair@example.com' }, address: { line1: 'Bandra Kurla Complex, Tower B', city: 'Mumbai', state: 'Maharashtra', postalCode: '400051', country: 'India' }, members: [{ id: 'mem_6', familyId: 'fam_2', name: 'Lakshmi Nair', relationship: 'Mother', gender: 'female', dateOfBirth: '1950-03-20', bloodGroup: 'O+', medicalConditions: ['Heart Disease', 'Hypertension'], allergies: ['Sulfa drugs'], status: 'active', createdAt: daysAgo(60), updatedAt: daysAgo(3) }], createdAt: daysAgo(60), updatedAt: daysAgo(1), activeRequestsCount: 1, totalRequestsCount: 8, emergencyCount: 2, status: 'active', lastActivity: hoursAgo(5) },
+  { id: 'fam_3', userId: 'user_fam_3', name: 'Iyer Family', primaryContactName: 'Venkatesh Iyer', contact: { phone: '+91 98330 44221', email: 'venkatesh.iyer@example.com' }, address: { line1: 'Matunga West, Shivaji Park Road', city: 'Mumbai', state: 'Maharashtra', postalCode: '400016', country: 'India' }, members: [{ id: 'mem_7', familyId: 'fam_3', name: 'Padmavathi Iyer', relationship: 'Grandmother', gender: 'female', dateOfBirth: '1942-07-12', bloodGroup: 'B+', medicalConditions: ['Dementia', 'Arthritis', 'Osteoporosis'], allergies: ['NSAIDs'], status: 'active', createdAt: daysAgo(120), updatedAt: daysAgo(2) }], createdAt: daysAgo(120), updatedAt: daysAgo(2), activeRequestsCount: 0, totalRequestsCount: 20, emergencyCount: 0, status: 'active', lastActivity: daysAgo(2) },
+  { id: 'fam_4', userId: 'user_fam_4', name: 'Reddy Family', primaryContactName: 'Srinivas Reddy', contact: { phone: '+91 98880 11234', email: 'srinivas.reddy@example.com' }, address: { line1: 'Powai Lake View', city: 'Mumbai', state: 'Maharashtra', postalCode: '400076', country: 'India' }, members: [{ id: 'mem_8', familyId: 'fam_4', name: 'Venkamma Reddy', relationship: 'Mother', gender: 'female', dateOfBirth: '1955-11-08', bloodGroup: 'A-', medicalConditions: ['Kidney Disease', 'Diabetes'], allergies: [], status: 'active', createdAt: daysAgo(45), updatedAt: daysAgo(1) }], createdAt: daysAgo(45), updatedAt: daysAgo(1), activeRequestsCount: 3, totalRequestsCount: 5, emergencyCount: 1, status: 'flagged', lastActivity: hoursAgo(1) },
+  { id: 'fam_5', userId: 'user_fam_5', name: 'Mehta Family', primaryContactName: 'Dilip Mehta', contact: { phone: '+91 98221 77890', email: 'dilip.mehta@example.com' }, address: { line1: 'Borivali West, Ekta Nagar', city: 'Mumbai', state: 'Maharashtra', postalCode: '400092', country: 'India' }, members: [{ id: 'mem_9', familyId: 'fam_5', name: 'Kantaben Mehta', relationship: 'Mother', gender: 'female', dateOfBirth: '1948-02-25', bloodGroup: 'B-', medicalConditions: ['Parkinson\'s Disease'], allergies: [], status: 'active', createdAt: daysAgo(30), updatedAt: daysAgo(5) }], createdAt: daysAgo(30), updatedAt: daysAgo(5), activeRequestsCount: 1, totalRequestsCount: 3, emergencyCount: 0, status: 'active', lastActivity: daysAgo(5) },
+];
+
+export const mockAdminProviders: any[] = [
+  { ...mockCareProviders[0], verificationStatus: 'approved', employeeCount: 5, activeRequestsCount: 3, totalRequestsCount: 184, documentsCount: 5, pendingDocuments: 0, lastActivity: hoursAgo(1), submittedAt: daysAgo(200) },
+  { ...mockCareProviders[1], verificationStatus: 'approved', employeeCount: 8, activeRequestsCount: 2, totalRequestsCount: 412, documentsCount: 4, pendingDocuments: 0, lastActivity: daysAgo(1), submittedAt: daysAgo(150) },
+  { ...mockCareProviders[2], verificationStatus: 'approved', employeeCount: 12, activeRequestsCount: 5, totalRequestsCount: 290, documentsCount: 6, pendingDocuments: 0, lastActivity: daysAgo(2), submittedAt: daysAgo(180) },
+  { ...mockCareProviders[3], verificationStatus: 'pending', employeeCount: 3, activeRequestsCount: 0, totalRequestsCount: 0, documentsCount: 2, pendingDocuments: 1, lastActivity: daysAgo(3), submittedAt: daysAgo(3) },
+  { ...mockCareProviders[4], verificationStatus: 'approved', employeeCount: 6, activeRequestsCount: 4, totalRequestsCount: 560, documentsCount: 5, pendingDocuments: 0, lastActivity: hoursAgo(0.5), submittedAt: daysAgo(365) },
+  { id: 'prov_6', name: 'Surya Multispecialty Home Care', type: 'home-care', description: 'Comprehensive home care specialists for post-surgical recovery and geriatric support.', contact: { phone: '+91 22 4000 6666', email: 'care@suryacare.in' }, address: { line1: 'Malad West', city: 'Mumbai', state: 'Maharashtra', postalCode: '400064', country: 'India' }, rating: 0, reviewCount: 0, isVerified: false, services: ['Home Nursing', 'Post-Surgical Care', 'IV Therapy'], experienceYears: 3, startingPrice: 1000, currency: '₹', distanceKm: 5, estimatedArrivalMinutes: 40, availability: 'available', reviews: [], createdAt: daysAgo(5), updatedAt: daysAgo(1), verificationStatus: 'pending', employeeCount: 2, activeRequestsCount: 0, totalRequestsCount: 0, documentsCount: 3, pendingDocuments: 2, lastActivity: daysAgo(1), submittedAt: daysAgo(5) },
+  { id: 'prov_7', name: 'Varsha Elder Care Services', type: 'caregiver', description: 'Senior companion and caregiver service for independent elderly.', contact: { phone: '+91 22 4000 7777', email: 'info@varshacare.in' }, address: { line1: 'Santacruz East', city: 'Mumbai', state: 'Maharashtra', postalCode: '400055', country: 'India' }, rating: 3.5, reviewCount: 8, isVerified: false, services: ['Caregiver', 'Senior Transport', 'Housekeeping'], experienceYears: 1, startingPrice: 800, currency: '₹', distanceKm: 7, estimatedArrivalMinutes: 55, availability: 'available', reviews: [], createdAt: daysAgo(15), updatedAt: daysAgo(5), verificationStatus: 'rejected', employeeCount: 4, activeRequestsCount: 0, totalRequestsCount: 8, documentsCount: 2, pendingDocuments: 0, lastActivity: daysAgo(5), submittedAt: daysAgo(15), rejectionReason: 'Incomplete GST registration document. Missing NABL certification for claimed lab services.' },
+];
+
+export const mockAdminEmployees: any[] = [
+  { ...mockEmployees[0], providerName: 'Aastha Senior Home Care', verificationStatus: 'approved', activeRequestsCount: 3 },
+  { ...mockEmployees[1], providerName: 'Aastha Senior Home Care', verificationStatus: 'approved', activeRequestsCount: 2 },
+  { ...mockEmployees[2], providerName: 'Aastha Senior Home Care', verificationStatus: 'approved', activeRequestsCount: 1 },
+  { ...mockEmployees[3], providerName: 'Dr. Malhotra House Call Physicians', verificationStatus: 'approved', activeRequestsCount: 4 },
+  { ...mockEmployees[4], providerName: 'Aastha Senior Home Care', verificationStatus: 'approved', activeRequestsCount: 0 },
+  { id: 'emp_6', name: 'Priya Menon', role: 'Senior Registered Nurse', department: 'Home Nursing', experience: '6 years', licenseNumber: 'INC-RN-77441-MUM', providerId: 'prov_4', contact: { phone: '+91 98441 22330', email: 'priya.m@chaitanya.in' }, address: { line1: 'Kurla West', city: 'Mumbai', state: 'Maharashtra', postalCode: '400070', country: 'India' }, languages: ['Malayalam', 'Hindi', 'English'], availability: 'available', workingDays: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], workingHours: '08:00 AM - 06:00 PM', governmentIdType: 'aadhaar', governmentIdNumber: '6655-4433-2211', certificates: ['B.Sc Nursing', 'Palliative Care Certificate'], emergencyContact: { name: 'Arun Menon', relationship: 'Husband', phone: '+91 98441 44556' }, status: 'active', avatarUrl: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&q=80&w=300', rating: 4.8, reviewCount: 28, assignedRequestsCount: 1, completedRequestsCount: 88, specialization: ['Palliative Care', 'IV Therapy', 'Post-Surgical'], createdAt: daysAgo(200), updatedAt: now(), providerName: 'Chaitanya Rehab & Physio', verificationStatus: 'approved', activeRequestsCount: 1 },
+  { id: 'emp_7', name: 'Ravi Shankar Pillai', role: 'Lab Technician', department: 'Diagnostics', experience: '4 years', licenseNumber: 'DMLT-33210-MUM', providerId: 'prov_3', contact: { phone: '+91 98773 11230', email: 'ravi.p@sanjivanilab.in' }, address: { line1: 'Andheri East', city: 'Mumbai', state: 'Maharashtra', postalCode: '400069', country: 'India' }, languages: ['Malayalam', 'Hindi', 'English'], availability: 'available', workingDays: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Saturday'], workingHours: '07:00 AM - 03:00 PM', governmentIdType: 'aadhaar', governmentIdNumber: '3344-5566-7788', certificates: ['DMLT', 'Phlebotomy Specialist'], status: 'active', avatarUrl: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?auto=format&fit=crop&q=80&w=300', rating: 4.7, reviewCount: 19, assignedRequestsCount: 2, completedRequestsCount: 62, specialization: ['Blood Collection', 'Rapid Antigen', 'ECG Recording'], createdAt: daysAgo(130), updatedAt: now(), providerName: 'Sanjivani Diagnostic Labs', verificationStatus: 'pending', activeRequestsCount: 2 },
+];
+
+export const mockVerificationQueue: any[] = [
+  {
+    id: 'ver_1', entityType: 'provider', entityId: 'prov_6', entityName: 'Surya Multispecialty Home Care', organizationName: 'Surya Healthcare Pvt Ltd', contactEmail: 'care@suryacare.in', contactPhone: '+91 22 4000 6666', submittedAt: daysAgo(5), status: 'pending',
+    registrationNumber: 'REG-MH-2024-1234', gstNumber: '27BBBBB1111B1Z5', licenseNumber: 'MH-MED-2024-5678',
+    documents: [
+      { id: 'vdoc_1', title: 'Business Registration Certificate', type: 'registration', fileName: 'Surya_Registration.pdf', fileUrl: '#', uploadedAt: daysAgo(5), status: 'pending' },
+      { id: 'vdoc_2', title: 'GST Registration', type: 'gst', fileName: 'Surya_GST.pdf', fileUrl: '#', uploadedAt: daysAgo(5), status: 'verified' },
+      { id: 'vdoc_3', title: 'Medical Facility License', type: 'license', fileName: 'Surya_License.pdf', fileUrl: '#', uploadedAt: daysAgo(4), status: 'pending', notes: 'Needs Maharashtra Medical Council stamp' },
+    ],
+    avatarUrl: 'https://images.unsplash.com/photo-1504813184591-01572f98c85f?auto=format&fit=crop&q=80&w=200',
+    notes: 'New provider from Malad West. Has 2 qualified nurses on roster.',
+  },
+  {
+    id: 'ver_2', entityType: 'employee', entityId: 'emp_7', entityName: 'Ravi Shankar Pillai', organizationName: 'Sanjivani Diagnostic Labs', contactEmail: 'ravi.p@sanjivanilab.in', contactPhone: '+91 98773 11230', submittedAt: daysAgo(2), status: 'pending',
+    licenseNumber: 'DMLT-33210-MUM',
+    documents: [
+      { id: 'vdoc_4', title: 'DMLT Certificate', type: 'certificate', fileName: 'DMLT_Ravi_Pillai.pdf', fileUrl: '#', uploadedAt: daysAgo(2), status: 'pending' },
+      { id: 'vdoc_5', title: 'Aadhaar ID', type: 'other', fileName: 'Aadhaar_Ravi.pdf', fileUrl: '#', uploadedAt: daysAgo(2), status: 'verified' },
+      { id: 'vdoc_6', title: 'Police Verification', type: 'other', fileName: 'Police_Verification_Ravi.pdf', fileUrl: '#', uploadedAt: daysAgo(1), status: 'pending' },
+    ],
+    avatarUrl: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?auto=format&fit=crop&q=80&w=200',
+  },
+  {
+    id: 'ver_3', entityType: 'provider', entityId: 'prov_7', entityName: 'Varsha Elder Care Services', organizationName: 'Varsha Senior Services', contactEmail: 'info@varshacare.in', contactPhone: '+91 22 4000 7777', submittedAt: daysAgo(15), status: 'rejected',
+    registrationNumber: 'REG-MH-2025-7891',
+    documents: [
+      { id: 'vdoc_7', title: 'Business Registration', type: 'registration', fileName: 'Varsha_Reg.pdf', fileUrl: '#', uploadedAt: daysAgo(15), status: 'verified' },
+      { id: 'vdoc_8', title: 'GST Certificate', type: 'gst', fileName: 'Varsha_GST.pdf', fileUrl: '#', uploadedAt: daysAgo(15), status: 'rejected', notes: 'GST number invalid — does not match MCA records' },
+    ],
+    rejectionReason: 'Incomplete GST registration document. Missing NABL certification for claimed lab services.',
+    reviewedBy: 'Ananya Verma (Admin)', reviewedAt: daysAgo(10),
+    avatarUrl: 'https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&q=80&w=200',
+  },
+];
+
+export const mockServiceCategories: any[] = [
+  { id: 'cat_1', name: 'Doctor Visit', icon: 'Stethoscope', description: 'Home consultation by qualified physician', color: '#3B82F6', enabled: true, providerCount: 3, requestCount: 89, createdAt: daysAgo(400) },
+  { id: 'cat_2', name: 'Hospital Care', icon: 'Building2', description: 'Hospital admission & emergency coordination', color: '#EF4444', enabled: true, providerCount: 5, requestCount: 34, createdAt: daysAgo(400) },
+  { id: 'cat_3', name: 'Elderly Caregiver', icon: 'Users', description: 'Daily living assistance & companionship', color: '#8B5CF6', enabled: true, providerCount: 6, requestCount: 145, createdAt: daysAgo(400) },
+  { id: 'cat_4', name: 'Home Nursing', icon: 'HeartPulse', description: 'Registered nurse visits for IV & wound care', color: '#EC4899', enabled: true, providerCount: 4, requestCount: 210, createdAt: daysAgo(400) },
+  { id: 'cat_5', name: 'Medicine Delivery', icon: 'Pill', description: 'Doorstep prescription & OTC delivery', color: '#10B981', enabled: true, providerCount: 2, requestCount: 412, createdAt: daysAgo(400) },
+  { id: 'cat_6', name: 'Diagnostic Lab', icon: 'FlaskConical', description: 'At-home blood sample collection', color: '#F59E0B', enabled: true, providerCount: 3, requestCount: 176, createdAt: daysAgo(400) },
+  { id: 'cat_7', name: 'Ambulance', icon: 'Ambulance', description: 'Emergency medical transport with oxygen', color: '#EF4444', enabled: true, providerCount: 2, requestCount: 28, createdAt: daysAgo(400) },
+  { id: 'cat_8', name: 'Senior Transport', icon: 'Car', description: 'Safe vehicle transport for appointments', color: '#6366F1', enabled: true, providerCount: 4, requestCount: 67, createdAt: daysAgo(400) },
+  { id: 'cat_9', name: 'Home Repairs', icon: 'Zap', description: 'Electrical safety check & grab bars', color: '#F59E0B', enabled: true, providerCount: 1, requestCount: 22, createdAt: daysAgo(300) },
+  { id: 'cat_10', name: 'Physiotherapy', icon: 'Activity', description: 'Joint mobility & stroke rehabilitation', color: '#14B8A6', enabled: true, providerCount: 3, requestCount: 98, createdAt: daysAgo(400) },
+  { id: 'cat_11', name: 'Housekeeping', icon: 'Home', description: 'Senior room sanitization & cleaning', color: '#84CC16', enabled: false, providerCount: 1, requestCount: 15, createdAt: daysAgo(200) },
+  { id: 'cat_12', name: 'Plumbing Service', icon: 'Wrench', description: 'Sanitary repairs & bathroom safety', color: '#6B7280', enabled: false, providerCount: 0, requestCount: 0, createdAt: daysAgo(100) },
+];
+
+export const mockAdminReviews: any[] = [
+  { id: 'rev_a1', reviewerName: 'Vikramaditya S.', reviewerFamilyId: 'fam_1', providerId: 'prov_1', providerName: 'Aastha Senior Home Care', employeeId: 'emp_1', employeeName: 'Anjali Sharma', patientName: 'Ramachandra Sharma', rating: 5, comment: 'Exceptional home nursing for my father. Anjali was patient, professional and extremely gentle.', isComplaint: false, status: 'responded', response: { text: 'Thank you Vikramaditya! It is our honor to support your father.', respondedAt: daysAgo(4) }, createdAt: daysAgo(5) },
+  { id: 'rev_a2', reviewerName: 'Radhika M.', reviewerFamilyId: 'fam_3', providerId: 'prov_1', providerName: 'Aastha Senior Home Care', patientName: 'Padmavathi Iyer', rating: 5, comment: 'Aastha Care has been with us for 2 years. Absolutely the most trusted elderly care in Mumbai.', isComplaint: false, status: 'pending', createdAt: daysAgo(12) },
+  { id: 'rev_a3', reviewerName: 'Suresh K.', reviewerFamilyId: 'fam_2', providerId: 'prov_4', providerName: 'Chaitanya Rehab', employeeId: 'emp_3', employeeName: 'Rajesh Kumar', patientName: 'Lakshmi Nair', rating: 4, comment: 'Good physiotherapy session. Rajesh was punctual and professional.', isComplaint: false, status: 'responded', response: { text: 'Thank you for your feedback!', respondedAt: daysAgo(19) }, createdAt: daysAgo(20) },
+  { id: 'rev_a4', reviewerName: 'Dinesh Patel', reviewerFamilyId: 'fam_4', providerId: 'prov_7', providerName: 'Varsha Elder Care Services', rating: 2, comment: 'Caregiver arrived 3 hours late and did not bring proper medical supplies. Very disappointed.', isComplaint: true, status: 'flagged', createdAt: daysAgo(7) },
+  { id: 'rev_a5', reviewerName: 'Meena Iyer', reviewerFamilyId: 'fam_3', providerId: 'prov_3', providerName: 'Sanjivani Diagnostic Labs', employeeId: 'emp_7', employeeName: 'Ravi Shankar Pillai', patientName: 'Padmavathi Iyer', rating: 5, comment: 'Punctual blood sample collection. Reports arrived within 10 hours. Excellent service!', isComplaint: false, status: 'responded', response: { text: 'Thank you Meena ji! We aim to serve you at the highest standard.', respondedAt: daysAgo(1) }, createdAt: daysAgo(3) },
+  { id: 'rev_a6', reviewerName: 'Srinivas R.', reviewerFamilyId: 'fam_4', providerId: 'prov_2', providerName: 'Jan Aushadhi Home Pharmacy', rating: 3, comment: 'Medicine was delivered but wrong dosage was sent. Had to call multiple times for correction.', isComplaint: true, status: 'resolved', response: { text: 'We sincerely apologize for the error. We have re-verified our medication dispatch process.', respondedAt: daysAgo(6) }, createdAt: daysAgo(8) },
+];
+
+export const mockAdminNotifications: any[] = [
+  { id: 'an_1', type: 'emergency', title: '🚨 Active Emergency — Sharma Family', message: 'SOS triggered by Ramachandra Sharma (Gokuldham Heights). Dr. Alok Gupta & ambulance dispatched. ETA 8 mins.', priority: 'critical', read: false, entityId: 'emer_1', entityType: 'emergency', createdAt: hoursAgo(0.5) },
+  { id: 'an_2', type: 'verification', title: 'New Provider Verification Request', message: 'Surya Multispecialty Home Care submitted verification documents. 3 documents pending review.', priority: 'high', read: false, entityId: 'ver_1', entityType: 'verification', createdAt: daysAgo(5) },
+  { id: 'an_3', type: 'verification', title: 'Employee Verification Pending', message: 'Ravi Shankar Pillai (Sanjivani Labs) has submitted DMLT and Aadhaar documents. Awaiting police verification.', priority: 'medium', read: false, entityId: 'ver_2', entityType: 'verification', createdAt: daysAgo(2) },
+  { id: 'an_4', type: 'provider', title: 'Low-Rated Complaint Received', message: 'Dinesh Patel filed a complaint against Varsha Elder Care Services (2-star rating). Review flagged for admin action.', priority: 'high', read: false, entityId: 'rev_a4', entityType: 'review', createdAt: daysAgo(7) },
+  { id: 'an_5', type: 'system', title: 'Platform Health: 98%', message: 'All services operational. API response time 142ms average. 0 critical errors in last 24 hours.', priority: 'low', read: true, createdAt: hoursAgo(3) },
+  { id: 'an_6', type: 'provider', title: 'Provider Varsha Care Rejected', message: 'Varsha Elder Care Services verification rejected. GST number mismatch. Provider notified automatically.', priority: 'medium', read: true, entityId: 'prov_7', entityType: 'provider', createdAt: daysAgo(10) },
+  { id: 'an_7', type: 'announcement', title: 'Diwali Support Hours Update', message: 'Emergency services remain 24/7. Routine home care requests may experience 20% longer ETAs on Nov 1.', priority: 'low', read: true, createdAt: daysAgo(15) },
+];
+
+export const mockAdminDocuments: any[] = [
+  { id: 'adoc_1', title: 'Maharashtra Medical License 2026', type: 'license', fileName: 'Aastha_License_2026.pdf', fileUrl: '#', uploadedAt: daysAgo(120), status: 'verified', notes: 'Valid until Dec 2027', ownerName: 'Aastha Senior Home Care', ownerType: 'provider', ownerId: 'prov_1', providerName: 'Aastha Senior Home Care' },
+  { id: 'adoc_2', title: 'GST Registration Certificate', type: 'gst', fileName: 'Aastha_GST.pdf', fileUrl: '#', uploadedAt: daysAgo(200), status: 'verified', ownerName: 'Aastha Senior Home Care', ownerType: 'provider', ownerId: 'prov_1', providerName: 'Aastha Senior Home Care' },
+  { id: 'adoc_3', title: 'INC Nursing License — Anjali Sharma', type: 'license', fileName: 'INC_Anjali_Sharma.pdf', fileUrl: '#', uploadedAt: daysAgo(365), status: 'verified', ownerName: 'Anjali Sharma', ownerType: 'employee', ownerId: 'emp_1', providerName: 'Aastha Senior Home Care' },
+  { id: 'adoc_4', title: 'DMLT Certificate — Ravi Shankar Pillai', type: 'certificate', fileName: 'DMLT_Ravi_Pillai.pdf', fileUrl: '#', uploadedAt: daysAgo(2), status: 'pending', ownerName: 'Ravi Shankar Pillai', ownerType: 'employee', ownerId: 'emp_7', providerName: 'Sanjivani Diagnostic Labs' },
+  { id: 'adoc_5', title: 'Business Registration — Surya Multispecialty', type: 'registration', fileName: 'Surya_Registration.pdf', fileUrl: '#', uploadedAt: daysAgo(5), status: 'pending', ownerName: 'Surya Multispecialty Home Care', ownerType: 'provider', ownerId: 'prov_6', providerName: 'Surya Multispecialty Home Care' },
+  { id: 'adoc_6', title: 'NABL Lab Accreditation', type: 'certificate', fileName: 'NABL_Sanjivani_2026.pdf', fileUrl: '#', uploadedAt: daysAgo(180), status: 'verified', notes: 'Valid until March 2028', ownerName: 'Sanjivani Diagnostic Labs', ownerType: 'provider', ownerId: 'prov_3', providerName: 'Sanjivani Diagnostic Labs' },
+  { id: 'adoc_7', title: 'Medical Liability Insurance', type: 'insurance', fileName: 'Aastha_Insurance_2026.pdf', fileUrl: '#', uploadedAt: daysAgo(45), status: 'verified', notes: 'Coverage ₹50,00,000', ownerName: 'Aastha Senior Home Care', ownerType: 'provider', ownerId: 'prov_1', providerName: 'Aastha Senior Home Care' },
+  { id: 'adoc_8', title: 'GST Certificate — Varsha Care', type: 'gst', fileName: 'Varsha_GST.pdf', fileUrl: '#', uploadedAt: daysAgo(15), status: 'rejected', notes: 'GST number invalid — does not match MCA records', ownerName: 'Varsha Elder Care Services', ownerType: 'provider', ownerId: 'prov_7', providerName: 'Varsha Elder Care Services' },
+];
+
+export const mockPlatformActivities: any[] = [
+  { id: 'act_1', type: 'sos_triggered', title: 'Emergency SOS Triggered', description: 'Ramachandra Sharma (Sharma Family) triggered SOS at Gokuldham Heights', actorName: 'Rajesh Sharma', actorRole: 'family', entityId: 'emer_1', entityType: 'emergency', severity: 'critical', createdAt: hoursAgo(0.5) },
+  { id: 'act_2', type: 'care_requested', title: 'New Care Request', description: 'Patel Family requested emergency caregiver for Devendra Patel', actorName: 'Patel Family', actorRole: 'family', entityId: 'req_103', entityType: 'request', severity: 'warning', createdAt: hoursAgo(0.2) },
+  { id: 'act_3', type: 'provider_approved', title: 'Provider Approved', description: 'Sanjivani Diagnostic Labs verified and approved', actorName: 'Ananya Verma', actorRole: 'admin', entityId: 'prov_3', entityType: 'provider', severity: 'info', createdAt: daysAgo(2) },
+  { id: 'act_4', type: 'request_completed', title: 'Care Request Completed', description: 'Anjali Sharma completed IV hydration for Sunita Joshi (Joshi Family)', actorName: 'Anjali Sharma', actorRole: 'employee', entityId: 'req_105', entityType: 'request', severity: 'info', createdAt: daysAgo(2) },
+  { id: 'act_5', type: 'review_submitted', title: 'Review Submitted', description: 'Vikramaditya S. left a 5-star review for Aastha Senior Home Care', actorName: 'Vikramaditya S.', actorRole: 'family', entityId: 'rev_a1', entityType: 'review', severity: 'info', createdAt: daysAgo(5) },
+  { id: 'act_6', type: 'provider_registered', title: 'New Provider Registered', description: 'Surya Multispecialty Home Care submitted registration for verification', actorName: 'Surya Multispecialty', actorRole: 'care-provider', entityId: 'prov_6', entityType: 'provider', severity: 'info', createdAt: daysAgo(5) },
+  { id: 'act_7', type: 'emergency_resolved', title: 'Emergency Resolved', description: 'Lakshmi Nair (Nair Family) emergency resolved. Patient admitted at Lilavati Hospital.', actorName: 'System', actorRole: 'system', entityId: 'emer_2', entityType: 'emergency', severity: 'info', createdAt: daysAgo(1) },
+  { id: 'act_8', type: 'family_registered', title: 'New Family Registered', description: 'Mehta Family registered. Primary contact: Dilip Mehta (Borivali West)', actorName: 'Dilip Mehta', actorRole: 'family', entityId: 'fam_5', entityType: 'family', severity: 'info', createdAt: daysAgo(30) },
+  { id: 'act_9', type: 'employee_verified', title: 'Employee Verified', description: 'Anjali Sharma (Aastha Care) INC nursing license verified and activated', actorName: 'Ananya Verma', actorRole: 'admin', entityId: 'emp_1', entityType: 'employee', severity: 'info', createdAt: daysAgo(365) },
+  { id: 'act_10', type: 'document_uploaded', title: 'Document Uploaded', description: 'DMLT Certificate uploaded by Ravi Shankar Pillai for verification', actorName: 'Ravi Shankar Pillai', actorRole: 'employee', entityId: 'adoc_4', entityType: 'document', severity: 'info', createdAt: daysAgo(2) },
+];
+
+export const mockPlatformAnalytics: any = {
+  familyGrowth: [
+    { month: 'Feb', count: 1 }, { month: 'Mar', count: 2 }, { month: 'Apr', count: 3 },
+    { month: 'May', count: 3 }, { month: 'Jun', count: 4 }, { month: 'Jul', count: 5 }, { month: 'Aug', count: 5 },
+  ],
+  providerGrowth: [
+    { month: 'Feb', count: 3 }, { month: 'Mar', count: 3 }, { month: 'Apr', count: 4 },
+    { month: 'May', count: 5 }, { month: 'Jun', count: 5 }, { month: 'Jul', count: 6 }, { month: 'Aug', count: 7 },
+  ],
+  employeeGrowth: [
+    { month: 'Feb', count: 3 }, { month: 'Mar', count: 4 }, { month: 'Apr', count: 5 },
+    { month: 'May', count: 5 }, { month: 'Jun', count: 6 }, { month: 'Jul', count: 7 }, { month: 'Aug', count: 7 },
+  ],
+  requestTrends: [
+    { month: 'Feb', total: 18, emergency: 1, completed: 16 }, { month: 'Mar', total: 24, emergency: 2, completed: 22 },
+    { month: 'Apr', total: 31, emergency: 3, completed: 28 }, { month: 'May', total: 38, emergency: 2, completed: 35 },
+    { month: 'Jun', total: 42, emergency: 4, completed: 38 }, { month: 'Jul', total: 50, emergency: 3, completed: 45 }, { month: 'Aug', total: 12, emergency: 1, completed: 8 },
+  ],
+  emergencyTrends: [
+    { month: 'Feb', count: 1, avgResponseMins: 14 }, { month: 'Mar', count: 2, avgResponseMins: 12 },
+    { month: 'Apr', count: 3, avgResponseMins: 10 }, { month: 'May', count: 2, avgResponseMins: 11 },
+    { month: 'Jun', count: 4, avgResponseMins: 9 }, { month: 'Jul', count: 3, avgResponseMins: 8 }, { month: 'Aug', count: 1, avgResponseMins: 8 },
+  ],
+  categoryUsage: [
+    { category: 'Home Nursing', count: 210, percentage: 27 }, { category: 'Medicine Delivery', count: 178, percentage: 23 },
+    { category: 'Diagnostic Lab', count: 120, percentage: 15 }, { category: 'Doctor Visit', count: 98, percentage: 13 },
+    { category: 'Physiotherapy', count: 75, percentage: 10 }, { category: 'Elderly Caregiver', count: 60, percentage: 8 },
+    { category: 'Others', count: 30, percentage: 4 },
+  ],
+  ratingsDistribution: [
+    { rating: 5, count: 142 }, { rating: 4, count: 89 }, { rating: 3, count: 28 }, { rating: 2, count: 8 }, { rating: 1, count: 3 },
+  ],
+  avgResponseTimeMinutes: 18,
+  topProviders: [
+    { id: 'prov_5', name: 'Dr. Malhotra House Call Physicians', rating: 4.95, requestCount: 560 },
+    { id: 'prov_1', name: 'Aastha Senior Home Care', rating: 4.9, requestCount: 184 },
+    { id: 'prov_3', name: 'Sanjivani Diagnostic Labs', rating: 4.85, requestCount: 290 },
+    { id: 'prov_4', name: 'Chaitanya Rehab & Physio', rating: 4.8, requestCount: 115 },
+    { id: 'prov_2', name: 'Jan Aushadhi Home Pharmacy', rating: 4.7, requestCount: 412 },
+  ],
+  topEmployees: [
+    { id: 'emp_4', name: 'Dr. Alok Gupta', rating: 4.95, completedCount: 260 },
+    { id: 'emp_1', name: 'Anjali Sharma', rating: 4.9, completedCount: 156 },
+    { id: 'emp_3', name: 'Rajesh Kumar', rating: 4.85, completedCount: 128 },
+    { id: 'emp_5', name: 'Suresh Patel', rating: 4.85, completedCount: 95 },
+    { id: 'emp_2', name: 'Ritu Verma', rating: 4.7, completedCount: 104 },
+  ],
+  mostRequestedServices: [
+    { service: 'In-Home Nursing Care', count: 210 }, { service: 'Medicine Delivery', count: 178 },
+    { service: 'Blood Test Collection', count: 120 }, { service: 'Doctor Consultation', count: 98 },
+    { service: 'Physiotherapy Session', count: 75 }, { service: 'Elderly Caregiver', count: 60 },
+  ],
+};
+
+export const mockPlatformSettings: any = {
+  platformName: 'We Care For You', platformTagline: 'AI-Powered Care Coordination Platform', supportEmail: 'support@wecare4you.app', supportPhone: '+91 98000 00000', defaultLanguage: 'en', timezone: 'Asia/Kolkata', currency: 'INR', currencySymbol: '₹', emergencyResponseTargetMinutes: 10, verificationRequiredForProviders: true, verificationRequiredForEmployees: true, allowSelfRegistration: true, maxFamilyMembers: 10,
+  notifications: { emailEnabled: true, smsEnabled: true, pushEnabled: true, emergencyAlerts: true, verificationAlerts: true, systemAlerts: true },
+  theme: { primaryColor: '#0F172A', accentColor: '#F97316', darkModeDefault: false },
+  pwa: { enabled: true, offlineSupport: true, backgroundSync: true },
+};
+

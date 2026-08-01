@@ -42,6 +42,25 @@ import { EmployeeAvailabilityPage } from './employee/employee-availability-page'
 import { EmployeeNotificationsPage } from './employee/employee-notifications-page';
 import { EmployeeSearchPage } from './employee/employee-search-page';
 
+// ─── Admin Portal ──────────────────────────────────────────────────────────────
+import { AdminDashboard } from './admin/admin-dashboard';
+import { FamiliesPage } from './admin/families-page';
+import { FamilyDetailPage } from './admin/family-detail-page';
+import { ProvidersPage } from './admin/providers-page';
+import { ProviderDetailPage } from './admin/provider-detail-page';
+import { AdminEmployeesPage } from './admin/admin-employees-page';
+import { AdminCareRequestsPage } from './admin/admin-care-requests-page';
+import { EmergencyCenterPage } from './admin/emergency-center-page';
+import { EmergencyDetailPage } from './admin/emergency-detail-page';
+import { VerificationCenterPage } from './admin/verification-center-page';
+import { AdminDocumentsPage } from './admin/admin-documents-page';
+import { AdminReviewsPage } from './admin/admin-reviews-page';
+import { AdminNotificationsPage } from './admin/admin-notifications-page';
+import { ServiceCategoriesPage } from './admin/service-categories-page';
+import { PlatformTimelinePage } from './admin/platform-timeline-page';
+import { AdminAnalyticsPage } from './admin/admin-analytics-page';
+import { AdminSettingsPage } from './admin/admin-settings-page';
+
 /**
  * Renders the correct portal page based on role + pathname.
  * The router mounts this at /portal/:role/* and we resolve the sub-page here.
@@ -55,6 +74,7 @@ export const PortalRouter = () => {
   if (role === 'family') return <FamilyPortalRouter sub={sub} />;
   if (role === 'care-provider') return <CareProviderPortalRouter sub={sub} />;
   if (role === 'employee') return <EmployeePortalRouter sub={sub} />;
+  if (role === 'admin') return <AdminPortalRouter sub={sub} />;
 
   return <PortalPage />;
 };
@@ -140,6 +160,46 @@ const EmployeePortalRouter = ({ sub }: { sub: string[] }) => {
   if (first === 'search') return <EmployeeSearchPage />;
 
   return <EmployeeDashboard />;
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+const AdminPortalRouter = ({ sub }: { sub: string[] }) => {
+  const [first, second] = sub;
+
+  if (!first) return <AdminDashboard />;
+
+  if (first === 'families') {
+    if (second) return <FamilyDetailPage />;
+    return <FamiliesPage />;
+  }
+
+  if (first === 'providers') {
+    if (second) return <ProviderDetailPage />;
+    return <ProvidersPage />;
+  }
+
+  if (first === 'employees') {
+    if (second) return <AdminEmployeesPage />;
+    return <AdminEmployeesPage />;
+  }
+
+  if (first === 'requests') return <AdminCareRequestsPage />;
+
+  if (first === 'emergency') {
+    if (second) return <EmergencyDetailPage />;
+    return <EmergencyCenterPage />;
+  }
+
+  if (first === 'verification') return <VerificationCenterPage />;
+  if (first === 'documents') return <AdminDocumentsPage />;
+  if (first === 'reviews') return <AdminReviewsPage />;
+  if (first === 'notifications') return <AdminNotificationsPage />;
+  if (first === 'categories') return <ServiceCategoriesPage />;
+  if (first === 'timeline') return <PlatformTimelinePage />;
+  if (first === 'analytics') return <AdminAnalyticsPage />;
+  if (first === 'settings') return <AdminSettingsPage />;
+
+  return <AdminDashboard />;
 };
 
 export default PortalRouter;

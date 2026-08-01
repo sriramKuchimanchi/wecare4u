@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { icons } from '@/config/icons';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/use-auth';
 import {
   useEmployeeDashboardQuery,
   useEmployeeStatusMutation,
@@ -14,8 +15,10 @@ import type { EmployeeAvailabilityStatus } from '@/types';
 export const EmployeeDashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
+  const employeeId = user?.id ?? 'emp_1';
 
-  const { data: dashboard, isLoading, refetch } = useEmployeeDashboardQuery('emp_1');
+  const { data: dashboard, isLoading, refetch } = useEmployeeDashboardQuery(employeeId);
   const statusMutation = useEmployeeStatusMutation();
   const workflowMutation = useEmployeeWorkflowMutation();
 

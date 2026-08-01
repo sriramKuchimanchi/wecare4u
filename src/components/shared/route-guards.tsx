@@ -1,7 +1,6 @@
-import { useLocation } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import type { ReactNode } from 'react';
 import { useAuthStore } from '@/store';
-import { mockUsers } from '@/utils/mock-data';
 import type { UserRole } from '@/types';
 import { FullScreenLoader } from '@/components/shared/full-screen-loader';
 
@@ -10,27 +9,28 @@ type RequireAuthProps = {
   role?: UserRole;
 };
 
-export const RequireAuth = ({ children }: RequireAuthProps) => {
+/**
+  Guard for portal routes (/portal/:role/*).
+  Requires the user to be authenticated. If unauthenticated, redirects to /login.
+  If authenticated under a different role (e.g. employee trying to access admin),
+  redirects to the user's authorized portal.
+ */
+export const RequireAuth = ({ children, role: requiredRole }: RequireAuthProps) => {
   const location = useLocation();
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const setSession = useAuthStore((s) => s.setSession);
+  const { isAuthenticated, role } = useAuthStore();
 
-  // Extract requested portal role from pathname, e.g., /portal/care-provider -> care-provider
+  // Extract target portal role from pathname, e.g., /portal/admin -> admin
   const segments = location.pathname.split('/').filter(Boolean);
-  const targetRole = (segments[1] as UserRole) ?? 'family';
+  const targetRole = requiredRole ?? (segments[1] as UserRole) ?? 'family';
 
-  // If unauthenticated or role mismatched on portal route, auto-assign session for demo/testing
-  if (!isAuthenticated || useAuthStore.getState().role !== targetRole) {
-    const user = mockUsers.find((u) => u.role === targetRole) ?? mockUsers[0];
-    setSession({
-      user,
-      token: `mock_token_${user.id}_demo`,
-      refreshToken: `mock_refresh_${user.id}_demo`,
-      expiresAt: new Date(Date.now() + 86400000).toISOString(),
-      permissions: ['read', 'write'],
-      verificationStatus: 'verified',
-      onboardingCompleted: true,
-    });
+  // If unauthenticated, redirect to login page
+  if (!isAuthenticated || !role) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  // If logged-in user attempts to access a portal of a different role, redirect to their authorized portal
+  if (role !== targetRole) {
+    return <Navigate to={`/portal/${role}`} replace />;
   }
 
   return <>{children}</>;
@@ -40,11 +40,19 @@ type RedirectIfAuthProps = {
   children: ReactNode;
 };
 
+/**
+ * Renders auth pages (login/register/forgot-password).
+ * Allows users to access auth screens freely without forced redirects.
+ */
 export const RedirectIfAuth = ({ children }: RedirectIfAuthProps) => {
   return <>{children}</>;
 };
 
 export const RequireOnboarding = ({ children }: { children: ReactNode }) => {
+  const { isAuthenticated } = useAuthStore();
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
   return <>{children}</>;
 };
 
