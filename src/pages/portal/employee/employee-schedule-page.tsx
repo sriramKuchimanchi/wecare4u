@@ -50,7 +50,7 @@ export const EmployeeSchedulePage = () => {
 
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-base font-bold text-foreground">{r.patientName || 'Mohammed Rahman'}</h3>
+                  <h3 className="text-base font-bold text-foreground">{r.patientName || 'Madhav Rao'}</h3>
                   <span className="text-2xs font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
                     {r.categoryLabel || r.category}
                   </span>

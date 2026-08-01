@@ -1,5 +1,5 @@
 /**
- * Admin Portal Service — delegates to Central Data Repository.
+ * Administrator Portal Service — delegates to Central Data Repository.
  * All reads & writes go through the single source of truth.
  */
 

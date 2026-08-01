@@ -33,7 +33,7 @@ export const FamiliesPage = () => {
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between rounded-2xl bg-gradient-to-r from-blue-600 to-blue-800 p-6 text-white shadow-lg">
         <div>
           <div className="flex items-center gap-2 text-white/70 text-xs font-semibold uppercase tracking-wider">
-            <icons.Users className="h-4 w-4" /> Admin Portal
+            <icons.Users className="h-4 w-4" /> Administrator Portal
           </div>
           <h1 className="text-2xl font-extrabold tracking-tight mt-1">Family Management</h1>
           <p className="text-sm text-white/80 mt-1">{families.length} registered families on the platform</p>

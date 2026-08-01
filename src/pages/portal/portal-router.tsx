@@ -20,7 +20,7 @@ import { FamilyProfilePage } from './family/family-profile-page';
 import { FamilySearchPage } from './family/family-search-page';
 import { FamilyAppointmentsPage } from './family/family-appointments-page';
 
-// ─── Care Provider Portal ─────────────────────────────────────────────────────
+// ─── Service Provider Portal ──────────────────────────────────────────────────
 import { CareProviderDashboard } from './care-provider/care-provider-dashboard';
 import { CareRequestsListPage } from './care-provider/care-requests-list-page';
 import { CareRequestDetailPage as ProviderCareRequestDetailPage } from './care-provider/care-request-detail-page';
@@ -42,7 +42,7 @@ import { EmployeeAvailabilityPage } from './employee/employee-availability-page'
 import { EmployeeNotificationsPage } from './employee/employee-notifications-page';
 import { EmployeeSearchPage } from './employee/employee-search-page';
 
-// ─── Admin Portal ──────────────────────────────────────────────────────────────
+// ─── Administrator Portal ─────────────────────────────────────────────────────
 import { AdminDashboard } from './admin/admin-dashboard';
 import { FamiliesPage } from './admin/families-page';
 import { FamilyDetailPage } from './admin/family-detail-page';

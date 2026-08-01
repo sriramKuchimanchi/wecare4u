@@ -66,10 +66,10 @@ const familySteps = [
 
 const providerSteps = [
   {
-    title: 'Welcome, Care Provider',
+    title: 'Welcome, Service Provider',
     body: (
       <div className="flex flex-col gap-3 text-sm text-muted-foreground">
-        <p>Thank you for joining. Your registration is being reviewed by our admin team.</p>
+        <p>Thank you for joining. Your registration is being reviewed by our administrator team.</p>
         <p>Once verified, you&apos;ll be able to manage bookings, staff and patient relationships.</p>
       </div>
     ),
@@ -82,7 +82,7 @@ const providerSteps = [
           <Shield className="h-5 w-5 text-warning" />
           <div className="flex flex-1 flex-col">
             <span className="text-sm font-semibold text-foreground">Pending Verification</span>
-            <span className="text-xs text-muted-foreground">Your account will become active after admin verification.</span>
+            <span className="text-xs text-muted-foreground">Your account will become active after administrator verification.</span>
           </div>
         </div>
         <div className="flex items-center gap-3 rounded-lg border border-border bg-surface p-4">
@@ -126,7 +126,7 @@ const employeeSteps = [
           <Briefcase className="h-5 w-5 text-primary" />
           <div className="flex flex-1 flex-col">
             <span className="text-sm font-semibold text-foreground">Sunrise Home Care</span>
-            <span className="text-xs text-muted-foreground">Your assigned care provider organization.</span>
+            <span className="text-xs text-muted-foreground">Your assigned service provider organization.</span>
           </div>
         </div>
       </div>

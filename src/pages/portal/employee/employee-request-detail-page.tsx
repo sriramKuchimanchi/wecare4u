@@ -144,7 +144,7 @@ export const EmployeeRequestDetailPage = () => {
           <div className="space-y-2 text-xs">
             <div className="flex justify-between border-b pb-2">
               <span className="text-muted-foreground">Patient Name:</span>
-              <span className="font-bold text-foreground text-sm">{req.patientName || 'Mohammed Rahman'}</span>
+              <span className="font-bold text-foreground text-sm">{req.patientName || 'Madhav Rao'}</span>
             </div>
 
             <div className="flex justify-between border-b pb-2">
@@ -259,7 +259,7 @@ export const EmployeeRequestDetailPage = () => {
 
             <div>
               <h3 className="text-base font-bold text-foreground">Calling Family...</h3>
-              <p className="text-xs font-semibold text-primary mt-1">Aisha Rahman (+971 50 123 4567)</p>
+              <p className="text-xs font-semibold text-primary mt-1">Aaradhya Rao (+91 98200 12345)</p>
               <p className="text-2xs text-muted-foreground mt-1">Masked in-app call session active</p>
             </div>
 

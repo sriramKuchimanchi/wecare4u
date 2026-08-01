@@ -7,7 +7,7 @@ import { PageHeader, SectionHeader, EmptyState } from '@/components/shared';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/shared/skeleton';
 import { CareRequestStatusStepper, statusSteps } from '@/components/care-coordination/CareRequestStatusStepper';
 import { LiveMapPlaceholder } from '@/components/care-coordination/LiveMapPlaceholder';
@@ -113,7 +113,7 @@ export const CareRequestDetailPage = () => {
               {request.categoryLabel || request.category}
             </Badge>
           </div>
-          <h1 className="text-2xl font-bold text-foreground">{request.providerName || 'Verified Care Provider'}</h1>
+          <h1 className="text-2xl font-bold text-foreground">{request.providerName || 'Verified Service Provider'}</h1>
           <p className="text-xs text-muted-foreground">
             Scheduled for <strong>{formatDate(request.scheduledAt, 'PPP')}</strong> at <strong>{formatTime(request.scheduledAt)}</strong>
           </p>
@@ -184,12 +184,13 @@ export const CareRequestDetailPage = () => {
           <SectionHeader title="Assigned Healthcare Professional" />
           <div className="flex items-center gap-4">
             <Avatar className="h-14 w-14 border border-border">
+              <AvatarImage src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=300" alt={request.employeeName || 'Kavya Menon'} />
               <AvatarFallback className="bg-primary/10 font-bold text-primary text-base">
-                {(request.employeeName || 'Layla Al-Nasser').split(' ').map((n) => n[0]).join('')}
+                {(request.employeeName || 'Kavya Menon').split(' ').map((n) => n[0]).join('')}
               </AvatarFallback>
             </Avatar>
             <div className="flex flex-1 flex-col">
-              <span className="text-base font-bold text-foreground">{request.employeeName || 'Layla Al-Nasser'}</span>
+              <span className="text-base font-bold text-foreground">{request.employeeName || 'Kavya Menon'}</span>
               <span className="text-xs text-muted-foreground">{request.employeeRole || 'Senior Nurse / Caregiver'}</span>
               <span className="mt-1 text-2xs font-semibold text-success">✓ Verified & Background Checked</span>
             </div>
@@ -209,7 +210,7 @@ export const CareRequestDetailPage = () => {
           <div className="flex flex-col gap-2.5 text-xs">
             <div className="flex justify-between border-b border-border pb-2">
               <span className="text-muted-foreground">Recipient Member</span>
-              <span className="font-bold text-foreground">{request.memberName || 'Mohammed Rahman'}</span>
+              <span className="font-bold text-foreground">{request.memberName || 'Madhav Rao'}</span>
             </div>
             <div className="flex justify-between border-b border-border pb-2">
               <span className="text-muted-foreground">Estimated Cost</span>

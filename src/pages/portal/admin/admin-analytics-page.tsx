@@ -135,9 +135,9 @@ export const AdminAnalyticsPage = () => {
 
       {/* Top Performers Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Top Care Providers */}
+        {/* Top Service Providers */}
         <div className="rounded-2xl bg-surface border border-border/60 p-5 shadow-xs">
-          <h3 className="font-bold text-foreground text-sm mb-3">Top Care Providers</h3>
+          <h3 className="font-bold text-foreground text-sm mb-3">Top Service Providers</h3>
           <div className="divide-y divide-border/40">
             {analytics.topProviders?.map((p: any, idx: number) => (
               <div key={p.id} className="py-2.5 flex items-center justify-between">

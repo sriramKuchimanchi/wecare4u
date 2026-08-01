@@ -108,7 +108,7 @@ export const NAV_CONFIG: Record<UserRole, NavConfig> = {
         items: [
           placeholder('Dashboard', '/portal/admin', 'LayoutDashboard'),
           placeholder('Families', '/portal/admin/families', 'Users'),
-          placeholder('Care Providers', '/portal/admin/providers', 'Building2'),
+          placeholder('Service Providers', '/portal/admin/providers', 'Building2'),
           placeholder('Employees', '/portal/admin/employees', 'Briefcase'),
         ],
       },

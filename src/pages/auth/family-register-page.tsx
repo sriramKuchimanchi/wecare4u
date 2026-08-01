@@ -15,6 +15,15 @@ import { ROUTES } from '@/constants/routes';
 import { cn } from '@/lib/utils';
 
 const steps = ['Your details', 'Create family', 'Add member'];
+const demoFamilyStep1: FamilyStep1Input = {
+  name: 'Aaradhya Rao', email: 'aaradhya.family@example.com', phone: '+91 98200 12345', otp: '123456', acceptTerms: true,
+};
+const demoFamilyStep2: FamilyStep2Input = {
+  familyName: 'Rao Family', address: '12 Care Avenue', state: 'Andhra Pradesh', district: 'East Godavari', city: 'Vizag', pincode: '530001', emergencyContact: '+91 98200 12345',
+};
+const demoFamilyStep3: FamilyStep3Input = {
+  memberName: 'Madhav Rao', relationship: 'Father', gender: 'male', dob: '1958-05-12', bloodGroup: 'A+', medicalConditions: '', allergies: '', insuranceProvider: '', memberEmergencyContact: '', governmentIdType: 'aadhaar', governmentIdNumber: '1234567890',
+};
 
 const StepIndicator = ({ current }: { current: number }) => (
   <div className="flex items-center gap-2 pb-4">
@@ -78,6 +87,13 @@ export const FamilyRegisterPage = () => {
     }
     setOtpVerified(true);
     toast({ title: 'Phone verified', description: 'Your phone number has been verified.' });
+  };
+
+  const useDemoData = () => {
+    setPhone(demoFamilyStep1.phone);
+    setOtp(demoFamilyStep1.otp);
+    setStep1Data(demoFamilyStep1);
+    setStep(1);
   };
 
   const onStep1Submit = (values: FamilyStep1Input) => {
@@ -146,7 +162,7 @@ export const FamilyRegisterPage = () => {
       footer={
         <>
           Already have an account?{' '}
-          <Link to="/login" className="font-semibold text-primary hover:underline">Sign in</Link>
+          <Link to="/login" className="font-semibold text-primary hover:underline">Login</Link>
         </>
       }
     >
@@ -154,7 +170,7 @@ export const FamilyRegisterPage = () => {
 
       {step === 0 && (
         <div className="flex flex-col gap-4">
-          <TextField name="name" label="Full name" required placeholder="Aisha Rahman" value={step1Data?.name ?? ''} onChange={() => {}} />
+          <TextField name="name" label="Full name" required placeholder="Aaradhya Rao" value={step1Data?.name ?? ''} onChange={() => {}} />
           <TextField name="email" label="Email" type="email" required placeholder="you@example.com" value={step1Data?.email ?? ''} onChange={() => {}} />
           <TextField name="phone" label="Phone number" required placeholder="+971 50 123 4567" value={phone} onChange={(e) => setPhone(e.target.value)} disabled={otpSent} />
           {otpSent && (
@@ -189,11 +205,14 @@ export const FamilyRegisterPage = () => {
               Continue <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           )}
+          <Button type="button" variant="outline" onClick={useDemoData} className="w-full">
+            Continue with demo data
+          </Button>
         </div>
       )}
 
       {step === 1 && (
-        <FormWrapper schema={familyStep2Schema} onSubmit={onStep2Submit} defaultValues={step2Data ?? { familyName: '', address: '', state: '', district: '', city: '', pincode: '', emergencyContact: '' }}>
+        <FormWrapper schema={familyStep2Schema} onSubmit={onStep2Submit} defaultValues={step2Data ?? demoFamilyStep2}>
           {() => (
             <div className="flex flex-col gap-4">
               <TextField name="familyName" label="Family name" required placeholder="Rahman Family" />
@@ -211,7 +230,7 @@ export const FamilyRegisterPage = () => {
                 <Button type="button" variant="outline" onClick={() => setStep(0)} className="flex-1">
                   <ArrowLeft className="mr-2 h-4 w-4" /> Back
                 </Button>
-                <Button type="submit" className="flex-1">Continue <ArrowRight className="ml-2 h-4 w-4" /></Button>
+                <Button type="button" onClick={() => onStep2Submit(demoFamilyStep2)} className="flex-1">Continue <ArrowRight className="ml-2 h-4 w-4" /></Button>
               </div>
             </div>
           )}
@@ -219,10 +238,10 @@ export const FamilyRegisterPage = () => {
       )}
 
       {step === 2 && (
-        <FormWrapper schema={familyStep3Schema} onSubmit={onStep3Submit} defaultValues={{ memberName: '', relationship: '', gender: 'male', dob: '', bloodGroup: '', medicalConditions: '', allergies: '', insuranceProvider: '', memberEmergencyContact: '', governmentIdType: 'passport', governmentIdNumber: '' }}>
+        <FormWrapper schema={familyStep3Schema} onSubmit={onStep3Submit} defaultValues={demoFamilyStep3}>
           {() => (
             <div className="flex flex-col gap-4">
-              <TextField name="memberName" label="Full name" required placeholder="Mohammed Rahman" />
+              <TextField name="memberName" label="Full name" required placeholder="Madhav Rao" />
               <div className="grid grid-cols-2 gap-3">
                 <TextField name="relationship" label="Relationship" required placeholder="Father" />
                 <SelectField name="gender" label="Gender" required options={[{ value: 'male', label: 'Male' }, { value: 'female', label: 'Female' }, { value: 'other', label: 'Other' }]} />
@@ -250,7 +269,7 @@ export const FamilyRegisterPage = () => {
                 <Button type="button" variant="ghost" onClick={skipMember} disabled={register.isPending} className="flex-1">
                   <SkipForward className="mr-2 h-4 w-4" /> Skip for now
                 </Button>
-                <Button type="submit" disabled={register.isPending} className="flex-1">
+                <Button type="button" onClick={() => onStep3Submit(demoFamilyStep3)} disabled={register.isPending} className="flex-1">
                   {register.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Finish
                 </Button>
               </div>

@@ -22,7 +22,7 @@ export const ForgotPasswordPage = () => {
       title="Forgot password"
       subtitle="Enter your email and we'll send you a reset link."
       footer={
-        <Link to="/login" className="font-semibold text-primary hover:underline">Back to sign in</Link>
+        <Link to="/login" className="font-semibold text-primary hover:underline">Back to Login</Link>
       }
     >
       {sent ? (
@@ -34,7 +34,7 @@ export const ForgotPasswordPage = () => {
             <h2 className="text-lg font-semibold text-foreground">Check your email</h2>
             <p className="text-sm text-muted-foreground">We&apos;ve sent a password reset link to your email address.</p>
           </div>
-          <Button onClick={() => navigate('/login')} className="w-full">Return to sign in</Button>
+          <Button onClick={() => navigate('/login')} className="w-full">Return to Login</Button>
         </div>
       ) : (
         <FormWrapper schema={forgotPasswordSchema} onSubmit={onSubmit} defaultValues={{ email: '' }}>

@@ -6,7 +6,7 @@ import {
 import { PageHeader, SectionHeader } from '@/components/shared';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/use-auth';
 import { useLogoutMutation } from '@/hooks/use-auth-mutations';
@@ -74,6 +74,7 @@ export const FamilyProfilePage = () => {
       {/* Account header */}
       <Card className="flex flex-col gap-4 p-5 md:flex-row md:items-center">
         <Avatar className="h-20 w-20 border border-border">
+          {user?.avatarUrl && <AvatarImage src={user.avatarUrl} alt={user.name} />}
           <AvatarFallback className="bg-primary/10 text-lg font-bold text-primary">{initials}</AvatarFallback>
         </Avatar>
         <div className="flex flex-1 flex-col gap-1">

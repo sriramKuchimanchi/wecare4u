@@ -3,7 +3,7 @@ import { Users, Plus, Pencil, Trash2, Eye, Phone } from '@/config/icons';
 import { PageHeader, EmptyState } from '@/components/shared';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { StatusIndicator } from '@/components/shared';
 import { Skeleton } from '@/components/shared/skeleton';
@@ -64,6 +64,7 @@ export const FamilyMembersPage = () => {
               <Card key={member.id} className="flex flex-col gap-3 p-4">
                 <div className="flex items-start gap-3">
                   <Avatar className="h-14 w-14 border border-border">
+                    {member.avatarUrl && <AvatarImage src={member.avatarUrl} alt={member.name} />}
                     <AvatarFallback className="bg-primary/10 text-sm font-semibold text-primary">
                       {member.name.split(' ').map((n) => n[0]).slice(0, 2).join('')}
                     </AvatarFallback>

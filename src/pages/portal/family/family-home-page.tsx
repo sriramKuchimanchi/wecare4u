@@ -6,7 +6,7 @@ import {
 import { PageHeader, SectionHeader, EmptyState, StatusIndicator } from '@/components/shared';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/use-auth';
 import {
@@ -162,6 +162,7 @@ export const FamilyHomePage = () => {
                   className="flex items-start gap-3 rounded-xl border border-border bg-card p-4 text-left transition-colors hover:border-primary"
                 >
                   <Avatar className="h-12 w-12 border border-border">
+                    {member.avatarUrl && <AvatarImage src={member.avatarUrl} alt={member.name} />}
                     <AvatarFallback className="bg-primary/10 text-sm font-semibold text-primary">
                       {member.name.split(' ').map((n) => n[0]).slice(0, 2).join('')}
                     </AvatarFallback>

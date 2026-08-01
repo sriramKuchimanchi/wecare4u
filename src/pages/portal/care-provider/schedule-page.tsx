@@ -43,8 +43,8 @@ export const SchedulePage = () => {
         {/* Time slots */}
         {[
           { time: '08:00 AM', title: 'Morning Care Shift Starts', type: 'system' },
-          { time: '09:00 AM', title: 'Home Nursing Visit - Mohammed Rahman', patient: 'Mohammed Rahman', staff: 'Layla Al-Nasser', category: 'Home Nurse Care', type: 'visit', reqId: 'req_101', priority: 'urgent' },
-          { time: '10:30 AM', title: 'Doctor Home Consultation - Mohammed Rahman', patient: 'Mohammed Rahman', staff: 'Dr. Amira Hassan', category: 'Doctor Visit', type: 'appointment', reqId: 'req_104' },
+          { time: '09:00 AM', title: 'Home Nursing Visit - Madhav Rao', patient: 'Madhav Rao', staff: 'Kavya Menon', category: 'Home Nurse Care', type: 'visit', reqId: 'req_101', priority: 'urgent' },
+          { time: '10:30 AM', title: 'Doctor Home Consultation - Madhav Rao', patient: 'Madhav Rao', staff: 'Dr. Ananya Deshmukh', category: 'Doctor Visit', type: 'appointment', reqId: 'req_104' },
           { time: '01:00 PM', title: 'Emergency Caregiver Standby - Sultan Al-Mansoor', patient: 'Sultan Al-Mansoor', staff: 'Maria Santos', category: 'Caregiver', type: 'emergency', reqId: 'req_103' },
           { time: '03:30 PM', title: 'Arthritis Physiotherapy - Fatima Rahman', patient: 'Fatima Rahman', staff: 'Ahmed Khalil', category: 'Physiotherapy', type: 'visit', reqId: 'req_102' },
           { time: '06:00 PM', title: 'Evening Shift Handoff & Log Verification', type: 'system' },

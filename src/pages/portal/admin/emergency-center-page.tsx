@@ -77,7 +77,7 @@ export const EmergencyCenterPage = () => {
                       </div>
 
                       <div className="bg-muted/50 p-3 rounded-xl border border-border/50">
-                        <p className="text-muted-foreground font-medium uppercase text-2xs">Assigned Care Provider</p>
+                        <p className="text-muted-foreground font-medium uppercase text-2xs">Assigned Service Provider</p>
                         <p className="font-bold text-foreground mt-0.5 flex items-center gap-1">
                           <icons.Building2 className="h-3.5 w-3.5 text-primary shrink-0" />
                           {em.assignedProvider?.name ?? 'Assigning...'} (ETA {em.assignedProvider?.etaMinutes ?? 10}m)

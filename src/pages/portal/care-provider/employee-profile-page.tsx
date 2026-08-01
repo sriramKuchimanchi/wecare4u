@@ -119,7 +119,7 @@ export const EmployeeProfilePage = () => {
                   >
                     <div>
                       <div className="flex items-center gap-2">
-                        <h4 className="text-sm font-bold text-foreground">{r.patientName || 'Mohammed Rahman'}</h4>
+                        <h4 className="text-sm font-bold text-foreground">{r.patientName || 'Madhav Rao'}</h4>
                         <span className="text-2xs font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
                           {r.categoryLabel || r.category}
                         </span>

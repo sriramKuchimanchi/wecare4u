@@ -18,8 +18,8 @@ type EmergencyContactsActions = {
 export type EmergencyContactsStore = EmergencyContactsState & EmergencyContactsActions;
 
 const initialContacts: EmergencyContact[] = [
-  { id: 'cnt_1', name: 'Aisha Rahman', relationship: 'Daughter', phone: '+971 50 123 4567', isPrimary: true, priority: 'primary', preferredLanguage: 'English' },
-  { id: 'cnt_2', name: 'Omar Rahman', relationship: 'Son', phone: '+971 50 987 6543', isPrimary: false, priority: 'secondary', preferredLanguage: 'English' },
+  { id: 'cnt_1', name: 'Aaradhya Rao', relationship: 'Daughter', phone: '+91 98200 12345', isPrimary: true, priority: 'primary', preferredLanguage: 'English' },
+  { id: 'cnt_2', name: 'Raghav Rao', relationship: 'Son', phone: '+91 98200 98765', isPrimary: false, priority: 'secondary', preferredLanguage: 'English' },
   { id: 'cnt_3', name: 'Dr. Khalid Mansoor', relationship: 'Family Doctor', phone: '+971 4 222 3333', isPrimary: false, priority: 'normal', preferredLanguage: 'Arabic' },
 ];
 

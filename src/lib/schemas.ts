@@ -110,7 +110,7 @@ export const familyStep3Schema = z.object({
   governmentIdNumber: requiredTextSchema,
 });
 
-/* ---------- Care Provider Registration ---------- */
+/* ---------- Service Provider Registration ---------- */
 
 export const providerTypeSchema = z.object({
   type: z.enum(['individual', 'organization']),

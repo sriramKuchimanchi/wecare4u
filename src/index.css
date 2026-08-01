@@ -159,3 +159,167 @@
     display: none;
   }
 }
+
+/* Public landing presentation stays scoped so portal surfaces keep their existing layout. */
+.landing-page .container,
+.public-landing-container {
+  width: min(calc(100% - 2rem), 1400px);
+  max-width: 1400px;
+  margin-inline: auto;
+}
+
+.landing-page .container > *,
+.landing-page .grid > *,
+.landing-page .flex > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.landing-page button,
+.landing-page a {
+  max-width: 100%;
+}
+
+.landing-page > section {
+  padding-block: 72px;
+}
+
+.landing-page > section.landing-hero,
+.landing-page > section:last-child {
+  padding-block: 96px;
+}
+
+.landing-page > section.border-b {
+  padding-block: 32px;
+}
+
+.landing-page #services,
+.landing-page #families,
+.landing-page section.bg-white {
+  background-color: #ffffff;
+}
+
+.landing-page #ai {
+  background-color: #fffaf4;
+}
+
+.landing-page #emergency {
+  background-color: #fff0ee;
+}
+
+.landing-page .landing-hero {
+  min-height: calc(100svh - 4rem);
+  background-image: linear-gradient(90deg, rgba(16, 36, 62, 0.94) 0%, rgba(16, 36, 62, 0.78) 45%, rgba(16, 36, 62, 0.3) 100%), url('https://images.pexels.com/photos/14558560/pexels-photo-14558560.jpeg?auto=compress&cs=tinysrgb&w=1800');
+  background-position: center;
+  background-size: cover;
+}
+
+@media (max-width: 767px) {
+  .landing-page .landing-hero {
+    min-height: 560px;
+  }
+
+  .landing-page > section.landing-hero {
+    padding-block: 24px;
+  }
+
+  .landing-page .landing-hero > .container {
+    min-height: 0;
+    padding-block: 24px;
+  }
+
+  .landing-page .landing-hero > .container > div:first-child {
+    gap: 14px;
+  }
+
+  .landing-page .landing-hero h1 {
+    font-size: 2.5rem;
+    line-height: 1.03;
+  }
+
+  .landing-page .landing-hero > .container > div:first-child > p {
+    font-size: 0.875rem;
+    line-height: 1.45rem;
+  }
+
+  .landing-page .landing-hero .h-13 {
+    height: 46px;
+  }
+
+  .landing-page .landing-hero .flex.flex-col.gap-3 {
+    gap: 8px;
+  }
+
+  .landing-page .landing-hero button,
+  .landing-page .landing-hero a {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .landing-page h1,
+  .landing-page h2,
+  .landing-page h3,
+  .landing-page p {
+    overflow-wrap: anywhere;
+  }
+
+  .landing-page .grid.grid-cols-2 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.landing-page .landing-hero > .container {
+  position: relative;
+  z-index: 1;
+}
+
+.landing-page .landing-hero > .container > div:first-child {
+  color: #ffffff;
+}
+
+.landing-page .landing-hero h1 {
+  line-height: 1.05;
+}
+
+.landing-page .landing-hero > .container > div:first-child > p {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.landing-page .landing-hero > .container > div:first-child strong {
+  color: #ffffff;
+}
+
+.landing-page .h-13 {
+  height: 52px;
+}
+
+@media (min-width: 1440px) {
+  .landing-page .container,
+  .public-landing-container {
+    width: min(calc(100% - 3rem), 1400px);
+  }
+}
+
+@media (max-width: 767px) {
+  .landing-page > section,
+  .landing-page > section:last-child {
+    padding-block: 56px;
+  }
+
+  .landing-page > section.landing-hero {
+    padding-block: 24px;
+  }
+
+  .landing-page > section.border-b {
+    padding-block: 28px;
+  }
+
+  .landing-page .container,
+  .public-landing-container {
+    width: calc(100% - 2rem);
+  }
+
+  .landing-page .landing-hero {
+    background-position: 68% center;
+  }
+}

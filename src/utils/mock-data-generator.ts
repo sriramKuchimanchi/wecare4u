@@ -98,7 +98,7 @@ export function generateExpandedDatabase() {
     });
   }
 
-  // 2. Care Providers (40+)
+  // 2. Service Providers (40+)
   const providers: CareProvider[] = [...seedProviders];
   const providerTypes: CareProvider['type'][] = ['home-care', 'nursing', 'physiotherapy', 'pharmacy', 'laboratory', 'transport', 'medical-visit', 'doctor', 'hospital', 'caregiver'];
 
@@ -254,8 +254,8 @@ export function generateExpandedDatabase() {
   const emergencyStepTemplates = [
     { step: 'sos_triggered', title: 'SOS Triggered', description: 'Emergency SOS has been activated.', status: 'completed' },
     { step: 'location_detected', title: 'GPS Received', description: 'Location pinpointed via device GPS.', status: 'completed' },
-    { step: 'coordinator_activated', title: 'AI Coordinator Activated', description: 'AI coordinator finding nearest available care provider.', status: 'completed' },
-    { step: 'provider_found', title: 'Provider Assigned', description: 'Nearest care provider located and dispatched.', status: 'completed' },
+    { step: 'coordinator_activated', title: 'AI Coordinator Activated', description: 'AI coordinator finding nearest available service provider.', status: 'completed' },
+    { step: 'provider_found', title: 'Provider Assigned', description: 'Nearest service provider located and dispatched.', status: 'completed' },
     { step: 'professional_assigned', title: 'Employee Assigned', description: 'Emergency medical professional assigned.', status: 'completed' },
     { step: 'ambulance_assigned', title: 'Ambulance Dispatched', description: 'Ambulance is en route to the location.', status: 'completed' },
     { step: 'hospital_notified', title: 'Hospital Notified', description: 'Nearest hospital alerted, preparing for patient.', status: 'completed' },

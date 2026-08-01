@@ -128,7 +128,7 @@ export const FamilyEmergencyPage = () => {
                   <span className="text-xs font-bold uppercase tracking-wider text-white/90">🚨 EMERGENCY ACTIVE</span>
                   <Badge variant="outline" className="text-2xs border-white/40 text-white">Live Tracking</Badge>
                 </div>
-                <h2 className="text-xl font-black text-white">{activeSession.memberName || 'Mohammed Rahman'}</h2>
+                <h2 className="text-xl font-black text-white">{activeSession.memberName || 'Madhav Rao'}</h2>
                 <p className="text-xs text-white/80">Location: {activeSession.location.line1}, {activeSession.location.city}</p>
               </div>
             </div>

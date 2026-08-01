@@ -116,7 +116,7 @@ export const RequestCareWizardModal = ({
 
   const stepTitles = [
     'Choose Category',
-    'Choose Care Provider',
+    'Choose Service Provider',
     'Choose Professional',
     'Choose Date & Time',
     'Describe Requirement',
@@ -185,7 +185,7 @@ export const RequestCareWizardModal = ({
             </div>
           )}
 
-          {/* STEP 2: Choose Care Provider */}
+          {/* STEP 2: Choose Service Provider */}
           {step === 2 && (
             <div className="flex flex-col gap-4">
               <p className="text-sm text-muted-foreground">Nearby verified providers for <strong>{categoryObj.label}</strong>:</p>
@@ -322,7 +322,7 @@ export const RequestCareWizardModal = ({
           {/* STEP 5: Describe Requirement */}
           {step === 5 && (
             <div className="flex flex-col gap-4">
-              <p className="text-sm text-muted-foreground">Provide details or special instructions for the care provider:</p>
+              <p className="text-sm text-muted-foreground">Provide details or special instructions for the service provider:</p>
               <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
@@ -342,7 +342,7 @@ export const RequestCareWizardModal = ({
                   <Badge variant="secondary" className="font-bold text-xs">{categoryObj.label}</Badge>
                 </div>
                 <div className="flex items-center justify-between border-b border-border pb-3">
-                  <span className="text-xs font-semibold text-muted-foreground uppercase">Care Provider</span>
+                  <span className="text-xs font-semibold text-muted-foreground uppercase">Service Provider</span>
                   <span className="text-sm font-bold text-foreground">{providerObj.name}</span>
                 </div>
                 <div className="flex items-center justify-between border-b border-border pb-3">

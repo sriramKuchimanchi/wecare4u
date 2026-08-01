@@ -119,8 +119,8 @@ export const CareRequestDetailPage = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
               <div className="rounded-xl bg-muted/40 p-4 border">
                 <span className="text-2xs font-semibold text-muted-foreground uppercase">Patient Name</span>
-                <p className="text-base font-bold text-foreground mt-0.5">{req.patientName || 'Mohammed Rahman'}</p>
-                <p className="text-xs text-muted-foreground mt-1">Family: {req.familyName || 'Rahman Family'}</p>
+                <p className="text-base font-bold text-foreground mt-0.5">{req.patientName || 'Madhav Rao'}</p>
+                <p className="text-xs text-muted-foreground mt-1">Family: {req.familyName || 'Rao Family'}</p>
               </div>
 
               <div className="rounded-xl bg-muted/40 p-4 border">
@@ -161,7 +161,7 @@ export const CareRequestDetailPage = () => {
               <div className="space-y-1">
                 <span className="text-2xs font-semibold text-muted-foreground uppercase">Primary Contact</span>
                 <p className="text-sm font-semibold text-foreground">+971 50 123 4567</p>
-                <p className="text-xs text-muted-foreground">Aisha Rahman (Daughter)</p>
+                <p className="text-xs text-muted-foreground">Aaradhya Rao (Daughter)</p>
               </div>
             </div>
           </div>

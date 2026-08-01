@@ -8,7 +8,7 @@ export const APP_NAME = 'We Care For You';
 export const APP_SHORT_NAME = 'WeCare';
 export const APP_TAGLINE = 'AI-Powered Care Coordination Platform';
 export const APP_DESCRIPTION =
-  'Connecting families with verified care providers for healthcare, emergency response, home care, transportation, pharmacies, laboratories and more.';
+  'Connecting families with verified service providers for healthcare, emergency response, home care, transportation, pharmacies, laboratories and more.';
 
 export const SUPPORT_EMAIL = 'support@wecare4you.app';
 export const SUPPORT_PHONE = '+1 (800) 000-0000';
@@ -17,16 +17,16 @@ export const ROLES: UserRole[] = ['family', 'care-provider', 'employee', 'admin'
 
 export const ROLE_LABELS: Record<UserRole, string> = {
   family: 'Family',
-  'care-provider': 'Care Provider',
+  'care-provider': 'Service Provider',
   employee: 'Employee',
   admin: 'Administrator',
 };
 
 export const PORTAL_LABELS: Record<UserRole, string> = {
   family: 'Family Portal',
-  'care-provider': 'Care Provider Portal',
+  'care-provider': 'Service Provider Portal',
   employee: 'Employee Portal',
-  admin: 'Admin Portal',
+  admin: 'Administrator Portal',
 };
 
 export const DEFAULT_PAGE_SIZE = 20;

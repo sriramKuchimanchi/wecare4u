@@ -180,7 +180,7 @@ export const EmergencyContactsPage = () => {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Aisha Rahman"
+                placeholder="Aaradhya Rao"
                 className="h-10 rounded-xl border border-input bg-surface px-3 text-sm focus:border-primary focus:outline-none"
               />
             </div>

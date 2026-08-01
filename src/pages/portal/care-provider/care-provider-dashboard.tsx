@@ -19,7 +19,7 @@ export const CareProviderDashboard = () => {
   }
 
   const { todayOverview, employeeStats, revenueSummary, ratingSummary, recentNotifications } = overview;
-  const orgName = user?.name ?? 'Care Provider Portal';
+  const orgName = user?.name ?? 'Service Provider Portal';
 
   return (
     <div className="space-y-6 pb-8">
@@ -223,7 +223,7 @@ export const CareProviderDashboard = () => {
 
           <div className="rounded-xl bg-muted/50 p-3 text-xs text-muted-foreground flex items-center gap-2 border">
             <icons.Award className="h-4 w-4 text-secondary shrink-0" />
-            Top-Rated Home Healthcare Provider in Dubai
+            Top-Rated Home Healthcare Service Provider in Dubai
           </div>
         </div>
       </div>

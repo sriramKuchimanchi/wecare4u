@@ -10,10 +10,10 @@ const hoursAgo = (n: number) => new Date(Date.now() - n * 3600000).toISOString()
 const daysFromNow = (n: number) => new Date(Date.now() + n * 86400000).toISOString();
 
 export const mockUsers: User[] = [
-  { id: 'user_family_1', name: 'Rajesh Sharma', email: 'rajesh.family@example.com', phone: '+91 98200 12345', role: 'family', isActive: true, createdAt: now(), updatedAt: now() },
-  { id: 'user_provider_1', name: 'Dr. Vikram Malhotra (Aastha Care)', email: 'vikram.provider@example.com', phone: '+91 98100 98765', role: 'care-provider', isActive: true, createdAt: now(), updatedAt: now() },
-  { id: 'user_employee_1', name: 'Anjali Sharma (Nurse)', email: 'anjali.employee@example.com', phone: '+91 98330 55512', role: 'employee', isActive: true, createdAt: now(), updatedAt: now() },
-  { id: 'user_admin_1', name: 'Ananya Verma (Admin)', email: 'admin@lomaa.com', phone: '+91 98000 00000', role: 'admin', isActive: true, createdAt: now(), updatedAt: now() },
+  { id: 'user_family_1', name: 'Rajesh Sharma', email: 'rajesh.family@example.com', phone: '+91 98200 12345', role: 'family', avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=300', isActive: true, createdAt: now(), updatedAt: now() },
+  { id: 'user_provider_1', name: 'Dr. Vikram Malhotra (Aastha Care)', email: 'vikram.provider@example.com', phone: '+91 98100 98765', role: 'care-provider', avatarUrl: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&q=80&w=300', isActive: true, createdAt: now(), updatedAt: now() },
+  { id: 'user_employee_1', name: 'Anjali Sharma (Nurse)', email: 'anjali.employee@example.com', phone: '+91 98330 55512', role: 'employee', avatarUrl: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=300', isActive: true, createdAt: now(), updatedAt: now() },
+  { id: 'user_admin_1', name: 'Ananya Verma (Administrator)', email: 'admin@lomaa.com', phone: '+91 98000 00000', role: 'admin', avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=300', isActive: true, createdAt: now(), updatedAt: now() },
 ];
 
 export const mockCareCategories: CareCategory[] = [
@@ -34,7 +34,7 @@ export const mockCareCategories: CareCategory[] = [
 
 export const mockFamilyMembers: FamilyMember[] = [
   {
-    id: 'mem_1', familyId: 'fam_1', name: 'Ramachandra Sharma', relationship: 'Father',
+    id: 'mem_1', familyId: 'fam_1', name: 'Ramachandra Sharma', relationship: 'Father', avatarUrl: 'https://images.unsplash.com/photo-1584999734482-0361aecad844?auto=format&fit=crop&q=80&w=300',
     gender: 'male', dateOfBirth: '1948-05-14', bloodGroup: 'B+',
     medicalConditions: ['Hypertension', 'Type 2 Diabetes'], allergies: ['Penicillin'],
     insurance: { provider: 'Star Health Insurance', policyNumber: 'SH-8891234' },
@@ -44,7 +44,7 @@ export const mockFamilyMembers: FamilyMember[] = [
     createdAt: daysAgo(90), updatedAt: daysAgo(2),
   },
   {
-    id: 'mem_2', familyId: 'fam_1', name: 'Savitri Sharma', relationship: 'Mother',
+    id: 'mem_2', familyId: 'fam_1', name: 'Savitri Sharma', relationship: 'Mother', avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=300',
     gender: 'female', dateOfBirth: '1952-11-03', bloodGroup: 'A+',
     medicalConditions: ['Arthritis', 'Osteoporosis'], allergies: ['Aspirin', 'Latex'],
     insurance: { provider: 'Star Health Insurance', policyNumber: 'SH-8891235' },
@@ -54,7 +54,7 @@ export const mockFamilyMembers: FamilyMember[] = [
     createdAt: daysAgo(88), updatedAt: daysAgo(5),
   },
   {
-    id: 'mem_3', familyId: 'fam_1', name: 'Amit Sharma', relationship: 'Brother',
+    id: 'mem_3', familyId: 'fam_1', name: 'Amit Sharma', relationship: 'Brother', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=300',
     gender: 'male', dateOfBirth: '1985-08-22', bloodGroup: 'O+',
     medicalConditions: [], allergies: [],
     insurance: { provider: 'HDFC ERGO Health' },
@@ -566,9 +566,9 @@ export const mockProviderDocuments: ProviderDocument[] = [
 
 export const mockProviderReviewsExtended = [
   { id: 'rev_1', reviewerName: 'Vikramaditya S.', patientName: 'Ramachandra Sharma', rating: 5, comment: 'Exceptional care for my father. Nurse Anjali was patient, professional and extremely gentle.', createdAt: daysAgo(5), response: { text: 'Thank you Vikramaditya! It is our honor to support your father.', respondedAt: daysAgo(4) } },
-  { id: 'rev_2', reviewerName: 'Radhika M.', patientName: 'Savitri Sharma', rating: 5, comment: 'We have used Aastha Care for two years. Best elderly care provider in Mumbai by far.', createdAt: daysAgo(12), response: undefined },
-  { id: 'rev_3', reviewerName: 'Suresh K.', patientName: 'Tariq R.', rating: 4, comment: 'Reliable and trustworthy team. Response time for physiotherapy was very prompt.', createdAt: daysAgo(20), response: { text: 'We appreciate your valuable feedback Suresh!', respondedAt: daysAgo(19) } },
-  { id: 'rev_4', reviewerName: 'Youssef B.', patientName: 'Amina B.', rating: 5, comment: 'Doctor consultation at home saved us an emergency hospital visit. Truly peace of mind.', createdAt: daysAgo(28), response: undefined },
+  { id: 'rev_2', reviewerName: 'Radhika M.', patientName: 'Savitri Sharma', rating: 5, comment: 'We have used Aastha Care for two years. Best elderly service provider in Mumbai by far.', createdAt: daysAgo(12), response: undefined },
+  { id: 'rev_3', reviewerName: 'Suresh K.', patientName: 'Tarun R.', rating: 4, comment: 'Reliable and trustworthy team. Response time for physiotherapy was very prompt.', createdAt: daysAgo(20), response: { text: 'We appreciate your valuable feedback Suresh!', respondedAt: daysAgo(19) } },
+  { id: 'rev_4', reviewerName: 'Yash B.', patientName: 'Ananya B.', rating: 5, comment: 'Doctor consultation at home saved us an emergency hospital visit. Truly peace of mind.', createdAt: daysAgo(28), response: undefined },
 ];
 
 export const mockServiceNotes: ServiceNote[] = [
@@ -697,7 +697,7 @@ export const mockVerificationQueue: any[] = [
       { id: 'vdoc_8', title: 'GST Certificate', type: 'gst', fileName: 'Varsha_GST.pdf', fileUrl: '#', uploadedAt: daysAgo(15), status: 'rejected', notes: 'GST number invalid — does not match MCA records' },
     ],
     rejectionReason: 'Incomplete GST registration document. Missing NABL certification for claimed lab services.',
-    reviewedBy: 'Ananya Verma (Admin)', reviewedAt: daysAgo(10),
+    reviewedBy: 'Ananya Verma (Administrator)', reviewedAt: daysAgo(10),
     avatarUrl: 'https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&q=80&w=200',
   },
 ];
@@ -730,7 +730,7 @@ export const mockAdminNotifications: any[] = [
   { id: 'an_1', type: 'emergency', title: '🚨 Active Emergency — Sharma Family', message: 'SOS triggered by Ramachandra Sharma (Gokuldham Heights). Dr. Alok Gupta & ambulance dispatched. ETA 8 mins.', priority: 'critical', read: false, entityId: 'emer_1', entityType: 'emergency', createdAt: hoursAgo(0.5) },
   { id: 'an_2', type: 'verification', title: 'New Provider Verification Request', message: 'Surya Multispecialty Home Care submitted verification documents. 3 documents pending review.', priority: 'high', read: false, entityId: 'ver_1', entityType: 'verification', createdAt: daysAgo(5) },
   { id: 'an_3', type: 'verification', title: 'Employee Verification Pending', message: 'Ravi Shankar Pillai (Sanjivani Labs) has submitted DMLT and Aadhaar documents. Awaiting police verification.', priority: 'medium', read: false, entityId: 'ver_2', entityType: 'verification', createdAt: daysAgo(2) },
-  { id: 'an_4', type: 'provider', title: 'Low-Rated Complaint Received', message: 'Dinesh Patel filed a complaint against Varsha Elder Care Services (2-star rating). Review flagged for admin action.', priority: 'high', read: false, entityId: 'rev_a4', entityType: 'review', createdAt: daysAgo(7) },
+  { id: 'an_4', type: 'provider', title: 'Low-Rated Complaint Received', message: 'Dinesh Patel filed a complaint against Varsha Elder Care Services (2-star rating). Review flagged for administrator action.', priority: 'high', read: false, entityId: 'rev_a4', entityType: 'review', createdAt: daysAgo(7) },
   { id: 'an_5', type: 'system', title: 'Platform Health: 98%', message: 'All services operational. API response time 142ms average. 0 critical errors in last 24 hours.', priority: 'low', read: true, createdAt: hoursAgo(3) },
   { id: 'an_6', type: 'provider', title: 'Provider Varsha Care Rejected', message: 'Varsha Elder Care Services verification rejected. GST number mismatch. Provider notified automatically.', priority: 'medium', read: true, entityId: 'prov_7', entityType: 'provider', createdAt: daysAgo(10) },
   { id: 'an_7', type: 'announcement', title: 'Diwali Support Hours Update', message: 'Emergency services remain 24/7. Routine home care requests may experience 20% longer ETAs on Nov 1.', priority: 'low', read: true, createdAt: daysAgo(15) },

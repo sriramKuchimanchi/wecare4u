@@ -75,7 +75,7 @@ export const careRequestService = {
     const newReq: CareRequest = {
       ...input,
       id: createId('req'),
-      providerName: provider?.name ?? input.providerName ?? 'Verified Care Provider',
+      providerName: provider?.name ?? input.providerName ?? 'Verified Service Provider',
       categoryLabel: input.category ? input.category.charAt(0).toUpperCase() + input.category.slice(1) : 'General Care',
       estimatedArrivalMinutes: provider?.estimatedArrivalMinutes ?? 25,
       timeline: [

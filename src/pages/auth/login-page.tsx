@@ -20,11 +20,14 @@ import type { UserRole } from '@/types';
 type LoginRole = UserRole;
 
 const roleCards: { role: LoginRole; label: string; description: string; icon: typeof Users }[] = [
-  { role: 'care-provider', label: 'Care Provider Portal', description: 'Operations, employee management & requests.', icon: Briefcase },
+  { role: 'care-provider', label: 'Service Provider Portal', description: 'Operations, employee management & requests.', icon: Briefcase },
   { role: 'employee', label: 'Employee Field Portal', description: 'Patient schedule, care notes & status workflow.', icon: Users },
   { role: 'family', label: 'Family Portal', description: 'Coordinate care & track family health.', icon: Heart },
-  { role: 'admin', label: 'Admin Portal', description: 'Platform administration & metrics.', icon: Shield },
+  { role: 'admin', label: 'Administrator Portal', description: 'Platform administration & metrics.', icon: Shield },
 ];
+
+const DEMO_PHONE = '+91 98200 12345';
+const DEMO_OTP = '123456';
 
 const FamilyLoginForm = () => {
   const [phone, setPhone] = useState('');
@@ -44,6 +47,11 @@ const FamilyLoginForm = () => {
   const handleVerify = async () => {
     if (!phone.trim() || !otp.trim()) return;
     await verifyOtp.mutateAsync({ target: phone.trim(), otp: otp.trim(), remember });
+    navigate(ROUTES.family, { replace: true });
+  };
+
+  const handleDemoSignIn = async () => {
+    await verifyOtp.mutateAsync({ target: DEMO_PHONE, otp: DEMO_OTP, remember: true });
     navigate(ROUTES.family, { replace: true });
   };
 
@@ -87,10 +95,13 @@ const FamilyLoginForm = () => {
         <div className="flex flex-col gap-2">
           <Button onClick={handleVerify} disabled={verifyOtp.isPending} className="w-full">
             {verifyOtp.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Verify & sign in
+            Verify & Login
           </Button>
         </div>
       )}
+      <Button type="button" variant="outline" onClick={handleDemoSignIn} disabled={verifyOtp.isPending} className="w-full">
+        Continue with demo family
+      </Button>
     </div>
   );
 };
@@ -100,13 +111,13 @@ const ProviderLoginForm = () => {
   const login = useLoginProviderMutation();
 
   const onSubmit = async (values: ProviderLoginInput) => {
-    await login.mutateAsync({ email: values.email, password: values.password, remember: values.remember });
+    await login.mutateAsync({ email: values.email || 'demo.provider@example.com', password: values.password || 'demo1234', remember: values.remember });
     navigate(ROUTES.careProvider, { replace: true });
   };
 
   return (
     <div className="space-y-4">
-      <FormWrapper schema={providerLoginSchema} onSubmit={onSubmit} defaultValues={{ email: '', password: '', remember: false }}>
+      <FormWrapper schema={providerLoginSchema} onSubmit={onSubmit} defaultValues={{ email: 'demo.provider@example.com', password: 'demo1234', remember: false }}>
         {() => (
           <>
             <TextField name="email" label="Email" type="email" placeholder="vikram.provider@example.com" autoComplete="email" />
@@ -117,7 +128,7 @@ const ProviderLoginForm = () => {
             </div>
             <Button type="submit" disabled={login.isPending} className="w-full">
               {login.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Sign in to Provider Portal
+              Login to Service Provider Portal
             </Button>
           </>
         )}
@@ -131,13 +142,13 @@ const EmployeeLoginForm = () => {
   const login = useLoginEmployeeMutation();
 
   const onSubmit = async (values: EmployeeLoginInput) => {
-    await login.mutateAsync({ identifier: values.identifier, password: values.password, remember: values.remember });
+    await login.mutateAsync({ identifier: values.identifier || 'demo.employee@example.com', password: values.password || 'demo1234', remember: values.remember });
     navigate(ROUTES.employee, { replace: true });
   };
 
   return (
     <div className="space-y-4">
-      <FormWrapper schema={employeeLoginSchema} onSubmit={onSubmit} defaultValues={{ identifier: '', password: '', remember: false }}>
+      <FormWrapper schema={employeeLoginSchema} onSubmit={onSubmit} defaultValues={{ identifier: 'demo.employee@example.com', password: 'demo1234', remember: false }}>
         {() => (
           <>
             <TextField name="identifier" label="Employee ID or Email" placeholder="EMP-1234 or anjali.employee@example.com" autoComplete="username" />
@@ -145,7 +156,7 @@ const EmployeeLoginForm = () => {
             <CheckboxField name="remember" label="Remember me" checkboxLabel="Keep me signed in" />
             <Button type="submit" disabled={login.isPending} className="w-full">
               {login.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Sign in to Employee Portal
+              Login to Employee Portal
             </Button>
           </>
         )}
@@ -165,15 +176,15 @@ const AdminLoginForm = () => {
 
   return (
     <div className="space-y-4">
-      <FormWrapper schema={adminLoginSchema} onSubmit={onSubmit} defaultValues={{ email: '', password: '', remember: false }}>
+      <FormWrapper schema={adminLoginSchema} onSubmit={onSubmit} defaultValues={{ email: 'admin@lomaa.com', password: 'lomaa123', remember: false }}>
         {() => (
           <>
-            <TextField name="email" label="Admin Email" type="email" placeholder="admin@lomaa.com" autoComplete="email" />
+            <TextField name="email" label="Administrator Email" type="email" placeholder="admin@lomaa.com" autoComplete="email" />
             <TextField name="password" label="Password" type="password" placeholder="••••••••" autoComplete="current-password" />
             <CheckboxField name="remember" label="Remember me" checkboxLabel="Keep me signed in" />
             <Button type="submit" disabled={login.isPending} className="w-full">
               {login.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Administrator sign in
+              Administrator Login
             </Button>
           </>
         )}
@@ -199,7 +210,7 @@ export const LoginPage = () => {
 
   return (
     <AuthLayout
-      title={selectedRole ? `Sign in as ${ROLE_LABELS[selectedRole]}` : 'Welcome back'}
+      title={selectedRole ? `Login as ${ROLE_LABELS[selectedRole]}` : 'Welcome back'}
       subtitle={selectedRole ? 'Enter your credentials to continue.' : 'Select your account type below to log in.'}
       footer={
         <>

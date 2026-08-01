@@ -44,7 +44,7 @@ export const PORTAL_QUERY_KEYS = {
   adminSearch: (q: string) => ['admin', 'search', q],
 };
 
-// ── Care Provider Hooks ───────────────────────────────────────────────────
+// ── Service Provider Hooks ────────────────────────────────────────────────
 export const useProviderOverviewQuery = () => {
   return useQuery({
     queryKey: PORTAL_QUERY_KEYS.providerOverview,

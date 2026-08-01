@@ -114,9 +114,9 @@ export const AdminDashboard = () => {
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
             <div className="flex items-center gap-2 text-white/70 text-xs font-semibold uppercase tracking-wider">
-              <icons.ShieldCheck className="h-4 w-4" /> Admin Control Center
+              <icons.ShieldCheck className="h-4 w-4" /> Administrator Control Center
             </div>
-            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight mt-1">We Care For You — Admin</h1>
+            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight mt-1">We Care For You — Administrator</h1>
             <p className="text-sm text-white/80 mt-1">
               Platform health: <span className="font-bold text-green-300">{stats.platformHealth}%</span>
               {stats.activeEmergencies > 0 && (
@@ -203,7 +203,7 @@ export const AdminDashboard = () => {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <StatCard icon={icons.Users} label="Total Families" value={stats.totalFamilies} color="bg-blue-100 text-blue-600" onClick={() => navigate('/portal/admin/families')} />
         <StatCard icon={icons.Heart} label="Family Members" value={stats.totalFamilyMembers} color="bg-pink-100 text-pink-600" sub="registered" />
-        <StatCard icon={icons.Building2} label="Care Providers" value={stats.totalProviders} color="bg-indigo-100 text-indigo-600" onClick={() => navigate('/portal/admin/providers')} />
+        <StatCard icon={icons.Building2} label="Service Providers" value={stats.totalProviders} color="bg-indigo-100 text-indigo-600" onClick={() => navigate('/portal/admin/providers')} />
         <StatCard icon={icons.Briefcase} label="Employees" value={stats.totalEmployees} color="bg-violet-100 text-violet-600" onClick={() => navigate('/portal/admin/employees')} />
       </div>
 

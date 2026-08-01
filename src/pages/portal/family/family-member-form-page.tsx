@@ -118,7 +118,7 @@ export const FamilyMemberFormPage = () => {
             <section className="flex flex-col gap-3">
               <h2 className="text-base font-semibold text-foreground">Personal Information</h2>
               <div className="grid gap-4 sm:grid-cols-2">
-                <TextField name="name" label="Full name" required placeholder="Mohammed Rahman" />
+                <TextField name="name" label="Full name" required placeholder="Madhav Rao" />
                 <TextField name="relationship" label="Relationship" required placeholder="Father" />
                 <SelectField name="gender" label="Gender" required options={genderOptions} />
                 <TextField name="dateOfBirth" label="Date of birth" type="date" required />
@@ -132,7 +132,7 @@ export const FamilyMemberFormPage = () => {
               <div className="grid gap-4">
                 <TextField name="medicalConditions" label="Medical conditions" placeholder="Hypertension, diabetes (comma-separated)" />
                 <TextField name="allergies" label="Allergies" placeholder="Penicillin, peanuts (comma-separated)" />
-                <TextAreaField name="medicalNotes" label="Medical notes" placeholder="Any additional notes for care providers…" rows={3} />
+                <TextAreaField name="medicalNotes" label="Medical notes" placeholder="Any additional notes for service providers…" rows={3} />
               </div>
             </section>
 
@@ -149,7 +149,7 @@ export const FamilyMemberFormPage = () => {
             <section className="flex flex-col gap-3">
               <h2 className="text-base font-semibold text-foreground">Emergency Contacts</h2>
               <div className="grid gap-4 sm:grid-cols-3">
-                <TextField name="emergencyContactName" label="Contact name" placeholder="Aisha Rahman" />
+                <TextField name="emergencyContactName" label="Contact name" placeholder="Aaradhya Rao" />
                 <TextField name="emergencyContactRelationship" label="Relationship" placeholder="Daughter" />
                 <TextField name="emergencyContactPhone" label="Phone" placeholder="+971 50 123 4567" />
               </div>

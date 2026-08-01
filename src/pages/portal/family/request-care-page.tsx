@@ -60,7 +60,7 @@ export const RequestCarePage = () => {
     <div className="flex flex-col gap-6">
       <PageHeader
         title="Request Care"
-        description="Connect with top verified healthcare providers and services for your family"
+        description="Connect with top verified healthcare and service providers for your family"
         actions={
           <Button onClick={() => handleStartWizard()} className="bg-secondary hover:bg-secondary/90 text-secondary-foreground font-bold shadow-md">
             <Plus className="mr-1.5 h-4 w-4" /> Start Care Request
@@ -181,9 +181,9 @@ export const RequestCarePage = () => {
           </Card>
         )}
 
-        {/* Care Providers List */}
+        {/* Service Providers List */}
         <SectionHeader
-          title={selectedCategory ? `Nearby ${selectedCategory.toUpperCase()} Care Providers` : 'All Verified Care Providers'}
+              title={selectedCategory ? `Nearby ${selectedCategory.toUpperCase()} Service Providers` : 'All Verified Service Providers'}
           description="Browse profiles or launch a direct Care Request"
         />
 
@@ -195,7 +195,7 @@ export const RequestCarePage = () => {
           <Card>
             <EmptyState
               icon={Stethoscope}
-              title="No care providers found"
+              title="No service providers found"
               description="Try adjusting your search query, filters, or selected care category."
               action={
                 <Button size="sm" onClick={() => { setSelectedCategory(null); setSearch(''); setMinRating(0); setAvailabilityFilter('all'); }}>

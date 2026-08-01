@@ -389,7 +389,7 @@ export type Employee = BaseEntity & {
   specialization?: string[];
 };
 
-// ── Care Provider Additional Models ──────────────────────────────────────
+// ── Service Provider Additional Models ───────────────────────────────────
 export type ProviderServiceItem = {
   id: string;
   name: string;
@@ -472,7 +472,7 @@ export type Booking = BaseEntity & {
 // ── Emergency (alias) ─────────────────────────────────────────────────────────
 export type Emergency = EmergencySession;
 
-// ── Admin Portal Types ────────────────────────────────────────────────────────
+// ── Administrator Portal Types ───────────────────────────────────────────────
 
 export type ProviderVerificationStatus = 'pending' | 'approved' | 'rejected' | 'suspended' | 'under_review';
 

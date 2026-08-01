@@ -1,341 +1,65 @@
 import { Link } from 'react-router-dom';
-import {
-  Heart, ArrowRight, Shield, Stethoscope, Ambulance, Pill, FlaskConical, Car,
-  Calendar, Bell, Activity, Sparkles, CheckCircle, Siren, Brain, Users, Phone,
-  Star, ChevronDown,
-} from '@/config/icons';
-import { useState } from 'react';
+import { Activity, Ambulance, ArrowRight, Bell, Brain, Calendar, Car, CheckCircle2, ChevronRight, Clock, FileText, FlaskConical, Heart, HeartHandshake, Lock, MapPin, MessageSquare, Pill, ShieldCheck, Siren, Sparkles, Stethoscope, Users, Video, type LucideIcon } from '@/config/icons';
 import { Button } from '@/components/ui/button';
-import { APP_NAME, APP_TAGLINE, APP_DESCRIPTION } from '@/constants';
-import { cn } from '@/lib/utils';
+import { APP_NAME, APP_TAGLINE } from '@/constants';
 
-const services = [
-  { icon: Stethoscope, title: 'Home Care', description: 'Verified caregivers for daily living support.' },
-  { icon: Ambulance, title: 'Emergency Response', description: 'One-tap dispatch to coordinated responders.' },
-  { icon: Pill, title: 'Pharmacy', description: 'Medication delivery and refill management.' },
-  { icon: FlaskConical, title: 'Laboratory', description: 'At-home sample collection and results.' },
-  { icon: Car, title: 'Transport', description: 'Safe rides to appointments and errands.' },
-  { icon: Calendar, title: 'Bookings', description: 'Schedule and coordinate every service.' },
+const services: [LucideIcon, string, string][] = [
+  [Stethoscope, 'Doctors', 'Trusted clinical care, when you need it.'],
+  [HeartHandshake, 'Caregivers', 'Compassionate support for everyday living.'],
+  [Activity, 'Home nursing', 'Skilled care in the comfort of home.'],
+  [Ambulance, 'Ambulance', 'Coordinated help when every second matters.'],
+  [FlaskConical, 'Laboratory', 'Convenient testing and clear results.'],
+  [Pill, 'Medicine delivery', 'Refills and prescriptions brought to you.'],
+  [Car, 'Transportation', 'Safe rides to appointments and more.'],
+  [Calendar, 'Appointments', 'One calm place for every booking.'],
 ];
-
-const stats = [
-  { value: '10k+', label: 'Families served' },
-  { value: '1.5k+', label: 'Verified providers' },
-  { value: '24/7', label: 'Emergency support' },
-  { value: '4.9★', label: 'Average rating' },
+const journey: [LucideIcon, string, string, string][] = [
+  [Users, '01', 'Create family', 'Bring your family circle together and add the details that help us care well.'],
+  [HeartHandshake, '02', 'Request care', 'Find trusted providers and book exactly what your loved one needs.'],
+  [Activity, '03', 'Track everything', 'See appointments, updates, records and progress without chasing anyone.'],
 ];
-
-const howItWorks = [
-  { step: '01', title: 'Create your family', description: 'Sign up and add your family members with their care needs.' },
-  { step: '02', title: 'Choose verified providers', description: 'Browse verified care providers for every service your family needs.' },
-  { step: '03', title: 'Coordinate & track', description: 'Book services, track every event on the timeline, and respond to emergencies.' },
+const platform: [LucideIcon, string, string][] = [
+  [FileText, 'Medical records', 'Important history, safely organized.'],
+  [Bell, 'Smart notifications', 'Never miss a meaningful update.'],
+  [MapPin, 'Live coordination', 'Know where care stands, at a glance.'],
+  [MessageSquare, 'Human support', 'A real team behind the technology.'],
 ];
+const familyBenefits = ['Care timeline', 'Medical records', 'Appointments', 'AI guidance', 'Emergency support', 'Notifications'];
+const providerBenefits = ['Bookings', 'Employees', 'Availability', 'Schedules', 'Analytics', 'Reviews'];
 
-const testimonials = [
-  { name: 'Aisha R.', role: 'Family caregiver', quote: 'We Care For You gave me peace of mind. I can track my mother\'s care from anywhere.', rating: 5 },
-  { name: 'Dr. Omar H.', role: 'Home care provider', quote: 'The platform helps me manage bookings and staff effortlessly. Families trust the verified badge.', rating: 5 },
-  { name: 'Layla N.', role: 'Registered nurse', quote: 'My schedule and patient notes are always with me. It feels built for how I actually work.', rating: 4 },
-];
-
-const faqs = [
-  { q: 'How do I know providers are verified?', a: 'Every care provider on the platform undergoes an admin verification process before their account becomes active. You will only see verified providers.' },
-  { q: 'Can I use the app for emergency response?', a: 'Yes. The Emergency SOS feature lets you dispatch coordinated responders with a single tap, available 24/7.' },
-  { q: 'Which services are available?', a: 'Home care, nursing, physiotherapy, pharmacy delivery, laboratory sample collection, transport, medical visits and emergency response.' },
-  { q: 'Is my family\'s data private?', a: 'Your data is encrypted and only shared with the providers you choose. We never sell your information.' },
-  { q: 'Does it work on mobile?', a: 'Yes. The platform is a Progressive Web App — installable on any phone, with offline support.' },
-];
-
-const FaqItem = ({ q, a }: { q: string; a: string }) => {
-  const [open, setOpen] = useState(false);
-  return (
-    <div className="border-b border-border">
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center justify-between gap-4 py-4 text-left"
-        aria-expanded={open}
-      >
-        <span className="text-sm font-semibold text-foreground md:text-base">{q}</span>
-        <ChevronDown className={cn('h-5 w-5 shrink-0 text-muted-foreground transition-transform', open && 'rotate-180')} />
-      </button>
-      {open && <p className="pb-4 text-sm text-muted-foreground">{a}</p>}
-    </div>
-  );
-};
+const Benefits = ({ items }: { items: string[] }) => <ul className="grid grid-cols-2 gap-x-4 gap-y-3">{items.map((item) => <li key={item} className="flex items-center gap-2 text-sm"><CheckCircle2 className="h-4 w-4 text-secondary" />{item}</li>)}</ul>;
+const SectionLabel = ({ children }: { children: React.ReactNode }) => <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-secondary">{children}</p>;
 
 export const LandingPage = () => (
-  <div className="flex flex-col">
-    {/* Hero */}
-    <section className="relative overflow-hidden bg-gradient-to-b from-primary/[0.04] to-background">
-      <div className="container flex flex-col items-center gap-8 py-16 md:py-24 lg:py-32">
-        <div className="flex flex-col items-center gap-4 text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-muted-foreground">
-            <Sparkles className="h-3.5 w-3.5 text-secondary" />
-            AI-Powered Care Coordination
-          </span>
-          <h1 className="max-w-3xl text-4xl font-bold leading-tight tracking-tight text-foreground md:text-5xl lg:text-6xl">
-            Care that feels like <span className="text-primary">family</span>.
-          </h1>
-          <p className="max-w-xl text-base text-muted-foreground md:text-lg">
-            {APP_DESCRIPTION}
-          </p>
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <Button asChild size="lg">
-              <Link to="/register">
-                Get started <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link to="/login">Sign in</Link>
-            </Button>
-          </div>
-        </div>
-
-        <div className="grid w-full grid-cols-2 gap-4 md:grid-cols-4">
-          {stats.map((stat) => (
-            <div key={stat.label} className="flex flex-col items-center gap-1 rounded-xl border border-border bg-surface p-4 text-center">
-              <span className="text-2xl font-bold text-primary md:text-3xl">{stat.value}</span>
-              <span className="text-xs text-muted-foreground md:text-sm">{stat.label}</span>
-            </div>
-          ))}
+  <div className="landing-page overflow-hidden bg-[#fffaf4] text-[#10243e]">
+    <section className="landing-hero relative bg-[#f8e8d8] bg-[linear-gradient(rgba(16,36,62,0.045)_1px,transparent_1px),linear-gradient(90deg,rgba(16,36,62,0.045)_1px,transparent_1px)] bg-[size:42px_42px]">
+      <div className="container min-h-[680px] items-center py-14 lg:flex lg:py-20">
+        <div className="relative z-10 flex flex-col items-start gap-6">
+          <h1 className="max-w-xl font-serif text-5xl font-bold leading-[0.98] tracking-tight md:text-6xl lg:text-[4.7rem]">Peace of mind for <span className="text-secondary">families.</span><br />Complete care for parents.</h1>
+          <p className="max-w-lg text-base leading-7 text-[#53657b] md:text-lg">A calmer way to care for the people you love. Connect healthcare, home support, emergency response and every important update in one trusted place.</p>
+          <div className="flex flex-col gap-3 sm:flex-row"><Button asChild size="lg" className="h-13 rounded-xl bg-secondary px-7 text-white shadow-lg shadow-secondary/20"><Link to="/register">Get started <ArrowRight className="ml-2 h-4 w-4" /></Link></Button><Button asChild size="lg" variant="outline" className="h-13 rounded-xl border-[#cfd7df] bg-white/70 px-7"><Link to="/#services">Explore services <ChevronRight className="ml-1 h-4 w-4" /></Link></Button></div>
+          <p className="text-sm text-[#53657b]"><strong className="text-[#10243e]">10,000+ families</strong> coordinate care with confidence</p>
         </div>
       </div>
     </section>
 
-    {/* How it works */}
-    <section id="how-it-works" className="container py-16 md:py-24">
-      <div className="flex flex-col items-center gap-3 pb-10 text-center">
-        <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">How it works</h2>
-        <p className="max-w-xl text-muted-foreground">Three simple steps to coordinated, confident care.</p>
-      </div>
-      <div className="grid gap-6 md:grid-cols-3">
-        {howItWorks.map((item) => (
-          <div key={item.step} className="flex flex-col gap-3 rounded-xl border border-border bg-surface p-6">
-            <span className="text-3xl font-bold text-primary/30">{item.step}</span>
-            <h3 className="text-lg font-semibold text-foreground">{item.title}</h3>
-            <p className="text-sm text-muted-foreground">{item.description}</p>
-          </div>
-        ))}
-      </div>
-    </section>
+    <section className="border-b border-[#e7ddd2] py-8"><div className="container grid gap-6 text-center sm:grid-cols-4 sm:text-left"><div><p className="font-serif text-3xl font-bold text-secondary">24/7</p><p className="text-xs uppercase tracking-[0.14em] text-[#718096]">Support when needed</p></div><div><p className="font-serif text-3xl font-bold">1.5k+</p><p className="text-xs uppercase tracking-[0.14em] text-[#718096]">Verified providers</p></div><div><p className="font-serif text-3xl font-bold">4.9/5</p><p className="text-xs uppercase tracking-[0.14em] text-[#718096]">Family rating</p></div><div><p className="font-serif text-3xl font-bold">One app</p><p className="text-xs uppercase tracking-[0.14em] text-[#718096]">For every care moment</p></div></div></section>
 
-    {/* Services */}
-    <section id="services" className="border-y border-border bg-surface">
-      <div className="container py-16 md:py-24">
-        <div className="flex flex-col items-center gap-3 pb-10 text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">Everything your family needs</h2>
-          <p className="max-w-xl text-muted-foreground">One platform to coordinate healthcare, emergency response, home care, pharmacy, laboratory and transport.</p>
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {services.map((service) => (
-            <div key={service.title} className="flex flex-col gap-3 rounded-xl border border-border bg-background p-6 transition-shadow hover:shadow-card">
-              <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <service.icon className="h-5 w-5" />
-              </span>
-              <h3 className="text-lg font-semibold text-foreground">{service.title}</h3>
-              <p className="text-sm text-muted-foreground">{service.description}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
+    <section id="services" className="container py-16 md:py-20"><div className="mb-9 flex flex-col gap-3 md:flex-row md:items-end md:justify-between"><div><SectionLabel>Care, connected</SectionLabel><h2 className="font-serif text-4xl font-bold md:text-5xl">Everything they need.<br /><span className="text-secondary">All in one place.</span></h2></div><p className="max-w-sm text-sm leading-6 text-[#718096]">From a quick check-in to long-term support, make every part of care easier to see and manage.</p></div><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{services.map(([Icon, title, description]) => <div key={title} className="group rounded-2xl border border-[#eadfd4] bg-white p-5 shadow-sm transition-all hover:-translate-y-1 hover:border-secondary/40 hover:shadow-lg"><span className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-[#fceddf] text-secondary"><Icon className="h-5 w-5" /></span><h3 className="font-semibold">{title}</h3><p className="mt-2 min-h-10 text-xs leading-5 text-[#718096]">{description}</p><Link to="/register" className="mt-4 flex items-center gap-1 text-xs font-bold text-secondary">Learn more <ArrowRight className="h-3.5 w-3.5" /></Link></div>)}</div></section>
 
-    {/* AI Assistant */}
-    <section id="ai" className="container py-16 md:py-24">
-      <div className="grid items-center gap-10 md:grid-cols-2">
-        <div className="flex flex-col gap-4">
-          <span className="inline-flex w-fit items-center gap-2 rounded-full bg-secondary/10 px-3 py-1 text-xs font-medium text-secondary">
-            <Brain className="h-3.5 w-3.5" /> AI Assistant
-          </span>
-          <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">Care guidance, powered by AI</h2>
-          <p className="text-muted-foreground">Get personalized care suggestions, summarize your family\'s care timeline, and surface the right next step — all tuned for senior care.</p>
-          <ul className="flex flex-col gap-2">
-            {['Smart care suggestions', 'Timeline summaries', 'Medication reminders', '24/7 assistance'].map((item) => (
-              <li key={item} className="flex items-center gap-2 text-sm text-foreground">
-                <CheckCircle className="h-4 w-4 text-success" /> {item}
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-6 shadow-card">
-          <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-            <Sparkles className="h-4 w-4 text-secondary" /> AI suggestion
-          </div>
-          <p className="text-sm text-muted-foreground">"Based on your father\'s recent blood pressure readings, a follow-up nursing visit within 48 hours is recommended. Would you like to book one?"</p>
-          <div className="flex gap-2">
-            <Button size="sm">Book a visit</Button>
-            <Button size="sm" variant="outline">Ask the AI</Button>
-          </div>
-        </div>
-      </div>
-    </section>
+    <section id="how-it-works" className="bg-[#eef3f1] py-16 md:py-20"><div className="container"><div className="mx-auto mb-10 max-w-xl text-center"><SectionLabel>A simpler journey</SectionLabel><h2 className="font-serif text-4xl font-bold md:text-5xl">Care that moves with you.</h2></div><div className="grid gap-5 md:grid-cols-3">{journey.map(([Icon, step, title, body]) => <div key={step} className="relative rounded-2xl bg-white p-6 shadow-sm"><span className="font-serif text-5xl font-bold text-[#d5e2df]">{step}</span><span className="absolute right-6 top-6 flex h-11 w-11 items-center justify-center rounded-xl bg-[#e7f1ee] text-[#28736d]"><Icon className="h-5 w-5" /></span><h3 className="mt-4 text-lg font-semibold">{title}</h3><p className="mt-2 text-sm leading-6 text-[#718096]">{body}</p></div>)}</div></div></section>
 
-    {/* Emergency SOS */}
-    <section id="emergency" className="border-y border-border bg-destructive/[0.04]">
-      <div className="container grid items-center gap-10 py-16 md:grid-cols-2 md:py-24">
-        <div className="flex flex-col gap-4">
-          <span className="inline-flex w-fit items-center gap-2 rounded-full bg-destructive/10 px-3 py-1 text-xs font-medium text-destructive">
-            <Siren className="h-3.5 w-3.5" /> Emergency SOS
-          </span>
-          <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">One tap to help</h2>
-          <p className="text-muted-foreground">When seconds matter, the Emergency SOS feature dispatches coordinated responders to your family\'s location instantly. Share live status with loved ones until help arrives.</p>
-          <Button asChild variant="destructive" className="w-fit">
-            <Link to="/register">Set up emergency contacts <ArrowRight className="ml-2 h-4 w-4" /></Link>
-          </Button>
-        </div>
-        <div className="flex justify-center">
-          <div className="flex h-48 w-48 items-center justify-center rounded-full bg-destructive/10">
-            <div className="flex h-32 w-32 items-center justify-center rounded-full bg-destructive text-white shadow-floating">
-              <Siren className="h-12 w-12" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+    <section id="ai" className="container py-16 md:py-20"><div className="grid items-center gap-10 lg:grid-cols-[0.85fr_1.15fr]"><div><span className="mb-4 inline-flex items-center gap-2 rounded-full bg-[#fceddf] px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-secondary"><Brain className="h-4 w-4" /> AI care companion</span><h2 className="font-serif text-4xl font-bold md:text-5xl">A little more clarity.<br /><span className="text-secondary">A lot less worry.</span></h2><p className="mt-5 max-w-md text-sm leading-7 text-[#718096]">Your care companion brings reminders, patterns and thoughtful next steps forward, so families can spend more time being present.</p><ul className="mt-6 space-y-3 text-sm"><li className="flex gap-3"><CheckCircle2 className="h-5 w-5 text-secondary" />Medication reminders that arrive on time</li><li className="flex gap-3"><CheckCircle2 className="h-5 w-5 text-secondary" />Health insights from the care timeline</li><li className="flex gap-3"><CheckCircle2 className="h-5 w-5 text-secondary" />Simple summaries for every appointment</li></ul></div><div className="rounded-[2rem] bg-[#10243e] p-5 text-white shadow-2xl md:p-7"><div className="flex items-center justify-between border-b border-white/10 pb-5"><div className="flex items-center gap-3"><span className="flex h-10 w-10 items-center justify-center rounded-xl bg-secondary"><Sparkles className="h-5 w-5" /></span><div><p className="text-sm font-semibold">AI care companion</p><p className="text-xs text-white/50">Private support for your family</p></div></div><span className="flex items-center gap-1.5 text-xs text-emerald-300"><span className="h-2 w-2 rounded-full bg-emerald-400" /> Ready to help</span></div><div className="space-y-4 py-6"><div className="ml-auto max-w-[80%] rounded-2xl rounded-br-sm bg-white/10 p-3 text-xs leading-5 text-white/80">Can you summarize Dad's care this week?</div><div className="max-w-[88%] rounded-2xl rounded-bl-sm bg-[#f7eee6] p-4 text-xs leading-5 text-[#10243e]"><p className="mb-3 font-semibold">Here is the week at a glance</p><div className="space-y-2 text-[#53657b]"><p className="flex items-center gap-2"><Calendar className="h-3.5 w-3.5 text-secondary" />2 appointments completed</p><p className="flex items-center gap-2"><Pill className="h-3.5 w-3.5 text-secondary" />7 medication reminders completed</p><p className="flex items-center gap-2"><Activity className="h-3.5 w-3.5 text-secondary" />Vitals are stable and trending well</p></div></div></div><div className="flex flex-wrap gap-2 border-t border-white/10 pt-4"><span className="rounded-full border border-white/15 px-3 py-2 text-[11px] text-white/70">Set reminder</span><span className="rounded-full border border-white/15 px-3 py-2 text-[11px] text-white/70">View timeline</span><span className="rounded-full border border-white/15 px-3 py-2 text-[11px] text-white/70">Review insights</span></div></div></div></section>
 
-    {/* Request Care */}
-    <section id="request-care" className="container py-16 md:py-24">
-      <div className="grid items-center gap-10 md:grid-cols-2">
-        <div className="order-2 flex justify-center md:order-1">
-          <div className="flex w-full max-w-sm flex-col gap-3 rounded-2xl border border-border bg-surface p-6 shadow-card">
-            {[
-              { icon: Stethoscope, label: 'Home care visit' },
-              { icon: Pill, label: 'Pharmacy delivery' },
-              { icon: FlaskConical, label: 'Lab sample collection' },
-              { icon: Car, label: 'Transport to appointment' },
-            ].map((row) => (
-              <div key={row.label} className="flex items-center gap-3 rounded-lg border border-border bg-background p-3">
-                <row.icon className="h-5 w-5 text-primary" />
-                <span className="text-sm font-medium text-foreground">{row.label}</span>
-                <ArrowRight className="ml-auto h-4 w-4 text-muted-foreground" />
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="order-1 flex flex-col gap-4 md:order-2">
-          <span className="inline-flex w-fit items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-            <Phone className="h-3.5 w-3.5" /> Request Care
-          </span>
-          <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">Request any service, anytime</h2>
-          <p className="text-muted-foreground">From a nursing visit to a pharmacy refill, request exactly what your family needs. Coordinate every booking in one place and track each step until it\'s done.</p>
-          <Button asChild className="w-fit">
-            <Link to="/register">Request care <ArrowRight className="ml-2 h-4 w-4" /></Link>
-          </Button>
-        </div>
-      </div>
-    </section>
+    <section id="emergency" className="bg-[#fff0ee] py-16 md:py-20"><div className="container grid items-center gap-10 lg:grid-cols-[1fr_0.9fr]"><div><span className="mb-4 inline-flex items-center gap-2 rounded-full bg-[#fbd8d4] px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-destructive"><Siren className="h-4 w-4" /> Emergency SOS</span><h2 className="font-serif text-4xl font-bold md:text-5xl">When seconds matter,<br /><span className="text-destructive">help is one tap away.</span></h2><p className="mt-5 max-w-md text-sm leading-7 text-[#718096]">Alert your chosen family circle and coordinated responders with a clear location, context and live response status.</p><Button asChild size="lg" variant="destructive" className="mt-6 h-13 rounded-xl px-7"><Link to="/register">Set up emergency contacts <ArrowRight className="ml-2 h-4 w-4" /></Link></Button></div><div className="rounded-[2rem] border border-[#f5d5d0] bg-white p-5 shadow-lg md:p-7"><div className="mb-5 flex items-center justify-between"><div><p className="text-sm font-semibold">Emergency preview</p><p className="text-xs text-[#718096]">Choose who to alert</p></div><ShieldCheck className="h-6 w-6 text-emerald-500" /></div>{['Maya - Daughter', 'Raghav - Son', 'Care coordinator'].map((name, index) => <div key={name} className="mb-3 flex items-center gap-3 rounded-xl border border-[#edf0f1] p-3"><span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#fceddf] text-secondary"><Users className="h-4 w-4" /></span><span className="flex-1 text-sm font-medium">{name}</span><span className={index < 2 ? 'h-5 w-5 rounded-md border-2 border-secondary bg-secondary' : 'h-5 w-5 rounded-md border-2 border-[#d7dde2]'}>{index < 2 && <CheckCircle2 className="h-4 w-4 text-white" />}</span></div>)}<div className="mt-5 flex items-center gap-3 rounded-xl bg-[#fff0ee] p-3 text-xs text-destructive"><Clock className="h-4 w-4" /><span><strong>Response timeline</strong><br />Alert sent - Help coordinating - Family notified</span></div></div></div></section>
 
-    {/* Value props */}
-    <section id="families" className="border-y border-border bg-surface">
-      <div className="container grid gap-10 py-16 md:grid-cols-2 md:py-24">
-        <div className="flex flex-col gap-4">
-          <span className="inline-flex w-fit items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-            <Heart className="h-3.5 w-3.5" /> For Families
-          </span>
-          <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">Peace of mind, every day</h2>
-          <p className="text-muted-foreground">Coordinate care for your loved ones with confidence. Track every appointment, medication and emergency response in a single timeline.</p>
-          <ul className="flex flex-col gap-2">
-            {['Real-time care timeline', 'Verified providers only', 'Family member profiles', 'Medical records in one place'].map((item) => (
-              <li key={item} className="flex items-center gap-2 text-sm text-foreground">
-                <CheckCircle className="h-4 w-4 text-success" /> {item}
-              </li>
-            ))}
-          </ul>
-          <Button asChild className="w-fit">
-            <Link to="/register">Create family account <ArrowRight className="ml-2 h-4 w-4" /></Link>
-          </Button>
-        </div>
-        <div className="flex flex-col gap-4">
-          <span className="inline-flex w-fit items-center gap-2 rounded-full bg-secondary/10 px-3 py-1 text-xs font-medium text-secondary">
-            <Shield className="h-3.5 w-3.5" /> For Providers
-          </span>
-          <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">Grow your care business</h2>
-          <p className="text-muted-foreground">Reach families who need your services. Manage bookings, staff and schedules with tools built for care providers.</p>
-          <ul className="flex flex-col gap-2">
-            {['Booking management', 'Staff scheduling', 'Patient coordination', 'Verified provider badge'].map((item) => (
-              <li key={item} className="flex items-center gap-2 text-sm text-foreground">
-                <CheckCircle className="h-4 w-4 text-success" /> {item}
-              </li>
-            ))}
-          </ul>
-          <Button asChild variant="outline" className="w-fit">
-            <Link to="/register">Register as provider <ArrowRight className="ml-2 h-4 w-4" /></Link>
-          </Button>
-        </div>
-      </div>
-    </section>
+    <section id="families" className="container py-16 md:py-20"><div className="grid gap-5 lg:grid-cols-2"><div className="rounded-[2rem] bg-[#f7eee6] p-7 md:p-10"><span className="mb-4 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-secondary"><Heart className="h-4 w-4" /> For families</span><h2 className="font-serif text-4xl font-bold">Feel close, even<br />when you are far away.</h2><p className="mt-4 max-w-md text-sm leading-6 text-[#718096]">One shared view of the details that matter, made for busy families and the people they care for.</p><div className="mt-7"><Benefits items={familyBenefits} /></div><Link to="/register" className="mt-7 inline-flex items-center gap-2 text-sm font-bold text-secondary">Create family account <ArrowRight className="h-4 w-4" /></Link></div><div id="providers" className="rounded-[2rem] bg-[#e9f1f1] p-7 md:p-10"><span className="mb-4 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-[#28736d]"><Stethoscope className="h-4 w-4" /> For providers</span><h2 className="font-serif text-4xl font-bold">More time for care.<br />Less time coordinating.</h2><p className="mt-4 max-w-md text-sm leading-6 text-[#718096]">Tools that help your team stay organized, responsive and focused on the people who count on you.</p><div className="mt-7"><Benefits items={providerBenefits} /></div><Link to="/register" className="mt-7 inline-flex items-center gap-2 text-sm font-bold text-[#28736d]">Join our provider network <ArrowRight className="h-4 w-4" /></Link></div></div></section>
 
-    {/* Feature highlights */}
-    <section className="container py-16 md:py-24">
-      <div className="grid gap-6 md:grid-cols-3">
-        {[
-          { icon: Bell, title: 'Smart Notifications', description: 'Stay informed about every care event, appointment update and emergency alert.' },
-          { icon: Activity, title: 'Care Timeline', description: 'A chronological view of every action taken for your family members.' },
-          { icon: Users, title: 'Family Profiles', description: 'Keep medical records and care needs for every family member in one place.' },
-        ].map((feature) => (
-          <div key={feature.title} className="flex flex-col gap-3 rounded-xl border border-border bg-surface p-6">
-            <feature.icon className="h-6 w-6 text-primary" />
-            <h3 className="text-lg font-semibold text-foreground">{feature.title}</h3>
-            <p className="text-sm text-muted-foreground">{feature.description}</p>
-          </div>
-        ))}
-      </div>
-    </section>
+    <section className="border-y border-[#e7ddd2] bg-white py-14"><div className="container grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-center"><div><SectionLabel>One connected platform</SectionLabel><h2 className="font-serif text-4xl font-bold">Every update, right<br />where it belongs.</h2><p className="mt-4 max-w-sm text-sm leading-6 text-[#718096]">A clear, shared record helps families, caregivers and providers move together.</p></div><div className="grid gap-3 sm:grid-cols-2">{platform.map(([Icon, title, body]) => <div key={title} className="rounded-2xl border border-[#eadfd4] p-5"><Icon className="h-5 w-5 text-secondary" /><p className="mt-4 text-sm font-semibold">{title}</p><p className="mt-1 text-xs leading-5 text-[#718096]">{body}</p></div>)}</div></div></section>
 
-    {/* Testimonials */}
-    <section id="testimonials" className="border-y border-border bg-surface">
-      <div className="container py-16 md:py-24">
-        <div className="flex flex-col items-center gap-3 pb-10 text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">Families and providers trust us</h2>
-          <p className="max-w-xl text-muted-foreground">Real stories from the people who use {APP_NAME} every day.</p>
-        </div>
-        <div className="grid gap-6 md:grid-cols-3">
-          {testimonials.map((t) => (
-            <figure key={t.name} className="flex flex-col gap-3 rounded-xl border border-border bg-background p-6">
-              <div className="flex gap-0.5">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star key={i} className={cn('h-4 w-4', i < t.rating ? 'text-secondary fill-secondary' : 'text-muted-foreground/30')} />
-                ))}
-              </div>
-              <blockquote className="text-sm text-foreground">"{t.quote}"</blockquote>
-              <figcaption className="flex flex-col">
-                <span className="text-sm font-semibold text-foreground">{t.name}</span>
-                <span className="text-xs text-muted-foreground">{t.role}</span>
-              </figcaption>
-            </figure>
-          ))}
-        </div>
-      </div>
-    </section>
+    <section className="bg-[#10243e] py-16 text-white md:py-20"><div className="container flex flex-col items-start justify-between gap-8 md:flex-row md:items-end"><div><SectionLabel>Care starts here</SectionLabel><h2 className="max-w-2xl font-serif text-4xl font-bold leading-tight md:text-6xl">Give your family<br />more good days.</h2><p className="mt-4 max-w-md text-sm leading-6 text-white/65">{APP_TAGLINE}. A trusted circle of care for every season of life.</p></div><div className="flex flex-col gap-3 sm:flex-row"><Button asChild size="lg" className="h-13 rounded-xl bg-secondary px-7 text-white"><Link to="/register">Get started today <ArrowRight className="ml-2 h-4 w-4" /></Link></Button><Button asChild size="lg" variant="outline" className="h-13 rounded-xl border-white/25 bg-white/5 px-7 text-white"><Link to="/login">Login</Link></Button></div></div></section>
 
-    {/* FAQ */}
-    <section id="faq" className="container py-16 md:py-24">
-      <div className="flex flex-col items-center gap-3 pb-6 text-center">
-        <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">Frequently asked questions</h2>
-        <p className="max-w-xl text-muted-foreground">Everything you need to know about {APP_NAME}.</p>
-      </div>
-      <div className="mx-auto max-w-3xl">
-        {faqs.map((faq) => (
-          <FaqItem key={faq.q} q={faq.q} a={faq.a} />
-        ))}
-      </div>
-    </section>
-
-    {/* CTA */}
-    <section className="border-t border-border bg-primary text-primary-foreground">
-      <div className="container flex flex-col items-center gap-6 py-16 text-center md:py-24">
-        <h2 className="max-w-2xl text-3xl font-bold tracking-tight md:text-4xl">{APP_NAME} starts with one step</h2>
-        <p className="max-w-xl text-primary-foreground/80">{APP_TAGLINE}. Join thousands of families who trust us with care coordination.</p>
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <Button asChild size="lg" variant="secondary">
-            <Link to="/register">Get started today <ArrowRight className="ml-2 h-4 w-4" /></Link>
-          </Button>
-          <Button asChild size="lg" className="border border-white/40 bg-white/20 text-white hover:bg-white/30 font-semibold backdrop-blur-xs">
-            <Link to="/login">Sign in</Link>
-          </Button>
-        </div>
-      </div>
-    </section>
+    <section className="container flex flex-col items-center gap-3 py-14 text-center"><SectionLabel>Built around trust</SectionLabel><h2 className="font-serif text-3xl font-bold">Care is personal. Your tools should be too.</h2><p className="max-w-xl text-sm leading-6 text-[#718096]">{APP_NAME} brings the warmth of a care circle to the clarity of one connected platform.</p><div className="mt-3 flex flex-wrap justify-center gap-5 text-xs text-[#718096]"><span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-emerald-500" /> Verified providers</span><span className="flex items-center gap-2"><Lock className="h-4 w-4 text-emerald-500" /> Private by design</span><span className="flex items-center gap-2"><Video className="h-4 w-4 text-emerald-500" /> Human support</span></div></section>
   </div>
 );
 

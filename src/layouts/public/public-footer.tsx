@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Heart, Mail, Phone } from '@/config/icons';
+import { Mail, Phone } from '@/config/icons';
 import { APP_NAME, APP_TAGLINE, SUPPORT_EMAIL, SUPPORT_PHONE } from '@/constants';
 
 const columns = [
@@ -15,7 +15,7 @@ const columns = [
   {
     title: 'Account',
     links: [
-      { label: 'Sign in', to: '/login' },
+      { label: 'Login', to: '/login' },
       { label: 'Create account', to: '/register' },
     ],
   },
@@ -31,14 +31,15 @@ const columns = [
 
 export const PublicFooter = () => (
   <footer className="border-t border-border bg-surface safe-bottom">
-    <div className="container py-12">
+    <div className="public-landing-container py-12">
       <div className="grid gap-10 md:grid-cols-4">
         <div className="flex flex-col gap-3">
           <Link to="/" className="flex items-center gap-2.5">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-              <Heart className="h-5 w-5" />
+            <img src="/logo.png" alt="We Care For You" className="h-11 w-11 object-contain" />
+            <span className="flex flex-col leading-tight">
+              <span className="text-base font-bold text-foreground">{APP_NAME}</span>
+              <span className="text-2xs uppercase tracking-[0.18em] text-muted-foreground">Care coordination</span>
             </span>
-            <span className="text-base font-bold text-foreground">{APP_NAME}</span>
           </Link>
           <p className="max-w-xs text-sm text-muted-foreground">{APP_TAGLINE}.</p>
           <div className="flex flex-col gap-1 text-sm text-muted-foreground">

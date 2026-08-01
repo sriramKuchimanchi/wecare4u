@@ -72,7 +72,7 @@ export const FamilySearchPage = () => {
           <EmptyState
             icon={Search}
             title="Start searching"
-            description="Search for care providers, services, family members or appointments."
+            description="Search for service providers, services, family members or appointments."
           />
         </Card>
       ) : noResults ? (

@@ -5,7 +5,7 @@ import {
 import { PageHeader, SectionHeader, EmptyState, StatusIndicator } from '@/components/shared';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton, SkeletonText } from '@/components/shared/skeleton';
 import {
@@ -53,6 +53,7 @@ export const FamilyMemberProfilePage = () => {
       {/* Header card */}
       <Card className="flex flex-col gap-4 p-5 md:flex-row md:items-center">
         <Avatar className="h-20 w-20 border border-border">
+          {member.avatarUrl && <AvatarImage src={member.avatarUrl} alt={member.name} />}
           <AvatarFallback className="bg-primary/10 text-lg font-bold text-primary">
             {member.name.split(' ').map((n) => n[0]).slice(0, 2).join('')}
           </AvatarFallback>

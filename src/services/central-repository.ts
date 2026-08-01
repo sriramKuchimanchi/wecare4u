@@ -127,7 +127,7 @@ export const familyRepository = {
   },
 };
 
-// ─── CARE PROVIDERS ──────────────────────────────────────────────────────────
+// ─── SERVICE PROVIDERS ──────────────────────────────────────────────────────
 
 export const providerRepository = {
   getAll(filters?: {
@@ -190,8 +190,8 @@ export const providerRepository = {
       (p as any).verificationStatus = 'approved';
       p.isVerified = true;
       p.updatedAt = nowISO();
-      addNotification(`user_provider_${id}`, 'Provider Approved ✅', 'Your care provider registration has been approved. You can now accept care requests.', 'success');
-      addNotification('user_admin_1', 'Provider Approved', `${p.name} has been approved and is now active on the platform.`, 'info');
+      addNotification(`user_provider_${id}`, 'Service Provider Approved ✅', 'Your service provider registration has been approved. You can now accept care requests.', 'success');
+      addNotification('user_admin_1', 'Service Provider Approved', `${p.name} has been approved and is now active on the platform.`, 'info');
       emitChange('provider:approved', { id });
     }
   },
@@ -369,7 +369,7 @@ export const careRequestRepository = {
 
     // Emit cross-portal events
     addTimelineEvent(input.familyId, 'care-request-submitted', `Care Request — ${req.categoryLabel}`, `A new care request has been submitted for ${req.patientName}.`, req.memberId);
-    addNotification(input.familyId, 'Request Submitted', `Your ${req.categoryLabel} request has been submitted. A care provider will confirm shortly.`, 'success');
+    addNotification(input.familyId, 'Request Submitted', `Your ${req.categoryLabel} request has been submitted. A service provider will confirm shortly.`, 'success');
     addNotification('user_admin_1', 'New Care Request', `${input.familyName} has submitted a ${req.categoryLabel} care request.`, 'info');
     emitChange('care-request:created', { id: req.id });
     return req;
@@ -497,8 +497,8 @@ export const emergencyRepository = {
       steps: [
         { step: 'sos_triggered', title: 'SOS Triggered', description: 'Emergency SOS has been activated.', status: 'completed', completedAt: nowISO() },
         { step: 'location_detected', title: 'GPS Received', description: `Location detected: ${location.city}`, status: 'in-progress' },
-        { step: 'coordinator_activated', title: 'AI Coordinator Activated', description: 'AI coordinator is finding the nearest available care provider.', status: 'pending' },
-        { step: 'provider_found', title: 'Provider Assigned', description: 'Nearest care provider located and dispatched.', status: 'pending' },
+        { step: 'coordinator_activated', title: 'AI Coordinator Activated', description: 'AI coordinator is finding the nearest available service provider.', status: 'pending' },
+        { step: 'provider_found', title: 'Provider Assigned', description: 'Nearest service provider located and dispatched.', status: 'pending' },
         { step: 'professional_assigned', title: 'Employee Assigned', description: 'Emergency medical professional assigned.', status: 'pending' },
         { step: 'ambulance_assigned', title: 'Ambulance Dispatched', description: 'Ambulance is en route to the location.', status: 'pending' },
         { step: 'hospital_notified', title: 'Hospital Notified', description: 'Nearest hospital has been alerted and is preparing for patient arrival.', status: 'pending' },

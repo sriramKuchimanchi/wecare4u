@@ -12,7 +12,7 @@ const choices = [
   },
   {
     role: 'care-provider' as const,
-    title: 'Care Provider',
+    title: 'Service Provider',
     description: 'Register as an individual professional or an organization to offer care services.',
     icon: Briefcase,
     to: '/register/care-provider',
@@ -26,7 +26,7 @@ export const RegisterPage = () => (
     footer={
       <>
         Already have an account?{' '}
-        <Link to="/login" className="font-semibold text-primary hover:underline">Sign in</Link>
+        <Link to="/login" className="font-semibold text-primary hover:underline">Login</Link>
       </>
     }
   >

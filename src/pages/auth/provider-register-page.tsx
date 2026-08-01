@@ -97,7 +97,7 @@ export const ProviderRegisterPage = () => {
           <div className="flex flex-col gap-1">
             <h2 className="text-xl font-bold text-foreground">Pending Verification</h2>
             <p className="text-sm text-muted-foreground">
-              Your registration has been received. Your account will become active after admin verification.
+              Your registration has been received. Your account will become active after administrator verification.
             </p>
           </div>
           <div className="rounded-lg border border-border bg-muted/30 px-4 py-2 text-sm">
@@ -111,12 +111,12 @@ export const ProviderRegisterPage = () => {
 
   return (
     <AuthLayout
-      title="Register as a Care Provider"
+      title="Register as a Service Provider"
       subtitle="Join the platform to offer your care services."
       footer={
         <>
           Already have an account?{' '}
-          <Link to="/login" className="font-semibold text-primary hover:underline">Sign in</Link>
+          <Link to="/login" className="font-semibold text-primary hover:underline">Login</Link>
         </>
       }
     >
@@ -198,7 +198,7 @@ export const ProviderRegisterPage = () => {
                 <TextField name="state" label="State" required placeholder="Dubai" />
                 <TextField name="pincode" label="Pincode" required placeholder="00000" />
               </div>
-              <TextField name="primaryContactPerson" label="Primary contact person" required placeholder="Aisha Rahman" />
+              <TextField name="primaryContactPerson" label="Primary contact person" required placeholder="Aaradhya Rao" />
               <div className="grid grid-cols-2 gap-3">
                 <FileUploadField label="Registration certificate" hint="PDF" />
                 <FileUploadField label="GST certificate" hint="PDF" />

@@ -51,7 +51,7 @@ export const AdminEmployeesPage = () => {
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
             <div className="flex items-center gap-2 text-white/70 text-xs font-semibold uppercase tracking-wider">
-              <icons.Briefcase className="h-4 w-4" /> Admin Portal
+              <icons.Briefcase className="h-4 w-4" /> Administrator Portal
             </div>
             <h1 className="text-2xl font-extrabold tracking-tight mt-1">Employee Management</h1>
             <p className="text-sm text-white/80 mt-1">{employees.length} healthcare & service employees platform-wide</p>

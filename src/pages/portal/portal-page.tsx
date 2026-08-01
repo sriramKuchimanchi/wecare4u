@@ -10,7 +10,7 @@ const portalIntro: Record<UserRole, string> = {
   family: 'Coordinate care for your loved ones — bookings, medical records, emergency response and more.',
   'care-provider': 'Manage your care services, bookings, staff and patient relationships.',
   employee: 'View your assigned tasks, schedule and patient coordination.',
-  admin: 'Oversee families, providers, employees and platform-wide activity.',
+  admin: 'Oversee families, service providers, employees and platform-wide activity.',
 };
 
 const placeholderSections: Record<UserRole, { title: string; description: string }[]> = {

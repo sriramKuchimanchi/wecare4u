@@ -216,7 +216,7 @@ export const EmployeeDashboard = () => {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b pb-3">
                   <div>
                     <div className="flex items-center gap-2">
-                      <h3 className="text-base font-bold text-foreground">{req.patientName || 'Mohammed Rahman'}</h3>
+                      <h3 className="text-base font-bold text-foreground">{req.patientName || 'Madhav Rao'}</h3>
                       <span className="text-2xs font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
                         {req.categoryLabel || req.category}
                       </span>

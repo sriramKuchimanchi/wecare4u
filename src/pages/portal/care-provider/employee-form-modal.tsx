@@ -127,7 +127,7 @@ export const EmployeeFormModal = ({
               <div>
                 <label className="text-xs font-medium text-foreground mb-1 block">Full Name *</label>
                 <Input
-                  placeholder="e.g. Layla Al-Nasser"
+                  placeholder="e.g. Kavya Menon"
                   value={formData.name || ''}
                   onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
                   required

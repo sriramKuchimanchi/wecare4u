@@ -7,7 +7,7 @@ import { PageHeader, SectionHeader, EmptyState } from '@/components/shared';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton, SkeletonText } from '@/components/shared/skeleton';
 import { useCareProvider } from '@/hooks/use-family-portal';
 import { RequestCareWizardModal } from '@/components/care-coordination/RequestCareWizardModal';
@@ -39,7 +39,7 @@ export const CareProviderProfilePage = () => {
         <EmptyState
           icon={Users}
           title="Provider not found"
-          description="This care provider could not be found."
+          description="This service provider could not be found."
           action={<Button onClick={() => navigate('/portal/family/request-care')}>Back to Request Care</Button>}
         />
       </Card>
@@ -49,7 +49,7 @@ export const CareProviderProfilePage = () => {
   return (
     <div className="flex flex-col gap-6">
       <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="w-fit">
-        <ArrowLeft className="mr-1 h-4 w-4" /> Back to Care Providers
+        <ArrowLeft className="mr-1 h-4 w-4" /> Back to Service Providers
       </Button>
 
       {/* Hero Header */}
@@ -168,6 +168,7 @@ export const CareProviderProfilePage = () => {
                   onClick={() => setSelectedEmployee(isSelected ? null : emp.id)}
                 >
                   <Avatar className="h-12 w-12 border border-border">
+                    {emp.avatarUrl && <AvatarImage src={emp.avatarUrl} alt={emp.name} />}
                     <AvatarFallback className="bg-primary/10 text-xs font-bold text-primary">
                       {emp.name.split(' ').map((n) => n[0]).slice(0, 2).join('')}
                     </AvatarFallback>

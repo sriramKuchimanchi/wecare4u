@@ -13,7 +13,7 @@ export const App = () => {
     eventBus.setQueryClient(queryClient);
 
     // Register Service Worker for PWA capabilities
-    if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
+    if ('serviceWorker' in navigator) {
       navigator.serviceWorker
         .register('/sw.js')
         .then((reg) => console.log('PWA ServiceWorker registered:', reg.scope))

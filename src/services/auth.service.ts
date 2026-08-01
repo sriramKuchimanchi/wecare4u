@@ -82,8 +82,8 @@ export const authService = {
   }): Promise<ApiResult<AuthSession>> {
     const user: User = {
       id: createId('user'),
-      name: input.name || 'Aisha Rahman',
-      email: input.email || 'aisha.family@example.com',
+      name: input.name || 'Aaradhya Rao',
+      email: input.email || 'aaradhya.family@example.com',
       phone: input.phone || '+971 50 123 4567',
       role: 'family',
       isActive: true,

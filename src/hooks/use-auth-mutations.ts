@@ -59,7 +59,7 @@ export function useLoginAdminMutation() {
     onSuccess: (result) => {
       if (result.success && result.data) {
         setSession(result.data);
-        toast({ title: 'Administrator signed in', description: 'Welcome to the admin portal.' });
+        toast({ title: 'Administrator signed in', description: 'Welcome to the Administrator Portal.' });
       }
     },
   });

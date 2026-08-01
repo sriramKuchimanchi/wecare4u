@@ -57,9 +57,9 @@ export const ProvidersPage = () => {
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
             <div className="flex items-center gap-2 text-white/70 text-xs font-semibold uppercase tracking-wider">
-              <icons.Building2 className="h-4 w-4" /> Admin Portal
+              <icons.Building2 className="h-4 w-4" /> Administrator Portal
             </div>
-            <h1 className="text-2xl font-extrabold tracking-tight mt-1">Care Providers</h1>
+            <h1 className="text-2xl font-extrabold tracking-tight mt-1">Service Providers</h1>
             <p className="text-sm text-white/80 mt-1">{providers.length} registered providers — manage verification & status</p>
           </div>
           <Button onClick={() => navigate('/portal/admin/verification')} className="bg-white text-indigo-900 hover:bg-indigo-50 font-bold shadow-md text-sm">
