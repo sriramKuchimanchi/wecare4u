@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { icons } from '@/config/icons';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/use-auth';
 import {
@@ -66,11 +67,10 @@ export const EmployeeDashboard = () => {
       <div className="rounded-2xl bg-gradient-to-r from-primary via-primary to-primary-hover p-6 text-white shadow-lg space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <img
-              src={employee.avatarUrl || 'https://images.unsplash.com/photo-1594824813566-7885a3964478?auto=format&fit=crop&q=80&w=200'}
-              alt={employee.name}
-              className="h-14 w-14 rounded-2xl object-cover border-2 border-white/30 shadow-sm"
-            />
+            <Avatar className="h-14 w-14 rounded-2xl border-2 border-white/30 shadow-sm">
+              <AvatarImage src={employee.avatarUrl || 'https://images.unsplash.com/photo-1594824813566-7885a3964478?auto=format&fit=crop&q=80&w=200'} alt={employee.name} className="object-cover" />
+              <AvatarFallback className="rounded-2xl bg-white/15 text-sm font-bold text-white">{employee.name.split(' ').map((part) => part[0]).slice(0, 2).join('')}</AvatarFallback>
+            </Avatar>
             <div>
               <h1 className="text-xl font-bold">{employee.name}</h1>
               <p className="text-xs text-primary-foreground/90">{employee.role} • {employee.department}</p>

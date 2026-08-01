@@ -63,9 +63,6 @@ export const FamilyHomePage = () => {
             <h1 className="text-2xl font-bold md:text-3xl">Hello, {firstName}</h1>
             <p className="text-sm text-primary-foreground/90">Here&apos;s your family&apos;s care overview for today.</p>
           </div>
-          <div className="hidden h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white/10 p-2 md:flex">
-            <img src="/logo.png" alt="We Care For You" className="h-full w-full object-contain brightness-0 invert" />
-          </div>
         </div>
       </div>
 

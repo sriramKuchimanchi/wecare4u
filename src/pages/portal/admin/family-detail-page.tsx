@@ -55,7 +55,7 @@ export const FamilyDetailPage = () => {
           { label: 'Members', value: family.members?.length ?? 0, icon: icons.Users, color: 'bg-blue-100 text-blue-600' },
           { label: 'Total Requests', value: family.careRequests?.length ?? 0, icon: icons.ClipboardList, color: 'bg-sky-100 text-sky-600' },
           { label: 'Emergencies', value: family.emergencies?.length ?? 0, icon: icons.Siren, color: 'bg-red-100 text-red-600' },
-          { label: 'Status', value: family.status ?? 'active', icon: icons.CheckCircle, color: 'bg-green-100 text-green-600' },
+          { label: 'Status', value: 'active', icon: icons.CheckCircle, color: 'bg-green-100 text-green-600' },
         ].map(({ label, value, icon: Icon, color }) => (
           <div key={label} className="rounded-xl bg-surface border border-border/60 p-4 shadow-xs">
             <div className="flex items-center gap-2 mb-2">

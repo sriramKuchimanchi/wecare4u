@@ -12,14 +12,17 @@ import { useNotificationStore } from '@/store';
 import { APP_NAME, PORTAL_LABELS, ROLE_LABELS } from '@/constants';
 import { cn } from '@/lib/utils';
 import { GlobalSearchModal } from '@/components/shared/global-search-modal';
+import type { UserRole } from '@/types';
 
 type PortalHeaderProps = {
   onToggleSidebar: () => void;
+  role?: UserRole;
   className?: string;
 };
 
-export const PortalHeader = ({ onToggleSidebar, className }: PortalHeaderProps) => {
-  const { user, role, reset } = useAuth();
+export const PortalHeader = ({ onToggleSidebar, role: routeRole, className }: PortalHeaderProps) => {
+  const { user, role: authRole, reset } = useAuth();
+  const role = routeRole ?? authRole;
   const navigate = useNavigate();
   const unreadCount = useNotificationStore((s) => s.unreadCount);
   const [isSearchOpen, setIsSearchOpen] = useState(false);

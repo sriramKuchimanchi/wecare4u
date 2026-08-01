@@ -101,6 +101,7 @@ export const careRequestService = {
     const titleMap: Record<CareRequestStatus, string> = {
       requested: 'Care Request Submitted',
       accepted: 'Care Request Accepted',
+      employee_assigned: 'Employee Assigned',
       professional_assigned: 'Professional Assigned',
       on_the_way: 'Professional On The Way',
       arrived: 'Professional Arrived',
@@ -108,6 +109,7 @@ export const careRequestService = {
       completed: 'Care Service Completed',
       cancelled: 'Care Request Cancelled',
       pending: 'Pending Review',
+      awaiting_review: 'Awaiting Review',
     };
 
     const currentTimeline = requests[idx].timeline ? [...requests[idx].timeline!] : [];

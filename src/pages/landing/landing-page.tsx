@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Activity, Ambulance, ArrowRight, Bell, Brain, Calendar, Car, CheckCircle2, ChevronRight, Clock, FileText, FlaskConical, Heart, HeartHandshake, Lock, MapPin, MessageSquare, Pill, ShieldCheck, Siren, Sparkles, Stethoscope, Users, Video, type LucideIcon } from '@/config/icons';
+import { Activity, Ambulance, ArrowRight, Bell, Brain, Building2, Calendar, Car, CheckCircle2, ChevronRight, Clock, FileText, FlaskConical, Heart, HeartHandshake, Lock, MapPin, MessageSquare, Pill, ShieldCheck, Siren, Sparkles, Stethoscope, Users, Video, type LucideIcon } from '@/config/icons';
 import { Button } from '@/components/ui/button';
 import { APP_NAME, APP_TAGLINE } from '@/constants';
 
@@ -26,6 +26,14 @@ const platform: [LucideIcon, string, string][] = [
 ];
 const familyBenefits = ['Care timeline', 'Medical records', 'Appointments', 'AI guidance', 'Emergency support', 'Notifications'];
 const providerBenefits = ['Bookings', 'Employees', 'Availability', 'Schedules', 'Analytics', 'Reviews'];
+const clientLogos = [
+  ['AH', 'Apollo Hospitals'],
+  ['KIMS', 'KIMS Hospitals'],
+  ['FH', 'Fortis Healthcare'],
+  ['A', 'Aster'],
+  ['NH', 'Narayana Health'],
+  ['MH', 'Manipal Hospitals'],
+];
 
 const Benefits = ({ items }: { items: string[] }) => <ul className="grid grid-cols-2 gap-x-4 gap-y-3">{items.map((item) => <li key={item} className="flex items-center gap-2 text-sm"><CheckCircle2 className="h-4 w-4 text-secondary" />{item}</li>)}</ul>;
 const SectionLabel = ({ children }: { children: React.ReactNode }) => <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-secondary">{children}</p>;
@@ -33,7 +41,7 @@ const SectionLabel = ({ children }: { children: React.ReactNode }) => <p classNa
 export const LandingPage = () => (
   <div className="landing-page overflow-hidden bg-[#fffaf4] text-[#10243e]">
     <section className="landing-hero relative bg-[#f8e8d8] bg-[linear-gradient(rgba(16,36,62,0.045)_1px,transparent_1px),linear-gradient(90deg,rgba(16,36,62,0.045)_1px,transparent_1px)] bg-[size:42px_42px]">
-      <div className="container min-h-[680px] items-center py-14 lg:flex lg:py-20">
+      <div className="container min-h-[520px] items-center py-10 lg:flex lg:py-14">
         <div className="relative z-10 flex flex-col items-start gap-6">
           <h1 className="max-w-xl font-serif text-5xl font-bold leading-[0.98] tracking-tight md:text-6xl lg:text-[4.7rem]">Peace of mind for <span className="text-secondary">families.</span><br />Complete care for parents.</h1>
           <p className="max-w-lg text-base leading-7 text-[#53657b] md:text-lg">A calmer way to care for the people you love. Connect healthcare, home support, emergency response and every important update in one trusted place.</p>
@@ -44,6 +52,8 @@ export const LandingPage = () => (
     </section>
 
     <section className="border-b border-[#e7ddd2] py-8"><div className="container grid gap-6 text-center sm:grid-cols-4 sm:text-left"><div><p className="font-serif text-3xl font-bold text-secondary">24/7</p><p className="text-xs uppercase tracking-[0.14em] text-[#718096]">Support when needed</p></div><div><p className="font-serif text-3xl font-bold">1.5k+</p><p className="text-xs uppercase tracking-[0.14em] text-[#718096]">Verified providers</p></div><div><p className="font-serif text-3xl font-bold">4.9/5</p><p className="text-xs uppercase tracking-[0.14em] text-[#718096]">Family rating</p></div><div><p className="font-serif text-3xl font-bold">One app</p><p className="text-xs uppercase tracking-[0.14em] text-[#718096]">For every care moment</p></div></div></section>
+
+    <section className="border-b border-[#243b59] bg-[#10243e] py-14 text-white md:py-16"><div className="container"><div className="grid items-end gap-8 lg:grid-cols-[0.8fr_1.2fr]"><div><div className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-[#f5a06a]"><Building2 className="h-4 w-4" /> Care, trusted across India</div><h2 className="max-w-xl font-serif text-4xl font-bold leading-tight md:text-5xl">The care network<br /><span className="text-[#f5a06a]">families can count on.</span></h2><p className="mt-4 max-w-md text-sm leading-6 text-white/65">Designed to bring families, hospitals, clinicians and home-care teams into one clear circle of support.</p></div><div className="grid grid-cols-2 gap-3 sm:grid-cols-3">{clientLogos.map(([mark, name]) => <div key={name} className="group flex min-h-24 flex-col justify-between rounded-2xl border border-white/10 bg-white/[0.07] p-4 transition-colors hover:border-[#f5a06a]/60 hover:bg-white/10"><span className="text-2xl font-black tracking-tight text-white/90 group-hover:text-[#f5a06a]">{mark}</span><span className="text-xs font-semibold leading-tight text-white/60">{name}</span></div>)}</div></div><div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-white/10 pt-5 text-xs text-white/55"><span><strong className="text-white">6</strong> care networks featured</span><span><strong className="text-white">24/7</strong> coordination ready</span><span><strong className="text-white">One view</strong> for every family</span></div></div></section>
 
     <section id="services" className="container py-16 md:py-20"><div className="mb-9 flex flex-col gap-3 md:flex-row md:items-end md:justify-between"><div><SectionLabel>Care, connected</SectionLabel><h2 className="font-serif text-4xl font-bold md:text-5xl">Everything they need.<br /><span className="text-secondary">All in one place.</span></h2></div><p className="max-w-sm text-sm leading-6 text-[#718096]">From a quick check-in to long-term support, make every part of care easier to see and manage.</p></div><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{services.map(([Icon, title, description]) => <div key={title} className="group rounded-2xl border border-[#eadfd4] bg-white p-5 shadow-sm transition-all hover:-translate-y-1 hover:border-secondary/40 hover:shadow-lg"><span className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-[#fceddf] text-secondary"><Icon className="h-5 w-5" /></span><h3 className="font-semibold">{title}</h3><p className="mt-2 min-h-10 text-xs leading-5 text-[#718096]">{description}</p><Link to="/register" className="mt-4 flex items-center gap-1 text-xs font-bold text-secondary">Learn more <ArrowRight className="h-3.5 w-3.5" /></Link></div>)}</div></section>
 

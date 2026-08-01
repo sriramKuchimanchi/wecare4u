@@ -189,6 +189,10 @@
   padding-block: 96px;
 }
 
+.landing-page > section.landing-hero {
+  padding-block: 56px;
+}
+
 .landing-page > section.border-b {
   padding-block: 32px;
 }
@@ -208,7 +212,7 @@
 }
 
 .landing-page .landing-hero {
-  min-height: calc(100svh - 4rem);
+  min-height: 520px;
   background-image: linear-gradient(90deg, rgba(16, 36, 62, 0.94) 0%, rgba(16, 36, 62, 0.78) 45%, rgba(16, 36, 62, 0.3) 100%), url('https://images.pexels.com/photos/14558560/pexels-photo-14558560.jpeg?auto=compress&cs=tinysrgb&w=1800');
   background-position: center;
   background-size: cover;

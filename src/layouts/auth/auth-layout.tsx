@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Heart, ArrowLeft } from '@/config/icons';
+import { ArrowLeft, HeartPulse } from '@/config/icons';
 import { APP_NAME, APP_TAGLINE } from '@/constants';
 
 type AuthLayoutProps = {
@@ -19,14 +19,16 @@ export const AuthLayout = ({ title, subtitle, children, footer }: AuthLayoutProp
     {/* Brand panel */}
     <aside className="relative hidden flex-col justify-between overflow-hidden bg-primary p-10 text-primary-foreground md:flex md:w-1/2 lg:p-16">
       <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 20% 20%, white 0, transparent 40%), radial-gradient(circle at 80% 80%, white 0, transparent 35%)' }} />
+      <div className="absolute -bottom-24 -right-24 h-72 w-72 rounded-full border border-white/10 bg-white/5" />
       <Link to="/" className="relative flex items-center gap-2.5">
-        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm">
-          <Heart className="h-5 w-5" />
-        </span>
+        <img src="/logo.png" alt="We Care For You" className="h-12 w-12 rounded-xl object-contain" />
         <span className="text-lg font-bold">{APP_NAME}</span>
       </Link>
       <div className="relative flex flex-col gap-4">
-        <h2 className="max-w-md text-3xl font-bold leading-tight lg:text-4xl">
+          <div className="mb-2 flex h-11 w-11 items-center justify-center rounded-xl bg-secondary/20 text-secondary">
+            <HeartPulse className="h-6 w-6" />
+          </div>
+          <h2 className="max-w-md font-serif text-3xl font-bold leading-tight lg:text-5xl">
           Care that feels like family.
         </h2>
         <p className="max-w-md text-sm text-primary-foreground/80 lg:text-base">
@@ -45,9 +47,7 @@ export const AuthLayout = ({ title, subtitle, children, footer }: AuthLayoutProp
           <ArrowLeft className="h-4 w-4" /> Home
         </Link>
         <Link to="/" className="flex items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <Heart className="h-4 w-4" />
-          </span>
+          <img src="/logo.png" alt="We Care For You" className="h-8 w-8 object-contain" />
           <span className="text-sm font-bold text-foreground">{APP_NAME}</span>
         </Link>
       </div>

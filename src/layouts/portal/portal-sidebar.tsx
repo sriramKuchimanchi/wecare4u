@@ -3,10 +3,12 @@ import { icons, type IconName } from '@/config/icons';
 import { getNavConfig, type NavSection } from '@/config/navigation';
 import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
+import type { UserRole } from '@/types';
 
 type PortalSidebarProps = {
   collapsed?: boolean;
   onNavigate?: () => void;
+  role?: UserRole;
   className?: string;
 };
 
@@ -47,9 +49,9 @@ const SectionBlock = ({ section, onNavigate }: { section: NavSection; onNavigate
   </div>
 );
 
-export const PortalSidebar = ({ onNavigate, className }: PortalSidebarProps) => {
-  const { role } = useAuth();
-  const config = getNavConfig(role ?? 'family');
+export const PortalSidebar = ({ onNavigate, role: routeRole, className }: PortalSidebarProps) => {
+  const { role: authRole } = useAuth();
+  const config = getNavConfig(routeRole ?? authRole ?? 'family');
 
   return (
     <aside className={cn('flex h-full w-full flex-col overflow-y-auto bg-surface p-4', className)}>

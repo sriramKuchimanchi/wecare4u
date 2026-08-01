@@ -51,7 +51,7 @@ export const PortalLayout = () => {
   return (
     <div className="flex min-h-dvh flex-col bg-background">
       {/* Full-width top header */}
-      <PortalHeader onToggleSidebar={() => setMobileOpen(true)} />
+      <PortalHeader role={role} onToggleSidebar={() => setMobileOpen(true)} />
 
       {/* Mobile sidebar drawer */}
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
@@ -60,7 +60,7 @@ export const PortalLayout = () => {
             <SheetTitle>Navigation Menu</SheetTitle>
             <SheetDescription>Mobile navigation sidebar</SheetDescription>
           </SheetHeader>
-          <PortalSidebar onNavigate={() => setMobileOpen(false)} />
+          <PortalSidebar role={role} onNavigate={() => setMobileOpen(false)} />
         </SheetContent>
       </Sheet>
 
@@ -69,7 +69,7 @@ export const PortalLayout = () => {
         {/* Desktop sidebar */}
         <div className="hidden w-64 shrink-0 border-r border-border lg:block">
           <div className="sticky top-16 h-[calc(100dvh-4rem)] overflow-y-auto">
-            <PortalSidebar />
+            <PortalSidebar role={role} />
           </div>
         </div>
 

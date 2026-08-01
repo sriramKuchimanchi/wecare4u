@@ -4,7 +4,7 @@
  */
 import {
   Home, Users, User, Heart, Calendar, Phone, Mail, Bell, Settings, LogOut,
-  Menu, X, Search, ChevronRight, ChevronLeft, ChevronDown, ChevronUp,
+  Menu, X, Search, SearchX, WifiOff, ChevronRight, ChevronLeft, ChevronDown, ChevronUp,
   Plus, Minus, Check, CheckCircle, AlertCircle, AlertTriangle, Info,
   Clock, MapPin, MessageSquare, Shield, Activity, Pill, Stethoscope,
   Ambulance, FlaskConical, Car, FileText, Download, Upload, Edit, Trash2,
@@ -33,7 +33,7 @@ import {
 
 export const icons = {
   Home, Users, User, Heart, Calendar, Phone, Mail, Bell, Settings, LogOut,
-  Menu, X, Search, ChevronRight, ChevronLeft, ChevronDown, ChevronUp,
+  Menu, X, Search, SearchX, WifiOff, ChevronRight, ChevronLeft, ChevronDown, ChevronUp,
   Plus, Minus, Check, CheckCircle, AlertCircle, AlertTriangle, Info,
   Clock, MapPin, MessageSquare, Shield, Activity, Pill, Stethoscope,
   Ambulance, FlaskConical, Car, FileText, Download, Upload, Edit, Trash2,

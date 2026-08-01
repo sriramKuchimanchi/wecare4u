@@ -23,6 +23,7 @@ export const ProviderDetailPage = () => {
 
   if (isLoading) return <div className="flex h-96 items-center justify-center"><icons.Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
   if (!provider) return <div className="text-center py-12 text-muted-foreground">Provider not found.</div>;
+  const reviews = provider.reviews ?? [];
 
   return (
     <div className="space-y-6 pb-8">
@@ -138,13 +139,13 @@ export const ProviderDetailPage = () => {
       )}
 
       {/* Reviews */}
-      {provider.reviews?.length > 0 && (
+      {reviews.length > 0 && (
         <div className="rounded-2xl bg-surface border border-border/60 shadow-xs overflow-hidden">
           <div className="px-5 py-4 border-b border-border/50">
-            <h2 className="font-bold text-foreground">Reviews ({provider.reviews.length})</h2>
+            <h2 className="font-bold text-foreground">Reviews ({reviews.length})</h2>
           </div>
           <div className="divide-y divide-border/40">
-            {provider.reviews.slice(0, 5).map((rev: any) => (
+            {reviews.slice(0, 5).map((rev: any) => (
               <div key={rev.id} className="px-5 py-3">
                 <div className="flex items-center gap-2 mb-1">
                   <span className="font-medium text-sm text-foreground">{rev.reviewerName}</span>
