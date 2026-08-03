@@ -78,6 +78,89 @@ export const mockFamilies: Family[] = [
 ];
 
 export const mockCareProviders: CareProvider[] = [
+    {
+    id: 'prov_h1', name: 'Apollo Hospitals', type: 'hospital',
+    description: 'Multi-specialty hospital network offering emergency admission coordination, ICU care, and specialist consultations for seniors.',
+    contact: { phone: '+91 22 2692 5000', email: 'care@apollohospitals.com' },
+    address: { line1: 'Mahalaxmi', city: 'Mumbai', state: 'Maharashtra', postalCode: '400034', country: 'India' },
+    rating: 4.9, reviewCount: 720, isVerified: true,
+    services: ['Emergency Admission', 'ICU Care', 'Specialist Consultation', 'Cardiac Care', 'Surgical Care'],
+    experienceYears: 25, startingPrice: 3000, currency: '₹', distanceKm: 3.5, estimatedArrivalMinutes: 15, availability: 'available',
+    employees: [
+      { id: 'emp_prov_h1', name: 'Dr. Anil Kapoor', role: 'Senior Cardiologist', experience: '18 years', rating: 4.9, availability: 'Available today' },
+      { id: 'emp_prov_h2', name: 'Dr. Priyanka Deshmukh', role: 'Emergency Medicine Specialist', experience: '12 years', rating: 4.8, availability: 'Available now' },
+    ],
+    reviews: [
+      { id: 'rev_h1', reviewerName: 'Manoj T.', rating: 5, comment: 'Fastest emergency admission for my mother. Coordinated care from arrival to discharge.', createdAt: daysAgo(6) },
+      { id: 'rev_h2', reviewerName: 'Kavita R.', rating: 5, comment: 'Trusted hospital network with excellent specialist doctors.', createdAt: daysAgo(18) },
+    ],
+    createdAt: daysAgo(400), updatedAt: daysAgo(1),
+  },
+  {
+    id: 'prov_h2', name: 'KIMS Hospitals', type: 'hospital',
+    description: 'Krishna Institute of Medical Sciences — leading multi-specialty hospital chain known for geriatric and critical care.',
+    contact: { phone: '+91 22 2857 4000', email: 'contact@kimshospitals.com' },
+    address: { line1: 'Saki Naka', city: 'Mumbai', state: 'Maharashtra', postalCode: '400072', country: 'India' },
+    rating: 4.85, reviewCount: 540, isVerified: true,
+    services: ['Emergency Admission', 'Geriatric Ward Care', 'Neurology', 'Orthopedic Surgery', 'Dialysis'],
+    experienceYears: 20, startingPrice: 2800, currency: '₹', distanceKm: 5.1, estimatedArrivalMinutes: 20, availability: 'available',
+    employees: [
+      { id: 'emp_prov_h3', name: 'Dr. Ramesh Iyer', role: 'Senior Neurologist', experience: '16 years', rating: 4.85, availability: 'Available today' },
+      { id: 'emp_prov_h4', name: 'Dr. Lakshmi Menon', role: 'Nephrologist', experience: '14 years', rating: 4.8, availability: 'Available tomorrow' },
+    ],
+    reviews: [
+      { id: 'rev_h3', reviewerName: 'Ashwin P.', rating: 5, comment: 'KIMS took excellent care of my grandfather during his dialysis sessions.', createdAt: daysAgo(9) },
+    ],
+    createdAt: daysAgo(380), updatedAt: daysAgo(2),
+  },
+  {
+    id: 'prov_h3', name: 'Fortis Healthcare', type: 'hospital',
+    description: 'Nationally accredited hospital network with dedicated senior citizen care programs and 24/7 emergency response.',
+    contact: { phone: '+91 22 6754 3333', email: 'care@fortishealthcare.com' },
+    address: { line1: 'Mulund Goregaon Link Road', city: 'Mumbai', state: 'Maharashtra', postalCode: '400078', country: 'India' },
+    rating: 4.8, reviewCount: 610, isVerified: true,
+    services: ['Emergency Admission', 'Oncology', 'Cardiac Surgery', 'Senior Citizen Health Packages'],
+    experienceYears: 22, startingPrice: 3200, currency: '₹', distanceKm: 6.2, estimatedArrivalMinutes: 22, availability: 'available',
+    employees: [
+      { id: 'emp_prov_h5', name: 'Dr. Neha Kulkarni', role: 'Senior Oncologist', experience: '17 years', rating: 4.8, availability: 'Available today' },
+    ],
+    reviews: [
+      { id: 'rev_h4', reviewerName: 'Rakesh S.', rating: 5, comment: 'Fortis handled my father\'s cardiac surgery with great care and clear communication.', createdAt: daysAgo(14) },
+    ],
+    createdAt: daysAgo(370), updatedAt: daysAgo(3),
+  },
+  {
+    id: 'prov_h4', name: 'Manipal Hospitals', type: 'hospital',
+    description: 'Comprehensive multi-specialty hospital chain offering advanced diagnostics, surgery, and elderly rehabilitation care.',
+    contact: { phone: '+91 22 6969 6969', email: 'info@manipalhospitals.com' },
+    address: { line1: 'Ghodbunder Road', city: 'Thane', state: 'Maharashtra', postalCode: '400607', country: 'India' },
+    rating: 4.82, reviewCount: 495, isVerified: true,
+    services: ['Emergency Admission', 'Advanced Diagnostics', 'Joint Replacement', 'Elderly Rehabilitation'],
+    experienceYears: 19, startingPrice: 2700, currency: '₹', distanceKm: 8.4, estimatedArrivalMinutes: 28, availability: 'available',
+    employees: [
+      { id: 'emp_prov_h6', name: 'Dr. Sameer Joshi', role: 'Orthopedic Surgeon', experience: '15 years', rating: 4.82, availability: 'Available today' },
+    ],
+    reviews: [
+      { id: 'rev_h5', reviewerName: 'Deepa N.', rating: 5, comment: 'Smooth joint replacement surgery and thorough rehabilitation follow-up for my mother.', createdAt: daysAgo(22) },
+    ],
+    createdAt: daysAgo(360), updatedAt: daysAgo(4),
+  },
+  {
+    id: 'prov_h5', name: 'Max Healthcare', type: 'hospital',
+    description: 'Premier hospital network offering critical care, specialist consultations, and coordinated emergency transport for seniors.',
+    contact: { phone: '+91 22 4933 4444', email: 'support@maxhealthcare.in' },
+    address: { line1: 'Vikhroli West', city: 'Mumbai', state: 'Maharashtra', postalCode: '400079', country: 'India' },
+    rating: 4.88, reviewCount: 580, isVerified: true,
+    services: ['Emergency Admission', 'Critical Care', 'Pulmonology', 'Senior Health Checkups'],
+    experienceYears: 21, startingPrice: 3100, currency: '₹', distanceKm: 4.9, estimatedArrivalMinutes: 18, availability: 'available',
+    employees: [
+      { id: 'emp_prov_h7', name: 'Dr. Farhan Sheikh', role: 'Senior Pulmonologist', experience: '16 years', rating: 4.88, availability: 'Available now' },
+    ],
+    reviews: [
+      { id: 'rev_h6', reviewerName: 'Sunita W.', rating: 5, comment: 'Max Healthcare\'s critical care team stabilized my father quickly during his emergency.', createdAt: daysAgo(11) },
+    ],
+    createdAt: daysAgo(350), updatedAt: daysAgo(1),
+  },
   {
     id: 'prov_1', name: 'Aastha Senior Home Care & Rehab', type: 'home-care',
     description: 'Premier home healthcare & geriatric support. Experienced registered nurses, certified caregivers, and physiotherapists.',

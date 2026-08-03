@@ -25,7 +25,7 @@ import {
   Laugh, Angry, Glasses, Focus,
   Maximize, Minimize, ZoomIn, ZoomOut, Expand, Shrink, Compass,
   Navigation, MapPinned, Map, Globe2, Plane, Rocket, Ship, Train,
-  Bus, CarFront, Bike, Footprints, Accessibility,
+  Bus, CarFront, Bike, Footprints, Accessibility, SlidersHorizontal,
   Construction, SkipForward, Pencil, CheckCheck, HeartPulse, Wrench,
   CheckCircle2, XCircle, ShieldAlert, Bot, Image, Truck, ShieldCheck,
   type LucideIcon,
@@ -34,7 +34,7 @@ import {
 
 
 export const icons = {
-  Home, Users, User, Heart, Calendar, Phone, Mail, Bell, Settings, LogOut,
+  Home, Users, User, Heart, Calendar, Phone, Mail, Bell, Settings, LogOut, SlidersHorizontal,
   Menu, X, Search, SearchX, WifiOff, ChevronRight, ChevronLeft, ChevronDown, ChevronUp,
   Plus, Minus, Check, CheckCircle, AlertCircle, AlertTriangle, Info,
   Clock, MapPin, MessageSquare, Shield, Activity, Pill, Stethoscope,

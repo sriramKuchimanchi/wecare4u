@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { icons } from '@/config/icons';
 import { Button } from '@/components/ui/button';
@@ -30,6 +30,13 @@ const availBadge: Record<string, string> = {
   on_leave: 'bg-blue-100 text-blue-700',
 };
 
+const VERIFICATION_OPTIONS = ['all', 'approved', 'pending', 'rejected', 'suspended'] as const;
+const ROLE_OPTIONS: { value: 'all' | 'provider' | 'employee'; label: string }[] = [
+  { value: 'all', label: 'All Types' },
+  { value: 'provider', label: 'Providers' },
+  { value: 'employee', label: 'Employees' },
+];
+
 type CombinedRow = {
   id: string;
   type: 'provider' | 'employee';
@@ -48,6 +55,9 @@ export const ProvidersPage = () => {
   const { providerFilters, setProviderFilters } = useAdminStore();
   const [search, setSearch] = useState(providerFilters.search ?? '');
   const [verifFilter, setVerifFilter] = useState(providerFilters.verificationStatus ?? 'all');
+  const [roleFilter, setRoleFilter] = useState<'all' | 'provider' | 'employee'>('all');
+  const [showFilters, setShowFilters] = useState(false);
+  const filterPanelRef = useRef<HTMLDivElement>(null);
   const [page, setPage] = useState(1);
   const [rejectId, setRejectId] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState('');
@@ -60,6 +70,8 @@ export const ProvidersPage = () => {
   const rejectMutation = useRejectProviderMutation();
   const suspendMutation = useSuspendProviderMutation();
   const approveEmployeeMutation = useApproveEmployeeMutation();
+
+  const activeFilterCount = (verifFilter !== 'all' ? 1 : 0) + (roleFilter !== 'all' ? 1 : 0);
 
   const combined = useMemo<CombinedRow[]>(() => {
     const providerRows = providers.map((prov: any) => ({
@@ -91,9 +103,10 @@ export const ProvidersPage = () => {
     return merged.filter((item) => {
       const matchesQuery = !q || item.name.toLowerCase().includes(q) || item.organization.toLowerCase().includes(q) || item.role.toLowerCase().includes(q) || item.location.toLowerCase().includes(q);
       const matchesStatus = status === 'all' || item.status === status;
-      return matchesQuery && matchesStatus;
+      const matchesRole = roleFilter === 'all' || item.type === roleFilter;
+      return matchesQuery && matchesStatus && matchesRole;
     });
-  }, [providers, employees, search, verifFilter, providerFilters.search, providerFilters.verificationStatus]);
+  }, [providers, employees, search, verifFilter, roleFilter, providerFilters.search, providerFilters.verificationStatus]);
 
   const pagedRows = useMemo(() => {
     const start = (page - 1) * pageSize;
@@ -105,6 +118,19 @@ export const ProvidersPage = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setProviderFilters({ search, verificationStatus: verifFilter });
+    setPage(1);
+  };
+
+  const handleApplyFilters = () => {
+    setProviderFilters({ search, verificationStatus: verifFilter });
+    setPage(1);
+    setShowFilters(false);
+  };
+
+  const handleResetFilters = () => {
+    setVerifFilter('all');
+    setRoleFilter('all');
+    setProviderFilters({ search, verificationStatus: 'all' });
     setPage(1);
   };
 
@@ -153,20 +179,96 @@ export const ProvidersPage = () => {
         </div>
       </div>
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <form onSubmit={handleSearch} className="flex flex-1 gap-2">
-          <div className="relative flex-1">
+      <div className="flex flex-row items-center gap-2">
+        <form onSubmit={handleSearch} className="flex flex-1 min-w-0 gap-2">
+          <div className="relative flex-1 min-w-0">
             <icons.Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search provider, employee, organization..." className="w-full rounded-lg border border-border bg-background pl-9 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search provider, employee..."
+              className="w-full rounded-lg border border-border bg-background pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+            />
           </div>
-          <Button type="submit" size="sm" className="bg-primary text-white">Search</Button>
+          <Button type="submit" size="sm" className="bg-primary text-white shrink-0">
+            <icons.Search className="h-4 w-4 sm:hidden" />
+            <span className="hidden sm:inline">Search</span>
+          </Button>
         </form>
-        <div className="flex flex-wrap gap-2">
-          {['all', 'approved', 'pending', 'rejected', 'suspended'].map((s) => (
-            <button key={s} onClick={() => { setVerifFilter(s); setProviderFilters({ verificationStatus: s, search }); setPage(1); }} className={cn('px-3 py-1.5 text-xs font-semibold rounded-lg capitalize border transition-colors', verifFilter === s ? 'bg-primary text-white border-primary' : 'bg-surface text-muted-foreground border-border hover:border-primary')}>
-              {s === 'all' ? 'All' : s}
-            </button>
-          ))}
+
+        <div className="relative shrink-0" ref={filterPanelRef}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowFilters((prev) => !prev)}
+            className={cn('relative', activeFilterCount > 0 && 'border-primary text-primary')}
+          >
+            <icons.SlidersHorizontal className="h-4 w-4 sm:mr-2" />
+            <span className="hidden sm:inline">Filters</span>
+            {activeFilterCount > 0 && (
+              <span className="ml-1.5 sm:ml-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">
+                {activeFilterCount}
+              </span>
+            )}
+          </Button>
+
+          {showFilters && (
+            <div className="absolute right-0 z-40 mt-2 w-64 sm:w-72 max-w-[90vw] rounded-2xl border border-border bg-background p-4 shadow-2xl">
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="text-sm font-bold text-foreground">Filter Results</h4>
+                <button onClick={() => setShowFilters(false)} className="text-muted-foreground hover:text-foreground">
+                  <icons.X className="h-4 w-4" />
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Role</p>
+                  <div className="flex flex-wrap gap-2">
+                    {ROLE_OPTIONS.map((opt) => (
+                      <button
+                        key={opt.value}
+                        onClick={() => setRoleFilter(opt.value)}
+                        className={cn(
+                          'px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors',
+                          roleFilter === opt.value ? 'bg-primary text-white border-primary' : 'bg-surface text-muted-foreground border-border hover:border-primary'
+                        )}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Verification Status</p>
+                  <div className="flex flex-wrap gap-2">
+                    {VERIFICATION_OPTIONS.map((s) => (
+                      <button
+                        key={s}
+                        onClick={() => setVerifFilter(s)}
+                        className={cn(
+                          'px-3 py-1.5 text-xs font-semibold rounded-lg capitalize border transition-colors',
+                          verifFilter === s ? 'bg-primary text-white border-primary' : 'bg-surface text-muted-foreground border-border hover:border-primary'
+                        )}
+                      >
+                        {s === 'all' ? 'All' : s}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-4 flex gap-2 border-t border-border pt-3">
+                <Button variant="outline" size="sm" className="flex-1" onClick={handleResetFilters}>
+                  Reset
+                </Button>
+                <Button size="sm" className="flex-1 bg-primary text-white" onClick={handleApplyFilters}>
+                  Apply
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
