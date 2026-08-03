@@ -2,10 +2,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import {
   ArrowLeft, Pencil, Phone, Mail, MapPin, Heart, Shield, Calendar, Activity, FileText, Users,
 } from '@/config/icons';
-import { PageHeader, SectionHeader, EmptyState, StatusIndicator } from '@/components/shared';
+import { PageHeader, SectionHeader, EmptyState, StatusIndicator, AppAvatar } from '@/components/shared';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton, SkeletonText } from '@/components/shared/skeleton';
 import {
@@ -52,12 +51,7 @@ export const FamilyMemberProfilePage = () => {
 
       {/* Header card */}
       <Card className="flex flex-col gap-4 p-5 md:flex-row md:items-center">
-        <Avatar className="h-20 w-20 border border-border">
-          {member.avatarUrl && <AvatarImage src={member.avatarUrl} alt={member.name} />}
-          <AvatarFallback className="bg-primary/10 text-lg font-bold text-primary">
-            {member.name.split(' ').map((n) => n[0]).slice(0, 2).join('')}
-          </AvatarFallback>
-        </Avatar>
+        <AppAvatar src={member.avatarUrl} name={member.name} className="h-20 w-20 rounded-full border border-border" />
         <div className="flex flex-1 flex-col gap-2">
           <div className="flex flex-wrap items-center gap-2">
             <h1 className="text-2xl font-bold text-foreground">{member.name}</h1>

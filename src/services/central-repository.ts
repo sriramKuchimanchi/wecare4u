@@ -868,6 +868,28 @@ export const categoryRepository = {
     }));
   },
 
+  create(data: any) {
+    const db = getDb();
+    if (!db.categories) {
+      db.categories = [];
+    }
+    const newCategory = {
+      id: data.id || createId('cat'),
+      name: data.name || 'New Category',
+      icon: data.icon || 'Sparkles',
+      description: data.description || '',
+      color: data.color || '#3B82F6',
+      enabled: data.enabled ?? true,
+      items: data.items || [],
+      createdAt: nowISO(),
+      updatedAt: nowISO(),
+      ...data,
+    };
+    db.categories.push(newCategory);
+    emitChange('category:created', { id: newCategory.id });
+    return newCategory;
+  },
+
   toggle(id: string) {
     const db = getDb();
     const cat = (db.categories ?? []).find((c: any) => c.id === id);
@@ -875,12 +897,22 @@ export const categoryRepository = {
     emitChange('category:toggled', { id });
   },
 
-  create(data: any) {
+  update(id: string, patch: any) {
     const db = getDb();
-    const cat = { id: createId('cat'), ...data, enabled: true, providerCount: 0, requestCount: 0, createdAt: nowISO(), updatedAt: nowISO() };
-    (db.categories ?? []).unshift(cat);
-    emitChange('category:created', { id: cat.id });
+    const cat = (db.categories ?? []).find((c: any) => c.id === id);
+    if (cat) {
+      Object.assign(cat, patch, { updatedAt: nowISO() });
+      emitChange('category:updated', { id });
+    }
     return cat;
+  },
+
+  delete(id: string) {
+    const db = getDb();
+    if (db.categories) {
+      db.categories = db.categories.filter((c: any) => c.id !== id);
+      emitChange('category:deleted', { id });
+    }
   },
 };
 

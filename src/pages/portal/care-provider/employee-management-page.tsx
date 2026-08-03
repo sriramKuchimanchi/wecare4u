@@ -14,6 +14,8 @@ import { EmployeeFormModal } from './employee-form-modal';
 import type { Employee } from '@/types';
 import { cn } from '@/lib/utils';
 
+import { AppAvatar } from '@/components/shared';
+
 export const EmployeeManagementPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -169,10 +171,10 @@ export const EmployeeManagementPage = () => {
                 {/* Employee Header */}
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
-                    <img
-                      src={emp.avatarUrl || 'https://images.unsplash.com/photo-1594824813566-7885a3964478?auto=format&fit=crop&q=80&w=200'}
-                      alt={emp.name}
-                      className="h-12 w-12 rounded-xl object-cover border border-primary/20"
+                    <AppAvatar
+                      src={emp.avatarUrl}
+                      name={emp.name}
+                      className="h-12 w-12 rounded-xl border border-primary/20"
                     />
                     <div>
                       <h3 className="text-base font-bold text-foreground">{emp.name}</h3>

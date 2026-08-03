@@ -17,7 +17,6 @@ import { RecentRequestsPage } from './family/recent-requests-page';
 import { FamilyTimelinePage } from './family/family-timeline-page';
 import { FamilyNotificationsPage } from './family/family-notifications-page';
 import { FamilyProfilePage } from './family/family-profile-page';
-import { FamilySearchPage } from './family/family-search-page';
 import { FamilyAppointmentsPage } from './family/family-appointments-page';
 
 // ─── Service Provider Portal ──────────────────────────────────────────────────
@@ -105,7 +104,6 @@ const FamilyPortalRouter = ({ sub }: { sub: string[] }) => {
   if (first === 'timeline') return <FamilyTimelinePage />;
   if (first === 'notifications') return <FamilyNotificationsPage />;
   if (first === 'profile') return <FamilyProfilePage />;
-  if (first === 'search') return <FamilySearchPage />;
   if (first === 'appointments') return <FamilyAppointmentsPage />;
 
   return <FamilyHomePage />;

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { icons } from '@/config/icons';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { AppAvatar } from '@/components/shared';
 import { useAdminEmployeesQuery, useApproveEmployeeMutation, useSuspendEmployeeMutation } from '@/hooks/use-portal-queries';
 import { useAdminStore } from '@/store/admin.store';
 
@@ -112,13 +113,7 @@ export const AdminEmployeesPage = () => {
                   <tr key={emp.id} className="border-b border-border/40 hover:bg-muted/20 transition-colors">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        {emp.avatarUrl ? (
-                          <img src={emp.avatarUrl} alt={emp.name} className="h-10 w-10 rounded-full object-cover shrink-0" />
-                        ) : (
-                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 text-purple-700 font-bold text-sm shrink-0">
-                            {emp.name.charAt(0)}
-                          </div>
-                        )}
+                        <AppAvatar src={emp.avatarUrl} name={emp.name} className="h-10 w-10 rounded-full shrink-0" />
                         <div>
                           <p className="font-semibold text-foreground">{emp.name}</p>
                           <p className="text-xs text-muted-foreground">{emp.role}</p>

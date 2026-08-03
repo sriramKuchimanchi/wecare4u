@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { useProviderOrgProfileQuery, useUpdateOrgProfileMutation } from '@/hooks/use-portal-queries';
 import type { OrganizationProfile } from '@/types';
+import { AppAvatar } from '@/components/shared';
 
 export const OrganizationProfilePage = () => {
   const { toast } = useToast();
@@ -54,10 +55,11 @@ export const OrganizationProfilePage = () => {
         {/* Verification Banner */}
         <div className="rounded-2xl bg-surface p-6 border border-border/60 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <img
-              src={formData.logoUrl || 'https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=200'}
-              alt={formData.name}
-              className="h-16 w-16 rounded-2xl object-cover border-2 border-primary/20"
+            <AppAvatar
+              src={formData.logoUrl}
+              name={formData.name}
+              fallbackType="building"
+              className="h-16 w-16 rounded-2xl border-2 border-primary/20"
             />
             <div>
               <div className="flex items-center gap-2">

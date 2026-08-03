@@ -3,10 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import {
   User, Users, Shield, MapPin, Bell, Globe, Lock, LogOut, Pencil, ChevronRight, Phone, Mail,
 } from '@/config/icons';
-import { PageHeader, SectionHeader } from '@/components/shared';
+import { PageHeader, SectionHeader, AppAvatar } from '@/components/shared';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/use-auth';
 import { useLogoutMutation } from '@/hooks/use-auth-mutations';
@@ -73,10 +72,7 @@ export const FamilyProfilePage = () => {
 
       {/* Account header */}
       <Card className="flex flex-col gap-4 p-5 md:flex-row md:items-center">
-        <Avatar className="h-20 w-20 border border-border">
-          {user?.avatarUrl && <AvatarImage src={user.avatarUrl} alt={user.name} />}
-          <AvatarFallback className="bg-primary/10 text-lg font-bold text-primary">{initials}</AvatarFallback>
-        </Avatar>
+        <AppAvatar src={user?.avatarUrl} name={user?.name} className="h-20 w-20 rounded-full border border-border" />
         <div className="flex flex-1 flex-col gap-1">
           <h2 className="text-xl font-bold text-foreground">{user?.name ?? 'Family Account'}</h2>
           <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">

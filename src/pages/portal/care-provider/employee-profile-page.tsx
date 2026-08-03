@@ -3,6 +3,7 @@ import { icons } from '@/config/icons';
 import { Button } from '@/components/ui/button';
 import { useProviderEmployeeDetailQuery, useProviderRequestsQuery } from '@/hooks/use-portal-queries';
 import { cn } from '@/lib/utils';
+import { AppAvatar } from '@/components/shared';
 
 export const EmployeeProfilePage = () => {
   const { id } = useParams<{ id: string }>();
@@ -39,10 +40,10 @@ export const EmployeeProfilePage = () => {
       {/* Main Profile Header Card */}
       <div className="rounded-2xl bg-surface p-6 border border-border/60 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
-          <img
-            src={employee.avatarUrl || 'https://images.unsplash.com/photo-1594824813566-7885a3964478?auto=format&fit=crop&q=80&w=200'}
-            alt={employee.name}
-            className="h-20 w-20 rounded-2xl object-cover border-2 border-primary/20 shadow-sm"
+          <AppAvatar
+            src={employee.avatarUrl}
+            name={employee.name}
+            className="h-20 w-20 rounded-2xl border-2 border-primary/20 shadow-sm"
           />
           <div className="space-y-1">
             <div className="flex items-center gap-2">

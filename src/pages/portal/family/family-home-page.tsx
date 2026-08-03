@@ -3,10 +3,9 @@ import {
   Heart, Siren, Pill, Activity, Users, Calendar,
   Bell, Sparkles, ArrowRight, HandHeart, LifeBuoy, Search, CheckCircle,
 } from '@/config/icons';
-import { PageHeader, SectionHeader, EmptyState, StatusIndicator } from '@/components/shared';
+import { PageHeader, SectionHeader, EmptyState, StatusIndicator, AppAvatar } from '@/components/shared';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/use-auth';
 import {
@@ -158,12 +157,7 @@ export const FamilyHomePage = () => {
                   onClick={() => navigate(`/portal/family/members/${member.id}`)}
                   className="flex items-start gap-3 rounded-xl border border-border bg-card p-4 text-left transition-colors hover:border-primary"
                 >
-                  <Avatar className="h-12 w-12 border border-border">
-                    {member.avatarUrl && <AvatarImage src={member.avatarUrl} alt={member.name} />}
-                    <AvatarFallback className="bg-primary/10 text-sm font-semibold text-primary">
-                      {member.name.split(' ').map((n) => n[0]).slice(0, 2).join('')}
-                    </AvatarFallback>
-                  </Avatar>
+                  <AppAvatar src={member.avatarUrl} name={member.name} className="h-12 w-12 rounded-full border border-border" />
                   <div className="flex flex-1 flex-col gap-1">
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-sm font-semibold text-foreground">{member.name}</span>

@@ -50,7 +50,6 @@ export const NAV_CONFIG: Record<UserRole, NavConfig> = {
         items: [
           placeholder('Family Members', '/portal/family/members', 'Users'),
           placeholder('Appointments', '/portal/family/appointments', 'Calendar'),
-          placeholder('Search', '/portal/family/search', 'Search'),
         ],
       },
     ],

@@ -1,27 +1,26 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Loader2, Heart, Users, Briefcase, Shield, ArrowLeft, ArrowRight } from '@/config/icons';
+import { Loader2, Heart, Briefcase, Shield, ArrowLeft, ArrowRight } from '@/config/icons';
 import { AuthLayout } from '@/layouts';
 import { FormWrapper, TextField, CheckboxField } from '@/components/shared';
 import { Button } from '@/components/ui/button';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import {
-  providerLoginSchema, employeeLoginSchema, adminLoginSchema,
-  type ProviderLoginInput, type EmployeeLoginInput, type AdminLoginInput,
+  providerLoginSchema, adminLoginSchema,
+  type ProviderLoginInput, type AdminLoginInput,
 } from '@/lib/schemas';
 import {
-  useLoginProviderMutation, useLoginEmployeeMutation, useLoginAdminMutation,
+  useLoginProviderMutation, useLoginAdminMutation,
   useSendOtpMutation, useVerifyOtpMutation,
 } from '@/hooks/use-auth-mutations';
 import { ROUTES } from '@/constants/routes';
 import { ROLE_LABELS } from '@/constants';
 import type { UserRole } from '@/types';
 
-type LoginRole = UserRole;
+type LoginRole = Extract<UserRole, 'care-provider' | 'family' | 'admin'>;
 
-const roleCards: { role: LoginRole; label: string; description: string; icon: typeof Users }[] = [
-  { role: 'care-provider', label: 'Service Provider Portal', description: 'Operations, employee management & requests.', icon: Briefcase },
-  { role: 'employee', label: 'Employee Field Portal', description: 'Patient schedule, care notes & status workflow.', icon: Users },
+const roleCards: { role: LoginRole; label: string; description: string; icon: typeof Briefcase }[] = [
+  { role: 'care-provider', label: 'Service Provider Portal', description: 'Organizations, individuals & field employees — manage requests, schedules & care.', icon: Briefcase },
   { role: 'family', label: 'Family Portal', description: 'Coordinate care & track family health.', icon: Heart },
   { role: 'admin', label: 'Administrator Portal', description: 'Platform administration & metrics.', icon: Shield },
 ];
@@ -47,11 +46,6 @@ const FamilyLoginForm = () => {
   const handleVerify = async () => {
     if (!phone.trim() || !otp.trim()) return;
     await verifyOtp.mutateAsync({ target: phone.trim(), otp: otp.trim(), remember });
-    navigate(ROUTES.family, { replace: true });
-  };
-
-  const handleDemoSignIn = async () => {
-    await verifyOtp.mutateAsync({ target: DEMO_PHONE, otp: DEMO_OTP, remember: true });
     navigate(ROUTES.family, { replace: true });
   };
 
@@ -99,9 +93,6 @@ const FamilyLoginForm = () => {
           </Button>
         </div>
       )}
-      {/* <Button type="button" variant="outline" onClick={handleDemoSignIn} disabled={verifyOtp.isPending} className="w-full">
-        Continue with demo family
-      </Button> */}
     </div>
   );
 };
@@ -129,34 +120,6 @@ const ProviderLoginForm = () => {
             <Button type="submit" disabled={login.isPending} className="w-full">
               {login.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Login to Service Provider Portal
-            </Button>
-          </>
-        )}
-      </FormWrapper>
-    </div>
-  );
-};
-
-const EmployeeLoginForm = () => {
-  const navigate = useNavigate();
-  const login = useLoginEmployeeMutation();
-
-  const onSubmit = async (values: EmployeeLoginInput) => {
-    await login.mutateAsync({ identifier: values.identifier || 'demo.employee@example.com', password: values.password || 'demo1234', remember: values.remember });
-    navigate(ROUTES.employee, { replace: true });
-  };
-
-  return (
-    <div className="space-y-4">
-      <FormWrapper schema={employeeLoginSchema} onSubmit={onSubmit} defaultValues={{ identifier: 'demo.employee@example.com', password: 'demo1234', remember: false }}>
-        {() => (
-          <>
-            <TextField name="identifier" label="Employee ID or Email" placeholder="EMP-1234 or anjali.employee@example.com" autoComplete="username" />
-            <TextField name="password" label="Password" type="password" placeholder="••••••••" autoComplete="current-password" />
-            <CheckboxField name="remember" label="Remember me" checkboxLabel="Keep me signed in" />
-            <Button type="submit" disabled={login.isPending} className="w-full">
-              {login.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Login to Employee Portal
             </Button>
           </>
         )}
@@ -196,13 +159,17 @@ const AdminLoginForm = () => {
 const roleForms: Record<LoginRole, React.ReactNode> = {
   family: <FamilyLoginForm />,
   'care-provider': <ProviderLoginForm />,
-  employee: <EmployeeLoginForm />,
   admin: <AdminLoginForm />,
+};
+
+const roleLabels: Record<LoginRole, string> = {
+  family: ROLE_LABELS['family'],
+  'care-provider': ROLE_LABELS['care-provider'],
+  admin: ROLE_LABELS['admin'],
 };
 
 export const LoginPage = () => {
   const [selectedRole, setSelectedRole] = useState<LoginRole | null>(null);
-  const navigate = useNavigate();
 
   const handleRoleCardClick = (role: LoginRole) => {
     setSelectedRole(role);
@@ -210,7 +177,7 @@ export const LoginPage = () => {
 
   return (
     <AuthLayout
-      title={selectedRole ? `Login as ${ROLE_LABELS[selectedRole]}` : 'Welcome back'}
+      title={selectedRole ? `Login as ${roleLabels[selectedRole]}` : 'Welcome back'}
       subtitle={selectedRole ? 'Enter your credentials to continue.' : 'Select your account type below to log in.'}
       footer={
         <>

@@ -202,12 +202,14 @@ export const adminPortalService = {
   },
 
   async updateCategory(id: string, patch: any) {
-    await new Promise(r => setTimeout(r, 300));
+    await new Promise(r => setTimeout(r, 200));
+    categoryRepository.update(id, patch);
     return ok({ success: true });
   },
 
   async deleteCategory(id: string) {
     await new Promise(r => setTimeout(r, 200));
+    categoryRepository.delete(id);
     return ok({ success: true });
   },
 

@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { AppAvatar } from '@/components/shared';
 import { Skeleton, SkeletonText } from '@/components/shared/skeleton';
 import { useCareProvider } from '@/hooks/use-family-portal';
 import { RequestCareWizardModal } from '@/components/care-coordination/RequestCareWizardModal';
@@ -167,12 +168,7 @@ export const CareProviderProfilePage = () => {
                   className={cn('flex items-start gap-3 p-4 cursor-pointer transition-all', isSelected && 'border-primary ring-2 ring-primary/20')}
                   onClick={() => setSelectedEmployee(isSelected ? null : emp.id)}
                 >
-                  <Avatar className="h-12 w-12 border border-border">
-                    {emp.avatarUrl && <AvatarImage src={emp.avatarUrl} alt={emp.name} />}
-                    <AvatarFallback className="bg-primary/10 text-xs font-bold text-primary">
-                      {emp.name.split(' ').map((n) => n[0]).slice(0, 2).join('')}
-                    </AvatarFallback>
-                  </Avatar>
+                  <AppAvatar src={emp.avatarUrl} name={emp.name} className="h-12 w-12 rounded-full border border-border" />
                   <div className="flex flex-1 flex-col gap-0.5">
                     <span className="text-sm font-bold text-foreground">{emp.name}</span>
                     <span className="text-xs text-muted-foreground">{emp.role} · {emp.experience}</span>

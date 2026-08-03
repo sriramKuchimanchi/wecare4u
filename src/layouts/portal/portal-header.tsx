@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Bell, LogOut, Menu, Search, User } from '@/config/icons';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { AppAvatar } from '@/components/shared';
 import { Badge } from '@/components/ui/badge';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
@@ -27,12 +27,7 @@ export const PortalHeader = ({ onToggleSidebar, role: routeRole, className }: Po
   const unreadCount = useNotificationStore((s) => s.unreadCount);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  const initials = (user?.name ?? '?')
-    .split(' ')
-    .map((n) => n[0])
-    .slice(0, 2)
-    .join('')
-    .toUpperCase();
+
 
   const handleLogout = () => {
     reset();
@@ -72,9 +67,11 @@ export const PortalHeader = ({ onToggleSidebar, role: routeRole, className }: Po
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="flex items-center gap-2 rounded-full p-0.5 hover:bg-muted" aria-label="Account menu">
-                <Avatar className="h-9 w-9 border border-border">
-                  <AvatarFallback className="bg-primary/10 text-xs font-semibold text-primary">{initials}</AvatarFallback>
-                </Avatar>
+                <AppAvatar
+                  src={user?.avatarUrl}
+                  name={user?.name}
+                  className="h-9 w-9 rounded-full border border-border"
+                />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">

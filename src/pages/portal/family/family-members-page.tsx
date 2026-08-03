@@ -1,9 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { Users, Plus, Pencil, Trash2, Eye, Phone } from '@/config/icons';
-import { PageHeader, EmptyState } from '@/components/shared';
+import { PageHeader, EmptyState, AppAvatar } from '@/components/shared';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { StatusIndicator } from '@/components/shared';
 import { Skeleton } from '@/components/shared/skeleton';
@@ -63,12 +62,7 @@ export const FamilyMembersPage = () => {
             return (
               <Card key={member.id} className="flex flex-col gap-3 p-4">
                 <div className="flex items-start gap-3">
-                  <Avatar className="h-14 w-14 border border-border">
-                    {member.avatarUrl && <AvatarImage src={member.avatarUrl} alt={member.name} />}
-                    <AvatarFallback className="bg-primary/10 text-sm font-semibold text-primary">
-                      {member.name.split(' ').map((n) => n[0]).slice(0, 2).join('')}
-                    </AvatarFallback>
-                  </Avatar>
+                  <AppAvatar src={member.avatarUrl} name={member.name} className="h-14 w-14 rounded-full border border-border" />
                   <div className="flex flex-1 flex-col gap-1">
                     <span className="text-base font-semibold text-foreground">{member.name}</span>
                     <span className="text-xs text-muted-foreground">{member.relationship}{age ? ` · ${age} years` : ''}</span>

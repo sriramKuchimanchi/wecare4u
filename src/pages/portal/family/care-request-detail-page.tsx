@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { AppAvatar } from '@/components/shared';
 import { Skeleton } from '@/components/shared/skeleton';
 import { CareRequestStatusStepper, statusSteps } from '@/components/care-coordination/CareRequestStatusStepper';
 import { LiveMapPlaceholder } from '@/components/care-coordination/LiveMapPlaceholder';
@@ -183,12 +184,11 @@ export const CareRequestDetailPage = () => {
         <Card className="flex flex-col gap-4 p-5">
           <SectionHeader title="Assigned Healthcare Professional" />
           <div className="flex items-center gap-4">
-            <Avatar className="h-14 w-14 border border-border">
-              <AvatarImage src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=300" alt={request.employeeName || 'Kavya Menon'} />
-              <AvatarFallback className="bg-primary/10 font-bold text-primary text-base">
-                {(request.employeeName || 'Kavya Menon').split(' ').map((n) => n[0]).join('')}
-              </AvatarFallback>
-            </Avatar>
+            <AppAvatar
+              src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=300"
+              name={request.employeeName || 'Kavya Menon'}
+              className="h-14 w-14 rounded-full border border-border"
+            />
             <div className="flex flex-1 flex-col">
               <span className="text-base font-bold text-foreground">{request.employeeName || 'Kavya Menon'}</span>
               <span className="text-xs text-muted-foreground">{request.employeeRole || 'Senior Nurse / Caregiver'}</span>

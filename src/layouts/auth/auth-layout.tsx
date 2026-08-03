@@ -17,7 +17,7 @@ type AuthLayoutProps = {
 export const AuthLayout = ({ title, subtitle, children, footer }: AuthLayoutProps) => (
   <div className="flex min-h-dvh flex-col bg-background md:flex-row">
     {/* Brand panel */}
-    <aside className="relative hidden flex-col items-center justify-between overflow-hidden bg-primary p-10 text-center text-primary-foreground md:flex md:w-1/2 lg:p-16">
+    <aside className="relative hidden flex-col items-center justify-between overflow-hidden bg-primary p-10 text-center text-primary-foreground md:sticky md:top-0 md:flex md:h-screen md:w-1/2 lg:p-16">
       <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 20% 20%, white 0, transparent 40%), radial-gradient(circle at 80% 80%, white 0, transparent 35%)' }} />
       <div className="absolute -bottom-24 -right-24 h-72 w-72 rounded-full border border-white/10 bg-white/5" />
       <Link to="/" className="relative mx-auto flex w-fit items-center gap-2.5">
