@@ -36,7 +36,7 @@ export const PortalHeader = ({ onToggleSidebar, role: routeRole, className }: Po
 
   return (
     <>
-      <header className={cn('sticky top-0 z-header flex h-16 items-center justify-between gap-2 border-b border-border bg-background/80 px-4 backdrop-blur-md safe-top md:px-6', className)}>
+      <header className={cn('sticky top-0 z-[100] flex h-16 items-center justify-between gap-2 border-b border-border bg-background/80 px-4 backdrop-blur-md safe-top md:px-6', className)}>
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" onClick={onToggleSidebar} aria-label="Toggle sidebar" className="lg:hidden">
             <Menu className="h-5 w-5" />

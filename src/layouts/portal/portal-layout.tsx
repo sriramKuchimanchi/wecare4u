@@ -74,12 +74,12 @@ export const PortalLayout = () => {
         </div>
 
         {/* Main column */}
-        <div className="flex min-w-0 flex-1 flex-col">
+        <div className="flex min-w-0 flex-1 flex-col overflow-x-hidden">
           <div className="flex items-center gap-2 border-b border-border bg-surface px-4 py-3 md:px-6">
             <Breadcrumb items={breadcrumbs} />
           </div>
 
-          <main className="flex-1 px-4 pb-24 pt-6 md:px-6 lg:px-8 lg:pb-8">
+          <main className="flex-1 overflow-x-hidden px-4 pb-24 pt-6 md:px-6 lg:px-8 lg:pb-8">
             <div className="mx-auto w-full max-w-6xl animate-fade-in-up">
               <Outlet />
             </div>
