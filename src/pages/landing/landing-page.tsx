@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Activity, Ambulance, ArrowRight, Bell, Bot, Brain, Building2, Calendar, Car, CheckCircle2, ChevronDown, ChevronRight, Clock, Droplet, Dumbbell, FileText, FlaskConical, Heart, HeartHandshake, HeartPulse, Home, Lock, MapPin, MessageCircle, MessageSquare, Pill, Scan, ShieldAlert, ShieldCheck, Siren, Sparkles, Stethoscope, TestTube, Users, Video, Wrench, Zap, type LucideIcon } from '@/config/icons';
+import { Activity, Ambulance, ArrowRight, Bell, Brain, Building2, Calendar, Car, CheckCircle2, ChevronDown, ChevronRight, Clock, Droplet, Dumbbell, FileText, FlaskConical, Heart, HeartHandshake, HeartPulse, Home, Lock, MapPin, MessageCircle, MessageSquare, Pill, Scan, ShieldAlert, ShieldCheck, Siren, Sparkles, Stethoscope, TestTube, Users, Video, Wrench, Zap, type LucideIcon } from '@/config/icons';
 import { icons, type IconName } from '@/config/icons';
 import { Button } from '@/components/ui/button';
 import { APP_NAME, APP_TAGLINE } from '@/constants';
@@ -72,8 +72,8 @@ export const LandingPage = () => {
               const Icon = (icons[cat.icon as IconName] ?? icons.Stethoscope) as LucideIcon;
               const items: any[] = cat.items ?? [];
               return (
-                <div key={cat.id || cat.name} tabIndex={0} className="group relative outline-none">
-                  <div className="relative z-10 flex items-center gap-3 rounded-xl border border-[#eadfd4] bg-white px-3.5 py-3 transition-all duration-300 group-hover:border-secondary/50 group-hover:shadow-[0_14px_30px_-18px_rgba(16,36,62,0.35)] group-focus-within:border-secondary/50 group-focus-within:shadow-[0_14px_30px_-18px_rgba(16,36,62,0.35)]">
+                <div key={cat.id || cat.name} className="group relative outline-none">
+                  <Link to="/portal/family/request-care" className="relative z-10 flex items-center gap-3 rounded-xl border border-[#eadfd4] bg-white px-3.5 py-3 transition-all duration-300 group-hover:border-secondary/50 group-hover:shadow-[0_14px_30px_-18px_rgba(16,36,62,0.35)] group-focus-within:border-secondary/50 group-focus-within:shadow-[0_14px_30px_-18px_rgba(16,36,62,0.35)]">
                     <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#fceddf] text-secondary transition-colors duration-300 group-hover:bg-secondary group-hover:text-white group-focus-within:bg-secondary group-focus-within:text-white">
                       <Icon className="h-4 w-4" />
                     </span>
@@ -84,7 +84,7 @@ export const LandingPage = () => {
                     {items.length > 0 && (
                       <ChevronDown className="h-3.5 w-3.5 shrink-0 text-[#c3ccd4] transition-transform duration-300 group-hover:rotate-180 group-hover:text-secondary group-focus-within:rotate-180 group-focus-within:text-secondary" />
                     )}
-                  </div>
+                  </Link>
 
                   {items.length > 0 && (
                     <div className="invisible absolute inset-x-0 top-full z-30 pt-2 opacity-0 transition-all duration-200 ease-out group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
@@ -94,9 +94,11 @@ export const LandingPage = () => {
                           {items.map((item: any) => {
                             const ItemIcon = (icons[item.icon as IconName] ?? icons.CheckCircle2) as LucideIcon;
                             return (
-                              <li key={item.name} className="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-xs text-white/80 transition-colors hover:bg-white/5 hover:text-white">
-                                <ItemIcon className="h-3.5 w-3.5 shrink-0 text-[#f5a06a]" />
-                                {item.name}
+                              <li key={item.name}>
+                                <Link to="/portal/family/request-care" className="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-xs text-white/80 transition-colors hover:bg-white/5 hover:text-white">
+                                  <ItemIcon className="h-3.5 w-3.5 shrink-0 text-[#f5a06a]" />
+                                  {item.name}
+                                </Link>
                               </li>
                             );
                           })}
@@ -116,20 +118,12 @@ export const LandingPage = () => {
       <section id="ai" className="container py-16 md:py-20"><div className="grid items-center gap-10 lg:grid-cols-[0.85fr_1.15fr]"><div><span className="mb-4 inline-flex items-center gap-2 rounded-full bg-[#fceddf] px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-secondary"><Brain className="h-4 w-4" /> AI care companion</span><h2 className="font-serif text-4xl font-bold md:text-5xl">A little more clarity<br /><span className="text-secondary">A lot less worry</span></h2><p className="mt-5 max-w-md text-sm leading-7 text-[#718096]">Your care companion brings reminders, patterns and thoughtful next steps forward, so families can spend more time being present.</p><ul className="mt-6 space-y-3 text-sm"><li className="flex gap-3"><CheckCircle2 className="h-5 w-5 text-secondary" />Medication reminders that arrive on time</li><li className="flex gap-3"><CheckCircle2 className="h-5 w-5 text-secondary" />Health insights from the care timeline</li><li className="flex gap-3"><CheckCircle2 className="h-5 w-5 text-secondary" />Simple summaries for every appointment</li></ul></div><div className="rounded-[2rem] bg-[#10243e] p-5 text-white shadow-2xl md:p-7"><div className="flex items-center justify-between border-b border-white/10 pb-5"><div className="flex items-center gap-3"><span className="flex h-10 w-10 items-center justify-center rounded-xl bg-secondary"><Sparkles className="h-5 w-5" /></span><div><p className="text-sm font-semibold">AI care companion</p><p className="text-xs text-white/50">Private support for your family</p></div></div><span className="flex items-center gap-1.5 text-xs text-emerald-300"><span className="h-2 w-2 rounded-full bg-emerald-400" /> Ready to help</span></div><div className="space-y-4 py-6"><div className="ml-auto max-w-[80%] rounded-2xl rounded-br-sm bg-white/10 p-3 text-xs leading-5 text-white/80">Can you summarize Dad's care this week?</div><div className="max-w-[88%] rounded-2xl rounded-bl-sm bg-[#f7eee6] p-4 text-xs leading-5 text-[#10243e]"><p className="mb-3 font-semibold">Here is the week at a glance</p><div className="space-y-2 text-[#53657b]"><p className="flex items-center gap-2"><Calendar className="h-3.5 w-3.5 text-secondary" />2 appointments completed</p><p className="flex items-center gap-2"><Pill className="h-3.5 w-3.5 text-secondary" />7 medication reminders completed</p><p className="flex items-center gap-2"><Activity className="h-3.5 w-3.5 text-secondary" />Vitals are stable and trending well</p></div></div></div><div className="flex flex-wrap gap-2 border-t border-white/10 pt-4"><span className="rounded-full border border-white/15 px-3 py-2 text-[11px] text-white/70">Set reminder</span><span className="rounded-full border border-white/15 px-3 py-2 text-[11px] text-white/70">View timeline</span><span className="rounded-full border border-white/15 px-3 py-2 text-[11px] text-white/70">Review insights</span></div></div></div></section>
 
       <section id="chat-assist" className="container pb-16 md:pb-20">
-        <div className="overflow-hidden rounded-[2rem] border border-[#eadfd4] bg-white shadow-lg">
-          <div className="grid lg:grid-cols-2">
-            <div className="relative flex flex-col justify-center border-b border-[#eadfd4] p-8 md:p-10 lg:border-b-0 lg:border-r">
-              <span className="mb-4 inline-flex w-fit items-center gap-2 rounded-full bg-[#e7f6ec] px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-[#1f9e57]"><MessageCircle className="h-4 w-4" /> WhatsApp assistant</span>
-              <h3 className="font-serif text-2xl font-bold leading-tight md:text-3xl">Care answers, right in your WhatsApp</h3>
-              <p className="mt-3 max-w-sm text-sm leading-6 text-[#718096]">Book a visit, check an appointment or reach the family circle &mdash; no new app to open, no waiting on hold.</p>
-              <a href="#" className="mt-6 inline-flex w-fit items-center gap-2 text-sm font-bold text-[#1f9e57]">Message us on WhatsApp <ArrowRight className="h-4 w-4" /></a>
-            </div>
-            <div className="relative flex flex-col justify-center bg-[#10243e] p-8 text-white md:p-10">
-              <span className="mb-4 inline-flex w-fit items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-[#f5a06a]"><Bot className="h-4 w-4" /> Web assistant</span>
-              <h3 className="font-serif text-2xl font-bold leading-tight md:text-3xl">Or chat right here on the site</h3>
-              <p className="mt-3 max-w-sm text-sm leading-6 text-white/65">A quick, always-on assistant tucked in the corner of the screen &mdash; ready with answers day or night.</p>
-              <button type="button" className="mt-6 inline-flex w-fit items-center gap-2 text-sm font-bold text-[#f5a06a]">Start a chat <ArrowRight className="h-4 w-4" /></button>
-            </div>
+        <div className="mx-auto max-w-2xl overflow-hidden rounded-[2rem] border border-[#eadfd4] bg-white shadow-lg">
+          <div className="relative flex flex-col justify-center p-8 md:p-10">
+            <span className="mb-4 inline-flex w-fit items-center gap-2 rounded-full bg-[#e7f6ec] px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-[#1f9e57]"><MessageCircle className="h-4 w-4" /> WhatsApp assistant</span>
+            <h3 className="font-serif text-2xl font-bold leading-tight md:text-3xl">Care answers, right in your WhatsApp</h3>
+            <p className="mt-3 max-w-sm text-sm leading-6 text-[#718096]">Book a visit, check an appointment or reach the family circle &mdash; no new app to open, no waiting on hold.</p>
+            <a href="#" className="mt-6 inline-flex w-fit items-center gap-2 text-sm font-bold text-[#1f9e57]">Message us on WhatsApp <ArrowRight className="h-4 w-4" /></a>
           </div>
         </div>
       </section>

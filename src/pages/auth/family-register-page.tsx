@@ -29,11 +29,6 @@ export const FamilyRegisterPage = () => {
   };
 
   const handleSendOtp = async () => {
-    if (!phone.trim()) {
-      // Allow instant signup without details
-      await handleQuickSubmit();
-      return;
-    }
     const result = await sendOtp.mutateAsync({ channel: 'sms', target: phone.trim() });
     if (result.success) {
       setOtpSent(true);
@@ -63,12 +58,16 @@ export const FamilyRegisterPage = () => {
           </span>
           <div>
             <p className="text-sm font-semibold text-foreground">
-              {otpVerified ? 'Phone verified!' : otpSent ? 'Enter verification code' : 'Quick Sign Up'}
+              {otpVerified ? 'Phone verified!' : otpSent ? 'Enter verification code' : phone.trim() ? 'Verify your phone number' : 'Create your account'}
             </p>
             <p className="text-xs text-muted-foreground">
               {otpVerified
                 ? 'Redirecting to your dashboard…'
-                : 'Click below to sign up immediately.'}
+                : otpSent
+                ? `Enter the code sent to ${phone}.`
+                : phone.trim()
+                ? 'We\'ll send a one-time code to verify your number.'
+                : 'Enter your phone number to get started.'}
             </p>
           </div>
         </div>
@@ -100,18 +99,10 @@ export const FamilyRegisterPage = () => {
         )}
 
         {!otpSent ? (
-          <div className="flex flex-col gap-2">
-            <Button onClick={handleQuickSubmit} disabled={verifyOtp.isPending} className="w-full h-11">
-              {verifyOtp.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Sign Up Now
-            </Button>
-            {phone.trim() && (
-              <Button onClick={handleSendOtp} variant="outline" disabled={sendOtp.isPending} className="w-full h-10 text-xs">
-                {sendOtp.isPending && <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />}
-                Send OTP first
-              </Button>
-            )}
-          </div>
+          <Button onClick={phone.trim() ? handleSendOtp : handleQuickSubmit} disabled={sendOtp.isPending || verifyOtp.isPending} className="w-full h-11">
+            {(sendOtp.isPending || verifyOtp.isPending) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {phone.trim() ? 'Send OTP' : 'Sign Up Now'}
+          </Button>
         ) : !otpVerified ? (
           <Button onClick={handleVerify} disabled={verifyOtp.isPending} className="w-full h-11">
             {verifyOtp.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

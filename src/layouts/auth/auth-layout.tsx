@@ -51,8 +51,8 @@ export const AuthLayout = ({ title, subtitle, children, footer }: AuthLayoutProp
           <span className="text-sm font-bold text-foreground">{APP_NAME}</span>
         </Link>
       </div>
-      <div className="flex flex-1 items-center justify-center p-6 md:p-10">
-        <div className="w-full max-w-md animate-fade-in-up">
+      <div className="flex flex-1 flex-col justify-start p-6 pb-10 pt-2 md:items-center md:justify-center md:p-10">
+        <div className="mx-auto w-full max-w-md animate-fade-in-up">
           <div className="flex flex-col gap-1 pb-6">
             <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">{title}</h1>
             {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}

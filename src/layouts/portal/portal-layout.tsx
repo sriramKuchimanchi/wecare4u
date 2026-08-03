@@ -10,8 +10,6 @@ import { PORTAL_LABELS } from '@/constants';
 import { portalPathForRole } from '@/constants/routes';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { FloatingEmergencyButton } from '@/components/care-coordination/FloatingEmergencyButton';
-import { FloatingAiAssistantButton } from '@/components/care-coordination/FloatingAiAssistantButton';
-import { AiAssistantDrawer } from '@/components/care-coordination/AiAssistantDrawer';
 import type { UserRole } from '@/types';
 
 const buildBreadcrumbs = (role: string, pathname: string): BreadcrumbItem[] => {
@@ -51,16 +49,44 @@ export const PortalLayout = () => {
   return (
     <div className="flex min-h-dvh flex-col bg-background">
       {/* Full-width top header */}
-      <PortalHeader role={role} onToggleSidebar={() => setMobileOpen(true)} />
+      <PortalHeader
+        role={role}
+        onToggleSidebar={() => setMobileOpen((open) => !open)}
+        isSidebarOpen={mobileOpen}
+        className={mobileOpen ? 'bg-background backdrop-blur-none' : undefined}
+      />
 
       {/* Mobile sidebar drawer */}
-      <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-        <SheetContent side="left" className="w-72 p-0">
+      {/* modal={false} keeps the header's own menu/close button interactive while the drawer is open
+          (a modal Radix Dialog disables pointer-events outside its portal, which would swallow that click).
+          Radix only renders its built-in overlay for modal dialogs, so we render the dim backdrop ourselves. */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 animate-in fade-in-0"
+          onClick={() => setMobileOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+      <Sheet open={mobileOpen} onOpenChange={setMobileOpen} modal={false}>
+        <SheetContent
+          side="left"
+          className="w-72 p-0"
+          // Our own dim overlay above already closes the drawer on any outside click.
+          // Without disabling Radix's own outside-interaction dismissal too, both it and the
+          // header toggle button's onClick fire for the same click on that button (which sits
+          // outside this portal — clicking it also focuses it, which Radix treats as an outside
+          // interaction), racing each other and reopening the drawer.
+          onInteractOutside={(e) => e.preventDefault()}
+        >
           <SheetHeader className="sr-only">
             <SheetTitle>Navigation Menu</SheetTitle>
             <SheetDescription>Mobile navigation sidebar</SheetDescription>
           </SheetHeader>
-          <PortalSidebar role={role} onNavigate={() => setMobileOpen(false)} />
+          <PortalSidebar
+            role={role}
+            onNavigate={() => setMobileOpen(false)}
+            className="pt-[calc(4rem_+_env(safe-area-inset-top))]"
+          />
         </SheetContent>
       </Sheet>
 
@@ -87,14 +113,8 @@ export const PortalLayout = () => {
 
           <PortalBottomNav />
 
-          {/* Family Portal Floating Action Buttons & AI Drawer */}
-          {isFamily && (
-            <>
-              <FloatingEmergencyButton />
-              <FloatingAiAssistantButton />
-              <AiAssistantDrawer />
-            </>
-          )}
+          {/* Family Portal Floating Action Buttons */}
+          {isFamily && <FloatingEmergencyButton />}
         </div>
       </div>
     </div>

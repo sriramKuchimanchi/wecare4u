@@ -1,9 +1,9 @@
-import { Siren } from '@/config/icons';
+import { useNavigate } from 'react-router-dom';
 import { useEmergencyStore } from '@/store';
 import { cn } from '@/lib/utils';
 
 export const FloatingEmergencyButton = () => {
-  const setConfirmationOpen = useEmergencyStore((s) => s.setConfirmationOpen);
+  const navigate = useNavigate();
   const activeSession = useEmergencyStore((s) => s.activeSession);
 
   return (
@@ -15,7 +15,7 @@ export const FloatingEmergencyButton = () => {
       )}
       <button
         type="button"
-        onClick={() => setConfirmationOpen(true)}
+        onClick={() => navigate('/portal/family/emergency')}
         className={cn(
           'group relative flex h-14 w-14 items-center justify-center rounded-full bg-destructive text-destructive-foreground shadow-floating transition-all hover:scale-105 active:scale-95 md:h-16 md:w-16',
           activeSession && 'ring-4 ring-destructive/40'
@@ -24,7 +24,7 @@ export const FloatingEmergencyButton = () => {
         title="Emergency SOS"
       >
         <span className="absolute -inset-1 animate-ping rounded-full bg-destructive/30 opacity-75" />
-        <Siren className="relative h-7 w-7 transition-transform group-hover:rotate-12 md:h-8 md:w-8" />
+        <span className="relative text-sm font-extrabold tracking-wide transition-transform group-hover:scale-110 md:text-base">SOS</span>
       </button>
     </div>
   );

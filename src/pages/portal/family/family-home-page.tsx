@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import {
-  Heart, Siren, Pill, Users, Calendar,
-  Bell, Sparkles, ArrowRight, HandHeart, LifeBuoy, Search, CheckCircle,
+  Siren, Users, Calendar,
+  Bell, HandHeart,
 } from '@/config/icons';
 import { PageHeader, SectionHeader, EmptyState, StatusIndicator, AppAvatar } from '@/components/shared';
 import { Card } from '@/components/ui/card';
@@ -11,25 +11,8 @@ import { useAuth } from '@/hooks/use-auth';
 import {
   useFamilyMembers, useUpcomingAppointments, useNotifications, useCareRequests,
 } from '@/hooks/use-family-portal';
-import { useMedicationReminderStore } from '@/store/medication-reminder.store';
 import { formatDate, formatTime } from '@/utils/date';
 import { Skeleton } from '@/components/shared/skeleton';
-import { cn } from '@/lib/utils';
-import type { LucideIcon } from '@/config/icons';
-
-const quickActions: { label: string; icon: LucideIcon; to: string; tone: 'primary' | 'secondary' | 'danger' }[] = [
-  { label: 'Request Care', icon: HandHeart, to: '/portal/family/request-care', tone: 'primary' },
-  { label: 'Get Assistance', icon: LifeBuoy, to: '/portal/family/request-care', tone: 'secondary' },
-  { label: 'Need Help?', icon: Heart, to: '/portal/family/request-care', tone: 'primary' },
-  { label: 'Find Care', icon: Search, to: '/portal/family/search', tone: 'secondary' },
-  { label: 'Emergency SOS', icon: Siren, to: '/portal/family', tone: 'danger' },
-];
-
-const toneClasses: Record<string, string> = {
-  primary: 'bg-primary/10 text-primary',
-  secondary: 'bg-secondary/10 text-secondary',
-  danger: 'bg-destructive/10 text-destructive',
-};
 
 export const FamilyHomePage = () => {
   const { user } = useAuth();
@@ -38,8 +21,6 @@ export const FamilyHomePage = () => {
   const appointmentsQuery = useUpcomingAppointments();
   const notificationsQuery = useNotifications();
   const requestsQuery = useCareRequests();
-  const { reminders, updateStatus } = useMedicationReminderStore();
-  const pendingMeds = reminders.filter((r) => r.status === 'pending');
 
   const members = membersQuery.data ?? [];
   const appointments = appointmentsQuery.data ?? [];
@@ -60,23 +41,6 @@ export const FamilyHomePage = () => {
             <p className="text-sm text-primary-foreground/90">Here&apos;s your family&apos;s care overview for today.</p>
           </div>
         </div>
-      </div>
-
-      {/* Quick Actions */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-        {quickActions.map((action) => (
-          <button
-            key={action.label}
-            type="button"
-            onClick={() => navigate(action.to)}
-            className="flex flex-col items-center gap-2 rounded-xl border border-border bg-card p-4 text-center transition-all hover:border-primary hover:shadow-sm"
-          >
-            <span className={cn('flex h-12 w-12 items-center justify-center rounded-full', toneClasses[action.tone])}>
-              <action.icon className="h-6 w-6" />
-            </span>
-            <span className="text-xs font-semibold text-foreground sm:text-sm">{action.label}</span>
-          </button>
-        ))}
       </div>
 
       {/* Today's Overview */}
@@ -104,28 +68,16 @@ export const FamilyHomePage = () => {
         ))}
       </div>
 
-      {/* Emergency SOS + AI Assistant */}
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="flex items-center gap-4 rounded-xl border border-destructive/20 bg-destructive/[0.03] p-5">
-          <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive">
-            <Siren className="h-7 w-7" />
-          </span>
-          <div className="flex flex-1 flex-col gap-1">
-            <h3 className="text-base font-semibold text-foreground">Emergency SOS</h3>
-            <p className="text-sm text-muted-foreground">One tap to dispatch coordinated responders to your family.</p>
-          </div>
-          <Button variant="destructive" size="sm" className="shrink-0" onClick={() => navigate('/portal/family/emergency')}>SOS</Button>
+      {/* Emergency SOS */}
+      <div className="flex items-center gap-4 rounded-xl border border-destructive/20 bg-destructive/[0.03] p-5">
+        <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+          <Siren className="h-7 w-7" />
+        </span>
+        <div className="flex flex-1 flex-col gap-1">
+          <h3 className="text-base font-semibold text-foreground">Emergency SOS</h3>
+          <p className="text-sm text-muted-foreground">One tap to dispatch coordinated responders to your family.</p>
         </div>
-        <div className="flex items-center gap-4 rounded-xl border border-border bg-card p-5">
-          <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-secondary/10 text-secondary">
-            <Sparkles className="h-7 w-7" />
-          </span>
-          <div className="flex flex-1 flex-col gap-1">
-            <h3 className="text-base font-semibold text-foreground">AI Assistant</h3>
-            <p className="text-sm text-muted-foreground">Get personalized care suggestions and timeline summaries.</p>
-          </div>
-          <Button variant="outline" size="sm" className="shrink-0" onClick={() => navigate('/portal/family/ai-assistant')}>Ask</Button>
-        </div>
+        <Button variant="destructive" size="sm" className="shrink-0" onClick={() => navigate('/portal/family/emergency')}>SOS</Button>
       </div>
 
       {/* Family Members */}
@@ -206,34 +158,6 @@ export const FamilyHomePage = () => {
           </div>
         )}
       </section>
-
-      {/* Medication Reminders */}
-      <section className="flex flex-col gap-4">
-        <SectionHeader title="Medication Reminders" description="Upcoming medication schedules" />
-        {pendingMeds.length === 0 ? (
-          <div className="rounded-xl border border-border bg-card">
-            <EmptyState icon={Pill} title="No pending medications" description="All medications are up to date." />
-          </div>
-        ) : (
-          <div className="flex flex-col gap-2">
-            {pendingMeds.slice(0, 3).map((med) => (
-              <div key={med.id} className="flex items-center gap-3 rounded-xl border border-warning/20 bg-warning/[0.03] p-4">
-                <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-warning/10 text-warning">
-                  <Pill className="h-5 w-5" />
-                </span>
-                <div className="flex flex-1 flex-col gap-0.5">
-                  <span className="text-sm font-semibold text-foreground">{med.medicineName} — {med.memberName}</span>
-                  <span className="text-xs text-muted-foreground">{med.frequency} · {med.time}</span>
-                </div>
-                <Button variant="outline" size="sm" className="shrink-0" onClick={() => updateStatus(med.id, 'taken')}>
-                  <CheckCircle className="mr-1.5 h-4 w-4 text-success" /> Mark taken
-                </Button>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
-
 
       {/* Notifications Preview */}
       {/* <section className="flex flex-col gap-4">

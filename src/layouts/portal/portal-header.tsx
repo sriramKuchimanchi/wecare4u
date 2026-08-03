@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Bell, LogOut, Menu, Search, User } from '@/config/icons';
+import { Bell, LogOut, Menu, Search, User, X } from '@/config/icons';
 import { Button } from '@/components/ui/button';
 import { AppAvatar } from '@/components/shared';
 import { Badge } from '@/components/ui/badge';
@@ -16,11 +16,12 @@ import type { UserRole } from '@/types';
 
 type PortalHeaderProps = {
   onToggleSidebar: () => void;
+  isSidebarOpen?: boolean;
   role?: UserRole;
   className?: string;
 };
 
-export const PortalHeader = ({ onToggleSidebar, role: routeRole, className }: PortalHeaderProps) => {
+export const PortalHeader = ({ onToggleSidebar, isSidebarOpen = false, role: routeRole, className }: PortalHeaderProps) => {
   const { user, role: authRole, reset } = useAuth();
   const role = routeRole ?? authRole;
   const navigate = useNavigate();
@@ -36,10 +37,17 @@ export const PortalHeader = ({ onToggleSidebar, role: routeRole, className }: Po
 
   return (
     <>
-      <header className={cn('sticky top-0 z-[100] flex h-16 items-center justify-between gap-2 border-b border-border bg-background/80 px-4 backdrop-blur-md safe-top md:px-6', className)}>
+      <header className={cn('sticky top-0 z-[100] flex min-h-16 items-center justify-between gap-2 border-b border-border bg-background/80 px-4 backdrop-blur-md safe-top md:px-6', className)}>
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" onClick={onToggleSidebar} aria-label="Toggle sidebar" className="lg:hidden">
-            <Menu className="h-5 w-5" />
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onToggleSidebar}
+            aria-label={isSidebarOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={isSidebarOpen}
+            className="lg:hidden"
+          >
+            {isSidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
           <Link to="/" className="flex items-center gap-2.5">
             <img src="/logo.png" alt="We Care For You" className="h-9 w-auto object-contain" />
