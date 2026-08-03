@@ -197,7 +197,7 @@ export const ServiceCategoriesPage = () => {
                     <div className="flex items-center gap-1.5 shrink-0">
                       <Button
                         variant={cat.enabled ? 'outline' : 'default'}
-                        size="xs"
+                        size="sm"
                         onClick={() => handleToggle(cat.id)}
                         className="text-xs font-semibold"
                       >
@@ -205,7 +205,7 @@ export const ServiceCategoriesPage = () => {
                       </Button>
                       <Button
                         variant="ghost"
-                        size="xs"
+                        size="sm"
                         onClick={() => handleDeleteCategory(cat.id, cat.name)}
                         className="text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
                         title="Delete category"
