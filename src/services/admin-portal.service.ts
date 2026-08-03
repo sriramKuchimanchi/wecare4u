@@ -40,6 +40,11 @@ export const adminPortalService = {
     return mockRequest(family, { latency: 300 });
   },
 
+  async updateFamilyMember(familyId: string, memberId: string, patch: any) {
+    const updated = familyRepository.updateMember(familyId, memberId, patch);
+    return mockRequest(updated, { latency: 300 });
+  },
+
   // ── Providers ────────────────────────────────────────────────────────────
   async getProviders(filters?: { search?: string; verificationStatus?: string; page?: number }) {
     const result = providerRepository.getAll(filters);

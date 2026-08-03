@@ -14,6 +14,7 @@ import { FamilyEmergencyPage } from './family/family-emergency-page';
 import { EmergencyContactsPage } from './family/emergency-contacts-page';
 import { AiAssistantPage } from './family/ai-assistant-page';
 import { RecentRequestsPage } from './family/recent-requests-page';
+import { FamilyRequestsPage } from './family/family-requests-page';
 import { FamilyTimelinePage } from './family/family-timeline-page';
 import { FamilyNotificationsPage } from './family/family-notifications-page';
 import { FamilyProfilePage } from './family/family-profile-page';
@@ -52,7 +53,6 @@ import { EmergencyCenterPage } from './admin/emergency-center-page';
 import { EmergencyDetailPage } from './admin/emergency-detail-page';
 import { AdminNotificationsPage } from './admin/admin-notifications-page';
 import { ServiceCategoriesPage } from './admin/service-categories-page';
-import { PlatformTimelinePage } from './admin/platform-timeline-page';
 import { AdminSettingsPage } from './admin/admin-settings-page';
 
 /**
@@ -101,6 +101,7 @@ const FamilyPortalRouter = ({ sub }: { sub: string[] }) => {
     return <FamilyMembersPage />;
   }
 
+  if (first === 'requests') return <FamilyRequestsPage />;
   if (first === 'timeline') return <FamilyTimelinePage />;
   if (first === 'notifications') return <FamilyNotificationsPage />;
   if (first === 'profile') return <FamilyProfilePage />;
@@ -118,11 +119,6 @@ const CareProviderPortalRouter = ({ sub }: { sub: string[] }) => {
   if (first === 'requests') {
     if (second) return <ProviderCareRequestDetailPage />;
     return <CareRequestsListPage />;
-  }
-
-  if (first === 'employees') {
-    if (second) return <EmployeeProfilePage />;
-    return <EmployeeManagementPage />;
   }
 
   if (first === 'availability') return <AvailabilityPage />;
@@ -182,7 +178,6 @@ const AdminPortalRouter = ({ sub }: { sub: string[] }) => {
 
   if (first === 'notifications') return <AdminNotificationsPage />;
   if (first === 'categories') return <ServiceCategoriesPage />;
-  if (first === 'timeline') return <PlatformTimelinePage />;
   if (first === 'settings') return <AdminSettingsPage />;
 
   return <AdminDashboard />;

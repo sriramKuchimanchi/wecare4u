@@ -96,4 +96,4 @@ export type { LucideIcon };
 
 export default icons;
 
-export { Bug, TestTube, Scan, Dumbbell, Droplet, MessageCircle} from 'lucide-react';
+export { Bug, TestTube, Scan, Dumbbell, Droplet, MessageCircle, CheckSquare, Square } from 'lucide-react';

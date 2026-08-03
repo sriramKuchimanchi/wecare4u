@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import {
-  Heart, Siren, Pill, Activity, Users, Calendar,
+  Heart, Siren, Pill, Users, Calendar,
   Bell, Sparkles, ArrowRight, HandHeart, LifeBuoy, Search, CheckCircle,
 } from '@/config/icons';
 import { PageHeader, SectionHeader, EmptyState, StatusIndicator, AppAvatar } from '@/components/shared';
@@ -9,11 +9,11 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/use-auth';
 import {
-  useFamilyMembers, useUpcomingAppointments, useTimeline, useNotifications, useCareRequests,
+  useFamilyMembers, useUpcomingAppointments, useNotifications, useCareRequests,
 } from '@/hooks/use-family-portal';
 import { useMedicationReminderStore } from '@/store/medication-reminder.store';
-import { formatDate, formatTime, formatRelative } from '@/utils/date';
-import { Skeleton, SkeletonText } from '@/components/shared/skeleton';
+import { formatDate, formatTime } from '@/utils/date';
+import { Skeleton } from '@/components/shared/skeleton';
 import { cn } from '@/lib/utils';
 import type { LucideIcon } from '@/config/icons';
 
@@ -36,7 +36,6 @@ export const FamilyHomePage = () => {
   const navigate = useNavigate();
   const membersQuery = useFamilyMembers();
   const appointmentsQuery = useUpcomingAppointments();
-  const timelineQuery = useTimeline();
   const notificationsQuery = useNotifications();
   const requestsQuery = useCareRequests();
   const { reminders, updateStatus } = useMedicationReminderStore();
@@ -44,13 +43,11 @@ export const FamilyHomePage = () => {
 
   const members = membersQuery.data ?? [];
   const appointments = appointmentsQuery.data ?? [];
-  const timeline = timelineQuery.data ?? [];
   const notifications = notificationsQuery.data ?? [];
   const activeRequests = (requestsQuery.data ?? []).filter((r) => !['completed', 'cancelled'].includes(r.status));
 
   const firstName = user?.name?.split(' ')[0] ?? 'there';
   const today = new Date();
-  const todaysTimeline = timeline.filter((t) => new Date(t.createdAt).toDateString() === today.toDateString());
 
   return (
     <div className="flex flex-col gap-6">
@@ -237,36 +234,6 @@ export const FamilyHomePage = () => {
         )}
       </section>
 
-      {/* Health Timeline Preview */}
-      <section className="flex flex-col gap-4">
-        <SectionHeader
-          title="Recent Activity"
-          description="Latest care events for your family"
-          actions={<Button variant="outline" size="sm" onClick={() => navigate('/portal/family/timeline')}>View all</Button>}
-        />
-        {timelineQuery.isLoading ? (
-          <SkeletonText lines={4} />
-        ) : timeline.length === 0 ? (
-          <div className="rounded-xl border border-border bg-card">
-            <EmptyState icon={Activity} title="No activity yet" description="Care events will appear here as they happen." />
-          </div>
-        ) : (
-          <div className="flex flex-col gap-2">
-            {timeline.slice(0, 4).map((entry) => (
-              <div key={entry.id} className="flex items-start gap-3 rounded-lg border border-border bg-card p-3">
-                <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <Activity className="h-4 w-4" />
-                </span>
-                <div className="flex flex-1 flex-col gap-0.5">
-                  <span className="text-sm font-semibold text-foreground">{entry.title}</span>
-                  {entry.description && <span className="text-xs text-muted-foreground">{entry.description}</span>}
-                  <span className="text-xs text-muted-foreground">{formatRelative(entry.createdAt)}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
 
       {/* Notifications Preview */}
       {/* <section className="flex flex-col gap-4">

@@ -491,3 +491,16 @@ export const useUpdatePlatformSettingsMutation = () => {
   return useMutation({ mutationFn: (patch: any) => adminPortalService.updateSettings(patch), onSuccess: () => { qc.invalidateQueries({ queryKey: ['admin', 'settings'] }); } });
 };
 
+export const useUpdateFamilyMemberMutation = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ familyId, memberId, patch }: { familyId: string; memberId: string; patch: any }) =>
+      adminPortalService.updateFamilyMember(familyId, memberId, patch),
+    onSuccess: (_, vars) => {
+      qc.invalidateQueries({ queryKey: PORTAL_QUERY_KEYS.adminFamily(vars.familyId) });
+      qc.invalidateQueries({ queryKey: PORTAL_QUERY_KEYS.adminFamilies() });
+    },
+  });
+};
+
+

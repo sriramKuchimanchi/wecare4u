@@ -1,25 +1,15 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { z } from 'zod';
-import { Upload } from '@/config/icons';
+import { Upload, CheckSquare, Square } from '@/config/icons';
 import { AuthLayout } from '@/layouts';
-import { FormWrapper, TextField, SelectField } from '@/components/shared';
+import { FormWrapper, TextField } from '@/components/shared';
 import { Button } from '@/components/ui/button';
 import { ROUTES } from '@/constants/routes';
+import { useAdminCategoriesQuery } from '@/hooks/use-portal-queries';
+import { cn } from '@/lib/utils';
 
 const lenientSchema = z.object({}).passthrough();
-
-const serviceProviderTypeOptions = [
-  { value: 'hospital', label: 'Hospital / Multi-Specialty Hospital' },
-  { value: 'clinic', label: 'Medical Clinic / Polyclinic' },
-  { value: 'individual-doctor', label: 'Individual Practitioner / Doctor' },
-  { value: 'nursing-agency', label: 'Home Nursing / Caregiver Agency' },
-  { value: 'pharmacy', label: 'Pharmacy / Chemist' },
-  { value: 'diagnostic-lab', label: 'Diagnostic & Pathology Lab' },
-  { value: 'ambulance', label: 'Ambulance & Emergency Response' },
-  { value: 'home-services', label: 'Home & Medical Equipment Services' },
-  { value: 'other', label: 'Other Service Provider' },
-];
 
 const FileUploadField = ({ label, hint }: { label: string; hint?: string }) => {
   const [fileName, setFileName] = useState<string | null>(null);
@@ -46,8 +36,53 @@ const FileUploadField = ({ label, hint }: { label: string; hint?: string }) => {
 
 export const ProviderRegisterPage = () => {
   const navigate = useNavigate();
+  const { data: adminCategories, isLoading: categoriesLoading } = useAdminCategoriesQuery();
+  const [selectedSubCategories, setSelectedSubCategories] = useState<string[]>([]);
+
+  // Build grouped sub-categories from categories
+  const categoriesGrouped: { categoryName: string; items: { id: string; name: string }[] }[] = [];
+
+  if (adminCategories && adminCategories.length > 0) {
+    adminCategories.forEach((cat: any) => {
+      if (cat.enabled !== false) {
+        const subItems: { id: string; name: string }[] = [];
+        if (cat.items && cat.items.length > 0) {
+          cat.items.forEach((item: any, idx: number) => {
+            const itemName = typeof item === 'string' ? item : item.name;
+            subItems.push({
+              id: `${cat.id}_sub_${idx}`,
+              name: itemName,
+            });
+          });
+        } else {
+          subItems.push({
+            id: cat.id,
+            name: cat.name,
+          });
+        }
+        if (subItems.length > 0) {
+          categoriesGrouped.push({
+            categoryName: cat.name,
+            items: subItems,
+          });
+        }
+      }
+    });
+  }
+
+  const toggleSubCategory = (name: string) => {
+    setSelectedSubCategories((prev) =>
+      prev.includes(name) ? prev.filter((c) => c !== name) : [...prev, name]
+    );
+  };
 
   const handleRedirect = () => {
+    // Persist selected sub-categories so the provider dashboard can use them
+    try {
+      localStorage.setItem('provider_registered_services', JSON.stringify(selectedSubCategories));
+    } catch {
+      // ignore
+    }
     navigate(ROUTES.careProvider, { replace: true });
   };
 
@@ -67,7 +102,6 @@ export const ProviderRegisterPage = () => {
         onSubmit={handleRedirect}
         defaultValues={{
           organizationName: '',
-          organizationType: 'clinic',
           email: '',
           phone: '',
           registrationNumber: '',
@@ -82,10 +116,65 @@ export const ProviderRegisterPage = () => {
         }}
       >
         {() => (
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-5">
             <TextField name="organizationName" label="Provider / Business Name" placeholder="e.g. Aastha Care / Dr. Sharma Clinic" />
-            <SelectField name="organizationType" label="Provider Category" options={serviceProviderTypeOptions} />
-            
+
+            {/* Provider Sub-Categories — dynamic checkbox list grouped by category */}
+            <div className="flex flex-col gap-3">
+              <div>
+                <label className="text-sm font-semibold text-foreground">
+                  Services Offered <span className="text-xs font-normal text-muted-foreground">(select sub-categories that apply)</span>
+                </label>
+                {selectedSubCategories.length > 0 && (
+                  <p className="text-xs text-primary font-bold mt-0.5">
+                    {selectedSubCategories.length} sub-category service{selectedSubCategories.length > 1 ? 's' : ''} selected
+                  </p>
+                )}
+              </div>
+
+              {categoriesLoading ? (
+                <div className="grid grid-cols-2 gap-2">
+                  {Array.from({ length: 8 }).map((_, i) => (
+                    <div key={i} className="h-9 animate-pulse rounded-lg bg-muted/40" />
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col gap-4">
+                  {categoriesGrouped.map((group) => (
+                    <div key={group.categoryName} className="flex flex-col gap-1.5 rounded-xl border border-border/60 bg-muted/10 p-3">
+                      <span className="text-2xs font-bold uppercase tracking-wider text-primary">
+                        {group.categoryName}
+                      </span>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-0.5">
+                        {group.items.map((sub) => {
+                          const isSelected = selectedSubCategories.includes(sub.name);
+                          return (
+                            <button
+                              key={sub.id}
+                              type="button"
+                              onClick={() => toggleSubCategory(sub.name)}
+                              className={cn(
+                                'flex items-center gap-2.5 rounded-lg border px-3 py-2 text-xs font-medium text-left transition-all',
+                                isSelected
+                                  ? 'border-primary bg-primary/10 text-primary font-semibold shadow-xs'
+                                  : 'border-border bg-background text-foreground hover:border-primary/50 hover:bg-primary/5'
+                              )}
+                            >
+                              {isSelected
+                                ? <CheckSquare className="h-4 w-4 shrink-0 text-primary" />
+                                : <Square className="h-4 w-4 shrink-0 text-muted-foreground" />
+                              }
+                              <span className="truncate">{sub.name}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <TextField name="email" label="Email Address" type="email" placeholder="info@example.com" />
               <TextField name="phone" label="Phone Number" placeholder="+91 98200 12345" />
@@ -117,7 +206,7 @@ export const ProviderRegisterPage = () => {
               <FileUploadField label="Registration / License Cert" hint="Official PDF or doc" />
               <FileUploadField label="GST Certificate / ID" hint="PDF or image" />
             </div>
-            
+
             <FileUploadField label="Organization Logo / Photo" hint="PNG or JPG format" />
 
             <Button

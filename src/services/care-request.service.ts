@@ -1,6 +1,7 @@
 import type { ApiResult, CareRequest, CareRequestStatus, CareProvider } from '@/types';
 import { mockRequest, createId, nowISO } from '@/lib/mock-api';
 import { mockCareRequests, mockCareProviders } from '@/utils/mock-data';
+import { careRequestRepository } from '@/services/central-repository';
 
 const requests: CareRequest[] = [...mockCareRequests];
 
@@ -59,11 +60,25 @@ export const careRequestService = {
   },
 
   async list(familyId = 'fam_1'): Promise<ApiResult<CareRequest[]>> {
-    const list = requests.filter((r) => r.familyId === familyId);
+    try {
+      const repoList = careRequestRepository.getAll({ familyId }).data;
+      if (repoList && repoList.length > 0) {
+        return mockRequest(repoList, { latency: 300 });
+      }
+    } catch {
+      // fallback
+    }
+    const list = requests.filter((r) => r.familyId === familyId || !r.familyId);
     return mockRequest(list, { latency: 300 });
   },
 
   async get(id: string): Promise<ApiResult<CareRequest>> {
+    try {
+      const found = careRequestRepository.getById(id);
+      if (found) return mockRequest(found, { latency: 250 });
+    } catch {
+      // fallback
+    }
     const req = requests.find((r) => r.id === id);
     if (!req) return { success: false, error: { code: 'NOT_FOUND', message: 'Care request not found' } };
     return mockRequest(req, { latency: 250 });
@@ -94,6 +109,12 @@ export const careRequestService = {
   },
 
   async updateStatus(id: string, status: CareRequestStatus, note?: string): Promise<ApiResult<CareRequest>> {
+    try {
+      const updated = careRequestRepository.updateStatus(id, status, { note });
+      if (updated) return mockRequest(updated, { latency: 350 });
+    } catch {
+      // fallback
+    }
     const idx = requests.findIndex((r) => r.id === id);
     if (idx === -1) return { success: false, error: { code: 'NOT_FOUND', message: 'Care request not found' } };
 
@@ -127,7 +148,7 @@ export const careRequestService = {
       updatedAt: now,
     };
 
-    return mockRequest(requests[idx], { latency: 400 });
+    return mockRequest(requests[idx], { latency: 350 });
   },
 };
 

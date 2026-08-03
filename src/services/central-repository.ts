@@ -125,6 +125,21 @@ export const familyRepository = {
       emitChange('family:updated', { id, status });
     }
   },
+
+  updateMember(familyId: string, memberId: string, patch: any) {
+    const db = getDb();
+    const family = db.families.find((f) => f.id === familyId);
+    if (family && family.members) {
+      const idx = family.members.findIndex((m) => m.id === memberId);
+      if (idx !== -1) {
+        family.members[idx] = { ...family.members[idx], ...patch, updatedAt: nowISO() };
+        family.updatedAt = nowISO();
+        emitChange('family:updated', { id: familyId, memberId });
+        return family.members[idx];
+      }
+    }
+    return null;
+  },
 };
 
 // ─── SERVICE PROVIDERS ──────────────────────────────────────────────────────

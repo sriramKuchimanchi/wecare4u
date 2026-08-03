@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { icons } from '@/config/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,14 +15,17 @@ import { cn } from '@/lib/utils';
 import type { CareRequestStatus } from '@/types';
 
 export const CareRequestDetailPage = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id: paramId } = useParams<{ id?: string }>();
+  const location = useLocation();
+  const segments = location.pathname.split('/').filter(Boolean);
+  const requestId = paramId || segments[segments.length - 1] || 'req_101';
+
   const navigate = useNavigate();
   const { toast } = useToast();
 
   const [newNote, setNewNote] = useState('');
   const [selectedEmpId, setSelectedEmpId] = useState('');
 
-  const requestId = id ?? 'req_101';
   const { data: req, isLoading, refetch } = useProviderRequestDetailQuery(requestId);
   const { data: employees = [] } = useProviderEmployeesQuery();
 

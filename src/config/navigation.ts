@@ -39,7 +39,7 @@ export const NAV_CONFIG: Record<UserRole, NavConfig> = {
         items: [
           placeholder('Home', '/portal/family', 'Home'),
           placeholder('Request Care', '/portal/family/request-care', 'HandHeart'),
-          placeholder('Timeline', '/portal/family/timeline', 'History'),
+          placeholder('My Requests', '/portal/family/requests', 'ClipboardList'),
           placeholder('Notifications', '/portal/family/notifications', 'Bell'),
           placeholder('Profile', '/portal/family/profile', 'User'),
         ],
@@ -49,7 +49,7 @@ export const NAV_CONFIG: Record<UserRole, NavConfig> = {
         label: 'Manage',
         items: [
           placeholder('Family Members', '/portal/family/members', 'Users'),
-          placeholder('Appointments', '/portal/family/appointments', 'Calendar'),
+          // placeholder('Appointments', '/portal/family/appointments', 'Calendar'),
         ],
       },
     ],
@@ -63,7 +63,6 @@ export const NAV_CONFIG: Record<UserRole, NavConfig> = {
         items: [
           placeholder('Dashboard', '/portal/care-provider', 'LayoutDashboard'),
           placeholder('Care Requests', '/portal/care-provider/requests', 'ClipboardList'),
-          placeholder('Employees', '/portal/care-provider/employees', 'Users'),
           placeholder('Services', '/portal/care-provider/services', 'Stethoscope'),
           placeholder('Availability', '/portal/care-provider/availability', 'Clock'),
           placeholder('Schedule', '/portal/care-provider/schedule', 'CalendarDays'),
@@ -124,7 +123,6 @@ export const NAV_CONFIG: Record<UserRole, NavConfig> = {
         items: [
           placeholder('Notifications', '/portal/admin/notifications', 'Bell'),
           placeholder('Categories', '/portal/admin/categories', 'Tags'),
-          placeholder('Timeline', '/portal/admin/timeline', 'History'),
           placeholder('Settings', '/portal/admin/settings', 'Settings'),
         ],
       },

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import {
   ArrowLeft, Phone, Clock, UserCheck, XCircle, CheckCircle2, MessageSquare, AlertCircle,
 } from '@/config/icons';
@@ -19,7 +19,11 @@ import type { CareRequest, CareRequestStatus } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 
 export const CareRequestDetailPage = () => {
-  const { requestId } = useParams<{ requestId: string }>();
+  const { requestId: paramId } = useParams<{ requestId?: string }>();
+  const location = useLocation();
+  const segments = location.pathname.split('/').filter(Boolean);
+  const requestId = paramId || segments[segments.length - 1];
+
   const navigate = useNavigate();
   const { toast } = useToast();
 

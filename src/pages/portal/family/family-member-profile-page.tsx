@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import {
   ArrowLeft, Pencil, Phone, Mail, MapPin, Heart, Shield, Calendar, Activity, FileText, Users,
 } from '@/config/icons';
@@ -13,9 +13,13 @@ import {
 import { formatDate, formatTime, formatRelative } from '@/utils/date';
 
 export const FamilyMemberProfilePage = () => {
-  const { memberId } = useParams<{ memberId: string }>();
+  const { memberId: paramId } = useParams<{ memberId?: string }>();
+  const location = useLocation();
+  const segments = location.pathname.split('/').filter(Boolean);
+  const memberId = paramId || segments[segments.length - 1] || '';
+
   const navigate = useNavigate();
-  const { data: member, isLoading } = useFamilyMember(memberId ?? '');
+  const { data: member, isLoading } = useFamilyMember(memberId);
   const { data: timeline = [] } = useTimeline();
   const { data: appointments = [] } = useAppointments();
   const { data: requests = [] } = useCareRequests();
