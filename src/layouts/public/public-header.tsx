@@ -1,4 +1,4 @@
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import { Menu, X } from '@/config/icons';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,9 @@ export const PublicHeader = ({ className }: PublicHeaderProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const { canInstall, promptInstall } = usePwaInstallPrompt();
   const closeMenu = () => setMenuOpen(false);
+  const location = useLocation();
+  const isSignupPage = location.pathname.startsWith('/register');
+  const isLoginPage = location.pathname.startsWith('/login');
 
   return (
   <header className={cn('sticky top-0 z-[100] w-full border-b border-border/60 bg-background/95 backdrop-blur-md safe-top', className)}>
@@ -56,12 +59,16 @@ export const PublicHeader = ({ className }: PublicHeaderProps) => {
       </nav>
 
       <div className="flex items-center gap-2">
-        <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
-          <Link to="/login">Login</Link>
-        </Button>
-        <Button asChild size="sm">
-          <Link to="/register">Get started</Link>
-        </Button>
+        {!isLoginPage && (
+          <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
+            <Link to="/login">Login</Link>
+          </Button>
+        )}
+        {!isSignupPage && (
+          <Button asChild size="sm">
+            <Link to="/register">Get started</Link>
+          </Button>
+        )}
       </div>
       {menuOpen && (
         <div className="absolute left-0 right-0 top-[calc(100%+1px)] z-[110] border-b border-border bg-background p-4 shadow-lg md:hidden">
@@ -73,9 +80,13 @@ export const PublicHeader = ({ className }: PublicHeaderProps) => {
               { label: 'For Providers', to: '/#providers' },
             ].map((item) => <Link key={item.to} to={item.to} onClick={closeMenu} className="rounded-lg px-3 py-3 text-sm font-medium text-foreground hover:bg-muted">{item.label}</Link>)}
           </nav>
-          <div className="mt-3 grid grid-cols-2 gap-2 border-t border-border pt-3">
-            <Button asChild variant="outline" className="h-12" onClick={closeMenu}><Link to="/login">Login</Link></Button>
-            <Button asChild className="h-12" onClick={closeMenu}><Link to="/register">Sign up</Link></Button>
+          <div className={cn('mt-3 grid gap-2 border-t border-border pt-3', isSignupPage || isLoginPage ? 'grid-cols-1' : 'grid-cols-2')}>
+            {!isLoginPage && (
+              <Button asChild variant="outline" className="h-12" onClick={closeMenu}><Link to="/login">Login</Link></Button>
+            )}
+            {!isSignupPage && (
+              <Button asChild className="h-12" onClick={closeMenu}><Link to="/register">Sign up</Link></Button>
+            )}
           </div>
           {canInstall && <Button type="button" variant="ghost" className="mt-2 h-12 w-full" onClick={() => promptInstall()}>Install app</Button>}
         </div>
