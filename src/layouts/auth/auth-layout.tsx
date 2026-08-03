@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { HeartPulse } from '@/config/icons';
 import { APP_NAME, APP_TAGLINE } from '@/constants';
-import { PublicHeader } from '@/layouts/public/public-header';
+import { AppHeader } from '@/layouts/app-header';
 
 type AuthLayoutProps = {
   title: string;
@@ -17,7 +17,7 @@ type AuthLayoutProps = {
  */
 export const AuthLayout = ({ title, subtitle, children, footer }: AuthLayoutProps) => (
   <div className="flex min-h-dvh flex-col bg-background">
-    <PublicHeader />
+    <AppHeader variant="public" />
     <div className="flex flex-1 flex-col md:flex-row">
       {/* Brand panel */}
       <aside className="relative hidden flex-col items-center justify-between overflow-hidden bg-primary p-10 text-center text-primary-foreground md:sticky md:top-16 md:flex md:h-[calc(100dvh-4rem)] md:w-1/2 lg:p-16">

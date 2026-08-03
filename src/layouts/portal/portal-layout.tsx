@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
-import { PortalHeader } from './portal-header';
+import { AppHeader } from '../app-header';
 import { PortalSidebar } from './portal-sidebar';
 import { PortalBottomNav } from './portal-bottom-nav';
 import { Breadcrumb, type BreadcrumbItem } from './portal-breadcrumb';
@@ -49,7 +49,8 @@ export const PortalLayout = () => {
   return (
     <div className="flex min-h-dvh flex-col bg-background">
       {/* Full-width top header */}
-      <PortalHeader
+      <AppHeader
+        variant="portal"
         role={role}
         onToggleSidebar={() => setMobileOpen((open) => !open)}
         isSidebarOpen={mobileOpen}

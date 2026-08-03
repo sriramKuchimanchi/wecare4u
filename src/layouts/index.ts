@@ -1,9 +1,8 @@
 export { PublicLayout } from './public/public-layout';
-export { PublicHeader } from './public/public-header';
 export { PublicFooter } from './public/public-footer';
 export { AuthLayout } from './auth/auth-layout';
 export { PortalLayout } from './portal/portal-layout';
-export { PortalHeader } from './portal/portal-header';
+export { AppHeader } from './app-header';
 export { PortalSidebar } from './portal/portal-sidebar';
 export { PortalBottomNav } from './portal/portal-bottom-nav';
 export { Breadcrumb } from './portal/portal-breadcrumb';
