@@ -55,7 +55,7 @@ export const mockFamilyMembers: FamilyMember[] = [
   },
   {
     id: 'mem_3', familyId: 'fam_1', name: 'Amit Sharma', relationship: 'Brother', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=300',
-    gender: 'male', dateOfBirth: '1985-08-22', bloodGroup: 'O+',
+    gender: 'male', dateOfBirth: '1985-09-22', bloodGroup: 'O+',
     medicalConditions: [], allergies: [],
     insurance: { provider: 'HDFC ERGO Health' },
     emergencyContacts: [],
