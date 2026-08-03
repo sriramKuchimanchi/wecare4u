@@ -25,13 +25,12 @@ export const AdminReviewsPage = () => {
 
   return (
     <div className="space-y-6 pb-8">
-      {/* Header */}
-      <div className="rounded-2xl bg-gradient-to-r from-orange-600 to-amber-700 p-6 text-white shadow-lg">
-        <div className="flex items-center gap-2 text-white/70 text-xs font-semibold uppercase tracking-wider">
+      <div className="rounded-2xl border border-border/60 bg-surface p-6 shadow-xs">
+        <div className="flex items-center gap-2 text-muted-foreground text-xs font-semibold uppercase tracking-wider">
           <icons.Star className="h-4 w-4" /> Platform Quality Control
         </div>
-        <h1 className="text-2xl font-extrabold tracking-tight mt-1">Reviews & Complaints Moderation</h1>
-        <p className="text-sm text-white/80 mt-1">Monitor patient satisfaction ratings, flagged complaints, and provider responses.</p>
+        <h1 className="text-2xl font-extrabold tracking-tight mt-1 text-foreground">Reviews & Complaints Moderation</h1>
+        <p className="text-sm text-muted-foreground mt-1">Monitor patient satisfaction ratings, flagged complaints, and provider responses.</p>
       </div>
 
       {/* Filter Tabs */}

@@ -40,14 +40,13 @@ export const PlatformTimelinePage = () => {
   const totalPages = Math.ceil((timelineData?.total ?? 0) / 10);
 
   return (
-    <div className="space-y-6 pb-8">
-      {/* Header */}
-      <div className="rounded-2xl bg-gradient-to-r from-slate-800 to-slate-900 p-6 text-white shadow-lg">
-        <div className="flex items-center gap-2 text-white/70 text-xs font-semibold uppercase tracking-wider">
+    <div className="space-y-5 pb-8">
+      <div className="rounded-2xl border border-border/60 bg-surface p-4 shadow-xs">
+        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           <icons.History className="h-4 w-4" /> Global Audit Trail
         </div>
-        <h1 className="text-2xl font-extrabold tracking-tight mt-1">Platform Activity Timeline</h1>
-        <p className="text-sm text-white/80 mt-1">Comprehensive chronological log of every event across the platform.</p>
+        <h1 className="mt-1 text-2xl font-extrabold tracking-tight">Platform Activity Timeline</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Chronological log of every event across the platform.</p>
       </div>
 
       {/* Search & Filter */}

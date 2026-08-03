@@ -205,9 +205,9 @@ export const FamilyRegisterPage = () => {
               Continue <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           )}
-          <Button type="button" variant="outline" onClick={useDemoData} className="w-full">
+          {/* <Button type="button" variant="outline" onClick={useDemoData} className="w-full">
             Continue with demo data
-          </Button>
+          </Button> */}
         </div>
       )}
 

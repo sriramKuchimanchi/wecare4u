@@ -31,16 +31,15 @@ export const FamilyDetailPage = () => {
         <span className="font-semibold text-foreground">{family.name}</span>
       </div>
 
-      {/* Family Info */}
-      <div className="rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-700 p-6 text-white shadow-lg">
+      <div className="rounded-2xl border border-border/60 bg-surface p-6 shadow-xs">
         <div className="flex items-start gap-4">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 text-2xl font-bold">
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-2xl font-bold text-primary">
             {family.name.charAt(0)}
           </div>
           <div className="flex-1">
-            <h1 className="text-2xl font-extrabold">{family.name}</h1>
-            <p className="text-white/80 text-sm mt-1">Primary Contact: {family.primaryContactName}</p>
-            <div className="flex flex-wrap gap-4 mt-2 text-sm text-white/70">
+            <h1 className="text-2xl font-extrabold text-foreground">{family.name}</h1>
+            <p className="text-sm text-muted-foreground mt-1">Primary Contact: {family.primaryContactName}</p>
+            <div className="flex flex-wrap gap-4 mt-2 text-sm text-muted-foreground">
               <span className="flex items-center gap-1"><icons.Phone className="h-3 w-3" />{family.contact?.phone}</span>
               <span className="flex items-center gap-1"><icons.Mail className="h-3 w-3" />{family.contact?.email}</span>
               <span className="flex items-center gap-1"><icons.MapPin className="h-3 w-3" />{family.address?.city}, {family.address?.state}</span>

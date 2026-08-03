@@ -275,7 +275,7 @@ export const FamilyHomePage = () => {
       </section>
 
       {/* Notifications Preview */}
-      <section className="flex flex-col gap-4">
+      {/* <section className="flex flex-col gap-4">
         <SectionHeader
           title="Notifications"
           description="Recent alerts and updates"
@@ -301,7 +301,7 @@ export const FamilyHomePage = () => {
             ))}
           </div>
         )}
-      </section>
+      </section> */}
     </div>
   );
 };

@@ -33,30 +33,30 @@ export const ProviderDetailPage = () => {
         <span className="font-semibold text-foreground truncate">{provider.name}</span>
       </div>
 
-      <div className="rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-700 p-6 text-white shadow-lg">
+      <div className="rounded-2xl border border-border/60 bg-surface p-6 shadow-xs">
         <div className="flex flex-col sm:flex-row gap-4 sm:items-start">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 text-2xl font-bold shrink-0">{provider.name.charAt(0)}</div>
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-2xl font-bold shrink-0 text-primary">{provider.name.charAt(0)}</div>
           <div className="flex-1">
             <div className="flex items-center flex-wrap gap-2">
-              <h1 className="text-2xl font-extrabold">{provider.name}</h1>
-              <span className={cn('text-xs px-2 py-0.5 rounded-full font-semibold capitalize bg-white/20 text-white border border-white/30')}>{provider.verificationStatus}</span>
-              {provider.isVerified && <icons.BadgeCheck className="h-5 w-5 text-green-300" />}
+              <h1 className="text-2xl font-extrabold text-foreground">{provider.name}</h1>
+              <span className={cn('text-xs px-2 py-0.5 rounded-full font-semibold capitalize bg-primary/10 text-primary border border-primary/20')}>{provider.verificationStatus}</span>
+              {provider.isVerified && <icons.BadgeCheck className="h-5 w-5 text-green-600" />}
             </div>
-            <p className="text-white/80 text-sm capitalize mt-1">{provider.type?.replace('-', ' ')} · {provider.address?.city}, {provider.address?.state}</p>
-            <div className="flex flex-wrap gap-4 mt-2 text-sm text-white/70">
+            <p className="text-sm text-muted-foreground capitalize mt-1">{provider.type?.replace('-', ' ')} · {provider.address?.city}, {provider.address?.state}</p>
+            <div className="flex flex-wrap gap-4 mt-2 text-sm text-muted-foreground">
               <span><icons.Phone className="h-3 w-3 inline mr-1" />{provider.contact?.phone}</span>
               <span><icons.Mail className="h-3 w-3 inline mr-1" />{provider.contact?.email}</span>
-              <span><icons.Star className="h-3 w-3 inline mr-1 text-amber-300" />{provider.rating ?? 'N/A'} ({provider.reviewCount ?? 0} reviews)</span>
+              <span><icons.Star className="h-3 w-3 inline mr-1 text-amber-400" />{provider.rating ?? 'N/A'} ({provider.reviewCount ?? 0} reviews)</span>
             </div>
           </div>
           <div className="flex gap-2 sm:flex-col">
             {provider.verificationStatus === 'pending' && (
-              <Button className="bg-white text-indigo-900 hover:bg-indigo-50 font-bold text-sm" onClick={() => { approveMutation.mutateAsync(id); refetch(); }} disabled={approveMutation.isPending}>
+              <Button className="bg-primary text-white hover:bg-primary/90 font-bold text-sm" onClick={() => { approveMutation.mutateAsync(id); refetch(); }} disabled={approveMutation.isPending}>
                 <icons.CheckCircle className="h-4 w-4 mr-1" /> Approve
               </Button>
             )}
             {provider.verificationStatus === 'approved' && (
-              <Button className="bg-white/20 text-white hover:bg-white/30 border border-white/40 font-semibold text-sm" onClick={() => { suspendMutation.mutateAsync(id); refetch(); }} disabled={suspendMutation.isPending}>
+              <Button className="bg-muted text-foreground hover:bg-muted/80 font-semibold text-sm" onClick={() => { suspendMutation.mutateAsync(id); refetch(); }} disabled={suspendMutation.isPending}>
                 <icons.AlertTriangle className="h-4 w-4 mr-1" /> Suspend
               </Button>
             )}

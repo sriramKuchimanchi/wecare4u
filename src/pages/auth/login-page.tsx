@@ -99,9 +99,9 @@ const FamilyLoginForm = () => {
           </Button>
         </div>
       )}
-      <Button type="button" variant="outline" onClick={handleDemoSignIn} disabled={verifyOtp.isPending} className="w-full">
+      {/* <Button type="button" variant="outline" onClick={handleDemoSignIn} disabled={verifyOtp.isPending} className="w-full">
         Continue with demo family
-      </Button>
+      </Button> */}
     </div>
   );
 };

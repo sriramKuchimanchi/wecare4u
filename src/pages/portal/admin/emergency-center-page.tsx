@@ -12,32 +12,20 @@ export const EmergencyCenterPage = () => {
   const resolved = emergencies.filter((e: any) => e.status === 'resolved');
 
   return (
-    <div className="space-y-6 pb-8">
-      {/* Ops Center Banner */}
-      <div className="rounded-2xl bg-gradient-to-r from-red-600 via-red-700 to-rose-800 p-6 text-white shadow-xl relative overflow-hidden">
-        <div className="absolute right-4 top-4 opacity-10">
-          <icons.Siren className="h-36 w-36" />
-        </div>
-        <div className="relative z-10">
-          <div className="flex items-center gap-2 text-white/80 text-xs font-bold uppercase tracking-widest">
-            <span className="flex h-2.5 w-2.5 rounded-full bg-white animate-ping" />
-            Emergency Operations Center (EOC)
+    <div className="space-y-5 pb-8">
+      <div className="rounded-2xl border border-border/60 bg-surface p-4 shadow-xs">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div>
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              <icons.Siren className="h-4 w-4 text-red-600" /> Emergency Operations Center
+            </div>
+            <h1 className="mt-1 text-2xl font-extrabold tracking-tight">Live Emergency Operations</h1>
+            <p className="mt-1 text-sm text-muted-foreground">Active incidents: {active.length} · Resolved today: {resolved.length}</p>
           </div>
-          <h1 className="text-2xl md:text-3xl font-black tracking-tight mt-1">Live Emergency Operations</h1>
-          <p className="text-sm text-white/90 mt-1 max-w-2xl">
-            Real-time SOS dispatch, GPS coordinate tracking, ambulance routing, and hospital notification network.
-          </p>
-
-          <div className="flex flex-wrap gap-4 mt-4 text-xs font-semibold">
-            <div className="bg-white/20 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-white/30">
-              Active Incidents: <span className="font-extrabold text-white text-sm ml-1">{active.length}</span>
-            </div>
-            <div className="bg-white/20 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-white/30">
-              Resolved Today: <span className="font-extrabold text-white text-sm ml-1">{resolved.length}</span>
-            </div>
-            <div className="bg-white/20 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-white/30">
-              Target Response Time: <span className="font-extrabold text-white text-sm ml-1">&lt; 10 mins</span>
-            </div>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" size="sm">
+              <icons.Siren className="mr-2 h-4 w-4 text-red-600" /> Active Incidents
+            </Button>
           </div>
         </div>
       </div>

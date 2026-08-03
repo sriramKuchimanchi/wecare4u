@@ -31,6 +31,8 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 
+
+
 export const icons = {
   Home, Users, User, Heart, Calendar, Phone, Mail, Bell, Settings, LogOut,
   Menu, X, Search, SearchX, WifiOff, ChevronRight, ChevronLeft, ChevronDown, ChevronUp,
@@ -93,3 +95,5 @@ export type IconName = keyof typeof icons;
 export type { LucideIcon };
 
 export default icons;
+
+export { Bug, TestTube, Scan, Dumbbell, Droplet, MessageCircle} from 'lucide-react';

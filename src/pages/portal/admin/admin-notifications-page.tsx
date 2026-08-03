@@ -27,22 +27,22 @@ export const AdminNotificationsPage = () => {
   const readAllMutation = useMarkAllNotificationsReadMutation();
 
   return (
-    <div className="space-y-6 pb-8">
-      {/* Header */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between rounded-2xl bg-gradient-to-r from-purple-700 to-indigo-800 p-6 text-white shadow-lg">
+    <div className="space-y-5 pb-8">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between rounded-2xl border border-border/60 bg-surface p-4 shadow-xs">
         <div>
-          <div className="flex items-center gap-2 text-white/70 text-xs font-semibold uppercase tracking-wider">
-            <icons.Bell className="h-4 w-4" /> Admin Operations
+          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            <icons.Bell className="h-4 w-4" /> Notification Center
           </div>
-          <h1 className="text-2xl font-extrabold tracking-tight mt-1">Notification Center</h1>
-          <p className="text-sm text-white/80 mt-1">System alerts, emergency dispatches, provider verifications & announcements.</p>
+          <h1 className="mt-1 text-2xl font-extrabold tracking-tight">Notifications</h1>
+          <p className="mt-1 text-sm text-muted-foreground">System alerts, emergency dispatches, provider verifications and announcements.</p>
         </div>
 
         <Button
+          variant="outline"
+          size="sm"
           onClick={async () => { await readAllMutation.mutateAsync(); refetch(); }}
-          className="bg-white text-purple-900 hover:bg-purple-50 font-bold shadow-md text-sm"
         >
-          <icons.CheckCircle2 className="mr-2 h-4 w-4 text-purple-700" /> Mark All as Read
+          <icons.CheckCircle2 className="mr-2 h-4 w-4" /> Mark All as Read
         </Button>
       </div>
 

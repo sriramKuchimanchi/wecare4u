@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { icons, type IconName } from '@/config/icons';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { DataTable } from '@/components/shared/data-table';
 import { useAdminCategoriesQuery, useToggleCategoryMutation, useCreateCategoryMutation } from '@/hooks/use-portal-queries';
 
 export const ServiceCategoriesPage = () => {
@@ -10,9 +11,31 @@ export const ServiceCategoriesPage = () => {
   const createMutation = useCreateCategoryMutation();
 
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [page, setPage] = useState(1);
   const [newCatName, setNewCatName] = useState('');
   const [newCatDesc, setNewCatDesc] = useState('');
   const [newCatIcon, setNewCatIcon] = useState('Stethoscope');
+
+  const pageSize = 8;
+
+  const filteredCategories = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) return categories;
+
+    return categories.filter((cat: any) =>
+      [cat.name, cat.id, cat.description, cat.icon].some((value) =>
+        String(value ?? '').toLowerCase().includes(term)
+      )
+    );
+  }, [categories, searchTerm]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredCategories.length / pageSize));
+  const safePage = Math.min(page, totalPages);
+  const pagedCategories = useMemo(() => {
+    const start = (safePage - 1) * pageSize;
+    return filteredCategories.slice(start, start + pageSize);
+  }, [filteredCategories, safePage]);
 
   const handleToggle = async (id: string) => {
     await toggleMutation.mutateAsync(id);
@@ -36,76 +59,114 @@ export const ServiceCategoriesPage = () => {
 
   return (
     <div className="space-y-6 pb-8">
-      {/* Header */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between rounded-2xl bg-gradient-to-r from-teal-600 to-cyan-700 p-6 text-white shadow-lg">
-        <div>
-          <div className="flex items-center gap-2 text-white/70 text-xs font-semibold uppercase tracking-wider">
-            <icons.Tags className="h-4 w-4" /> Platform Taxonomy
+      <div className="rounded-2xl border border-border/60 bg-surface p-6 shadow-xs">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <div className="flex items-center gap-2 text-muted-foreground text-xs font-semibold uppercase tracking-wider">
+              <icons.Tags className="h-4 w-4" /> Platform Taxonomy
+            </div>
+            <h1 className="text-2xl font-extrabold tracking-tight mt-1 text-foreground">Service Categories</h1>
+            <p className="text-sm text-muted-foreground mt-1">Manage platform care categories, enable/disable offerings, and add new services.</p>
           </div>
-          <h1 className="text-2xl font-extrabold tracking-tight mt-1">Service Categories</h1>
-          <p className="text-sm text-white/80 mt-1">Manage platform care categories, enable/disable offerings, and add new services.</p>
-        </div>
 
-        <Button
-          onClick={() => setShowCreateModal(true)}
-          className="bg-white text-teal-900 hover:bg-teal-50 font-bold shadow-md text-sm"
-        >
-          <icons.Plus className="mr-2 h-4 w-4" /> Add Category
-        </Button>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="relative">
+              <icons.Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <input
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setPage(1);
+                }}
+                placeholder="Search categories"
+                className="w-full rounded-lg border border-border bg-background pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 sm:w-64"
+              />
+            </div>
+
+            <Button
+              onClick={() => setShowCreateModal(true)}
+              className="font-bold shadow-md text-sm"
+            >
+              <icons.Plus className="mr-2 h-4 w-4" /> Add Category
+            </Button>
+          </div>
+        </div>
       </div>
 
-      {/* Grid of Categories */}
       {isLoading ? (
         <div className="flex h-40 items-center justify-center">
           <icons.Loader2 className="h-7 w-7 animate-spin text-primary" />
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {categories.map((cat: any) => {
-            const Icon = icons[cat.icon as IconName] ?? icons.Stethoscope;
-
-            return (
-              <div
-                key={cat.id}
-                className={cn(
-                  'rounded-2xl border p-5 bg-surface shadow-xs transition-all flex flex-col justify-between space-y-4',
-                  !cat.enabled && 'opacity-60 bg-muted/30 border-dashed'
-                )}
-              >
-                <div>
-                  <div className="flex items-center justify-between gap-2 mb-3">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary shrink-0">
-                        <Icon className="h-6 w-6" />
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-foreground text-base">{cat.name}</h3>
-                        <p className="text-2xs text-muted-foreground">ID: {cat.id}</p>
-                      </div>
+        <DataTable
+          columns={[
+            {
+              key: 'name',
+              header: 'Category',
+              render: (row: any) => {
+                const Icon = icons[row.icon as IconName] ?? icons.Stethoscope;
+                return (
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shrink-0">
+                      <Icon className="h-5 w-5" />
                     </div>
-
-                    <button
-                      onClick={() => handleToggle(cat.id)}
-                      className={cn(
-                        'text-xs font-bold px-3 py-1 rounded-full transition-colors',
-                        cat.enabled ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                      )}
-                    >
-                      {cat.enabled ? 'Active' : 'Disabled'}
-                    </button>
+                    <div>
+                      <p className="font-semibold text-foreground">{row.name}</p>
+                      <p className="text-xs text-muted-foreground">ID: {row.id}</p>
+                    </div>
                   </div>
-
-                  <p className="text-xs text-muted-foreground leading-relaxed">{cat.description}</p>
-                </div>
-
-                <div className="pt-3 border-t border-border/40 flex items-center justify-between text-xs text-muted-foreground">
-                  <span>Providers: <strong className="text-foreground">{cat.providerCount ?? 0}</strong></span>
-                  <span>Total Requests: <strong className="text-foreground">{cat.requestCount ?? 0}</strong></span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+                );
+              },
+            },
+            {
+              key: 'description',
+              header: 'Description',
+              render: (row: any) => <span className="text-sm text-muted-foreground">{row.description || '—'}</span>,
+            },
+            {
+              key: 'providerCount',
+              header: 'Providers',
+              render: (row: any) => <span className="text-sm font-semibold text-foreground">{row.providerCount ?? 0}</span>,
+            },
+            {
+              key: 'requestCount',
+              header: 'Requests',
+              render: (row: any) => <span className="text-sm font-semibold text-foreground">{row.requestCount ?? 0}</span>,
+            },
+            {
+              key: 'status',
+              header: 'Status',
+              render: (row: any) => (
+                <span
+                  className={cn(
+                    'rounded-full px-2.5 py-1 text-xs font-bold',
+                    row.enabled ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-700'
+                  )}
+                >
+                  {row.enabled ? 'Active' : 'Disabled'}
+                </span>
+              ),
+            },
+            {
+              key: 'actions',
+              header: 'Action',
+              className: 'text-right',
+              render: (row: any) => (
+                <Button variant="outline" size="sm" onClick={() => handleToggle(row.id)}>
+                  {row.enabled ? 'Disable' : 'Enable'}
+                </Button>
+              ),
+            },
+          ]}
+          data={pagedCategories}
+          isLoading={isLoading}
+          page={safePage}
+          pageSize={pageSize}
+          total={filteredCategories.length}
+          totalPages={totalPages}
+          onPageChange={(next) => setPage(next)}
+          rowKey={(row: any) => row.id}
+        />
       )}
 
       {/* Create Modal */}

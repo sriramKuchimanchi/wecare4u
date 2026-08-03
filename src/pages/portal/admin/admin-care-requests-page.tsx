@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { icons } from '@/config/icons';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { DataTable } from '@/components/shared/data-table';
 import { useAdminCareRequestsQuery } from '@/hooks/use-portal-queries';
 import { useAdminStore } from '@/store/admin.store';
 
@@ -27,15 +28,26 @@ export const AdminCareRequestsPage = () => {
   const { requestFilters, setRequestFilters } = useAdminStore();
   const [search, setSearch] = useState('');
   const [activeTab, setActiveTab] = useState('all');
+  const [page, setPage] = useState(1);
+  const [selectedRequest, setSelectedRequest] = useState<any | null>(null);
+  const pageSize = 8;
 
   const { data: requests = [], isLoading } = useAdminCareRequestsQuery({
     search: requestFilters.search,
     status: activeTab,
   });
 
+  const pagedRequests = useMemo(() => {
+    const start = (page - 1) * pageSize;
+    return requests.slice(start, start + pageSize);
+  }, [requests, page]);
+
+  const totalPages = Math.max(1, Math.ceil(requests.length / pageSize));
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setRequestFilters({ search, status: activeTab });
+    setPage(1);
   };
 
   const tabs = [
@@ -49,31 +61,27 @@ export const AdminCareRequestsPage = () => {
   ];
 
   return (
-    <div className="space-y-6 pb-8">
-      {/* Header */}
-      <div className="rounded-2xl bg-gradient-to-r from-sky-600 to-blue-700 p-6 text-white shadow-lg">
+    <div className="space-y-5 pb-8">
+      <div className="rounded-2xl border border-border/60 bg-surface p-4 shadow-xs">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <div className="flex items-center gap-2 text-white/70 text-xs font-semibold uppercase tracking-wider">
-              <icons.ClipboardList className="h-4 w-4" /> Admin Operations
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              <icons.ClipboardList className="h-4 w-4" /> Care Requests Master Log
             </div>
-            <h1 className="text-2xl font-extrabold tracking-tight mt-1">Care Requests Master Log</h1>
-            <p className="text-sm text-white/80 mt-1">{requests.length} care requests tracked platform-wide</p>
+            <h1 className="mt-1 text-2xl font-extrabold tracking-tight">Care Requests</h1>
+            <p className="mt-1 text-sm text-muted-foreground">{requests.length} care requests tracked platform-wide</p>
           </div>
         </div>
       </div>
 
-      {/* Tabs */}
       <div className="flex flex-wrap border-b border-border gap-1 pb-1">
         {tabs.map((t) => (
           <button
             key={t.id}
-            onClick={() => { setActiveTab(t.id); setRequestFilters({ status: t.id, search }); }}
+            onClick={() => { setActiveTab(t.id); setRequestFilters({ status: t.id, search }); setPage(1); }}
             className={cn(
               'px-4 py-2 text-xs font-semibold rounded-t-lg transition-colors',
-              activeTab === t.id
-                ? 'bg-primary text-white'
-                : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+              activeTab === t.id ? 'bg-primary text-white' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
             )}
           >
             {t.label}
@@ -81,7 +89,6 @@ export const AdminCareRequestsPage = () => {
         ))}
       </div>
 
-      {/* Search */}
       <form onSubmit={handleSearch} className="flex gap-2">
         <div className="relative flex-1">
           <icons.Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -95,52 +102,91 @@ export const AdminCareRequestsPage = () => {
         <Button type="submit" size="sm" className="bg-primary text-white">Search</Button>
       </form>
 
-      {/* List */}
-      {isLoading ? (
-        <div className="flex h-40 items-center justify-center">
-          <icons.Loader2 className="h-7 w-7 animate-spin text-primary" />
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {requests.map((req: any) => (
-            <div key={req.id} className="rounded-2xl border border-border/60 bg-surface p-5 shadow-xs hover:shadow-md transition-all">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="space-y-1.5 flex-1 min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-bold text-foreground text-base">{req.categoryLabel ?? req.category}</span>
-                    <span className={cn('px-2.5 py-0.5 rounded-full text-xs font-semibold capitalize', statusBadge[req.status ?? 'pending'])}>
-                      {req.status?.replace(/_/g, ' ')}
-                    </span>
-                    <span className={cn('px-2.5 py-0.5 rounded-full text-xs capitalize', priorityBadge[req.priority ?? 'standard'])}>
-                      {req.priority ?? 'standard'}
-                    </span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    <span className="font-medium text-foreground">{req.patientName}</span> ({req.familyName}) → <span className="font-medium text-foreground">{req.providerName ?? 'Unassigned Provider'}</span>
-                  </p>
-                  {req.employeeName && (
-                    <p className="text-xs text-muted-foreground flex items-center gap-1">
-                      <icons.UserCheck className="h-3.5 w-3.5 text-primary" /> Staff: {req.employeeName} ({req.employeeRole})
-                    </p>
-                  )}
-                  {req.notes && (
-                    <p className="text-xs text-muted-foreground/80 italic mt-1 line-clamp-1">"{req.notes}"</p>
-                  )}
+      <DataTable
+        columns={[
+          {
+            key: 'categoryLabel',
+            header: 'Request',
+            render: (row: any) => (
+              <div className="space-y-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-bold text-foreground">{row.categoryLabel ?? row.category}</span>
+                  <span className={cn('px-2 py-0.5 rounded-full text-[11px] font-semibold capitalize', statusBadge[row.status ?? 'pending'])}>{row.status?.replace(/_/g, ' ')}</span>
+                  <span className={cn('px-2 py-0.5 rounded-full text-[11px] capitalize', priorityBadge[row.priority ?? 'standard'])}>{row.priority ?? 'standard'}</span>
                 </div>
+                <p className="text-xs text-muted-foreground">{row.patientName} ({row.familyName})</p>
+              </div>
+            ),
+          },
+          { key: 'providerName', header: 'Provider', render: (row: any) => <span className="text-sm font-medium">{row.providerName ?? 'Unassigned Provider'}</span> },
+          { key: 'employeeName', header: 'Assigned Staff', render: (row: any) => <span className="text-sm text-muted-foreground">{row.employeeName ?? '—'}</span> },
+          { key: 'scheduledAt', header: 'Schedule', render: (row: any) => <span className="text-xs text-muted-foreground">{new Date(row.scheduledAt).toLocaleString()}</span> },
+          { key: 'estimatedCost', header: 'Cost', render: (row: any) => <span className="font-bold">{row.currency ?? '₹'}{row.estimatedCost ?? 0}</span> },
+          {
+            key: 'actions',
+            header: 'Action',
+            className: 'text-right',
+            render: (row: any) => (
+              <Button variant="outline" size="sm" onClick={() => setSelectedRequest(row)}>
+                <icons.Eye className="mr-1 h-3 w-3" /> View
+              </Button>
+            ),
+          },
+        ]}
+        data={pagedRequests}
+        isLoading={isLoading}
+        page={page}
+        pageSize={pageSize}
+        total={requests.length}
+        totalPages={totalPages}
+        onPageChange={(next) => setPage(next)}
+        rowKey={(row: any) => row.id}
+      />
 
-                <div className="text-right shrink-0 space-y-1">
-                  <p className="text-lg font-extrabold text-foreground">{req.currency ?? '₹'}{req.estimatedCost ?? 0}</p>
-                  <p className="text-2xs text-muted-foreground">{new Date(req.scheduledAt).toLocaleDateString()} {new Date(req.scheduledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
-                </div>
+      {selectedRequest && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-xl rounded-2xl border border-border bg-background p-5 shadow-2xl">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Care Request</p>
+                <h3 className="text-lg font-bold text-foreground">{selectedRequest.categoryLabel ?? selectedRequest.category}</h3>
+              </div>
+              <Button variant="outline" size="sm" onClick={() => setSelectedRequest(null)}>
+                Close
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="rounded-lg bg-surface p-3">
+                <p className="text-[11px] uppercase tracking-wider text-muted-foreground">Patient</p>
+                <p className="font-semibold text-foreground">{selectedRequest.patientName}</p>
+              </div>
+              <div className="rounded-lg bg-surface p-3">
+                <p className="text-[11px] uppercase tracking-wider text-muted-foreground">Family</p>
+                <p className="font-semibold text-foreground">{selectedRequest.familyName}</p>
+              </div>
+              <div className="rounded-lg bg-surface p-3">
+                <p className="text-[11px] uppercase tracking-wider text-muted-foreground">Provider</p>
+                <p className="font-semibold text-foreground">{selectedRequest.providerName ?? 'Unassigned Provider'}</p>
+              </div>
+              <div className="rounded-lg bg-surface p-3">
+                <p className="text-[11px] uppercase tracking-wider text-muted-foreground">Assigned Staff</p>
+                <p className="font-semibold text-foreground">{selectedRequest.employeeName ?? '—'}</p>
+              </div>
+              <div className="rounded-lg bg-surface p-3">
+                <p className="text-[11px] uppercase tracking-wider text-muted-foreground">Status</p>
+                <p className="font-semibold text-foreground capitalize">{selectedRequest.status?.replace(/_/g, ' ')}</p>
+              </div>
+              <div className="rounded-lg bg-surface p-3">
+                <p className="text-[11px] uppercase tracking-wider text-muted-foreground">Priority</p>
+                <p className="font-semibold text-foreground capitalize">{selectedRequest.priority ?? 'standard'}</p>
+              </div>
+              <div className="rounded-lg bg-surface p-3 col-span-2">
+                <p className="text-[11px] uppercase tracking-wider text-muted-foreground">Schedule</p>
+                <p className="font-semibold text-foreground">{new Date(selectedRequest.scheduledAt).toLocaleString()}</p>
               </div>
             </div>
-          ))}
-          {requests.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-              <icons.ClipboardList className="h-10 w-10 mb-3 opacity-40" />
-              <p className="font-medium">No care requests match this filter</p>
-            </div>
-          )}
+          </div>
         </div>
       )}
     </div>

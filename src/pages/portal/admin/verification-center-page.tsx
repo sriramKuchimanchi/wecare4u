@@ -34,13 +34,12 @@ export const VerificationCenterPage = () => {
 
   return (
     <div className="space-y-6 pb-8">
-      {/* Banner */}
-      <div className="rounded-2xl bg-gradient-to-r from-amber-600 to-orange-700 p-6 text-white shadow-lg">
-        <div className="flex items-center gap-2 text-white/80 text-xs font-bold uppercase tracking-wider">
+      <div className="rounded-2xl border border-border/60 bg-surface p-6 shadow-xs">
+        <div className="flex items-center gap-2 text-muted-foreground text-xs font-bold uppercase tracking-wider">
           <icons.ShieldCheck className="h-4 w-4" /> Admin Operations
         </div>
-        <h1 className="text-2xl font-extrabold tracking-tight mt-1">Verification Center</h1>
-        <p className="text-sm text-white/90 mt-1">
+        <h1 className="text-2xl font-extrabold tracking-tight mt-1 text-foreground">Verification Center</h1>
+        <p className="text-sm text-muted-foreground mt-1">
           Review business credentials, licenses, GST registration, and employee certs before granting platform access.
         </p>
       </div>

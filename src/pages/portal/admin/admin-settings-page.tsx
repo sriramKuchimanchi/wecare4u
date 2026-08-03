@@ -41,13 +41,12 @@ export const AdminSettingsPage = () => {
 
   return (
     <div className="space-y-6 pb-8">
-      {/* Banner */}
-      <div className="rounded-2xl bg-gradient-to-r from-slate-700 to-slate-900 p-6 text-white shadow-lg">
-        <div className="flex items-center gap-2 text-white/70 text-xs font-semibold uppercase tracking-wider">
+      <div className="rounded-2xl border border-border/60 bg-surface p-6 shadow-xs">
+        <div className="flex items-center gap-2 text-muted-foreground text-xs font-semibold uppercase tracking-wider">
           <icons.Settings className="h-4 w-4" /> System Configuration
         </div>
-        <h1 className="text-2xl font-extrabold tracking-tight mt-1">Platform Global Settings</h1>
-        <p className="text-sm text-white/80 mt-1">Branding, emergency dispatch parameters, verification mandates, and PWA options.</p>
+        <h1 className="text-2xl font-extrabold tracking-tight mt-1 text-foreground">Platform Global Settings</h1>
+        <p className="text-sm text-muted-foreground mt-1">Branding, emergency dispatch parameters, verification mandates, and PWA options.</p>
       </div>
 
       {saved && (

@@ -48,17 +48,12 @@ import { FamiliesPage } from './admin/families-page';
 import { FamilyDetailPage } from './admin/family-detail-page';
 import { ProvidersPage } from './admin/providers-page';
 import { ProviderDetailPage } from './admin/provider-detail-page';
-import { AdminEmployeesPage } from './admin/admin-employees-page';
 import { AdminCareRequestsPage } from './admin/admin-care-requests-page';
 import { EmergencyCenterPage } from './admin/emergency-center-page';
 import { EmergencyDetailPage } from './admin/emergency-detail-page';
-import { VerificationCenterPage } from './admin/verification-center-page';
-import { AdminDocumentsPage } from './admin/admin-documents-page';
-import { AdminReviewsPage } from './admin/admin-reviews-page';
 import { AdminNotificationsPage } from './admin/admin-notifications-page';
 import { ServiceCategoriesPage } from './admin/service-categories-page';
 import { PlatformTimelinePage } from './admin/platform-timeline-page';
-import { AdminAnalyticsPage } from './admin/admin-analytics-page';
 import { AdminSettingsPage } from './admin/admin-settings-page';
 
 /**
@@ -178,10 +173,7 @@ const AdminPortalRouter = ({ sub }: { sub: string[] }) => {
     return <ProvidersPage />;
   }
 
-  if (first === 'employees') {
-    if (second) return <AdminEmployeesPage />;
-    return <AdminEmployeesPage />;
-  }
+  if (first === 'employees') return <ProvidersPage />;
 
   if (first === 'requests') return <AdminCareRequestsPage />;
 
@@ -190,13 +182,9 @@ const AdminPortalRouter = ({ sub }: { sub: string[] }) => {
     return <EmergencyCenterPage />;
   }
 
-  if (first === 'verification') return <VerificationCenterPage />;
-  if (first === 'documents') return <AdminDocumentsPage />;
-  if (first === 'reviews') return <AdminReviewsPage />;
   if (first === 'notifications') return <AdminNotificationsPage />;
   if (first === 'categories') return <ServiceCategoriesPage />;
   if (first === 'timeline') return <PlatformTimelinePage />;
-  if (first === 'analytics') return <AdminAnalyticsPage />;
   if (first === 'settings') return <AdminSettingsPage />;
 
   return <AdminDashboard />;

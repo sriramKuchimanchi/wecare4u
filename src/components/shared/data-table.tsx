@@ -1,4 +1,3 @@
-import { forwardRef } from 'react';
 import type { PaginationParams } from '@/types';
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
@@ -31,17 +30,14 @@ export type DataTableProps<T> = {
   rowKey?: (row: T) => string;
 };
 
-export function DataTable<T extends Record<string, unknown>>(
-  {
-    columns, data, isLoading, emptyTitle = 'No results', emptyDescription = 'Try adjusting your filters or search.',
-    page, pageSize, total, totalPages, onPageChange, onRowClick, className, rowKey,
-  }: DataTableProps<T>,
-  ref: React.Ref<HTMLDivElement>,
-) {
+export function DataTable<T extends Record<string, unknown>>({
+  columns, data, isLoading, emptyTitle = 'No results', emptyDescription = 'Try adjusting your filters or search.',
+  page, pageSize, total, totalPages, onPageChange, onRowClick, className, rowKey,
+}: DataTableProps<T>) {
   const showPagination = Boolean(page && totalPages && total && onPageChange);
 
   return (
-    <div ref={ref} className={cn('flex flex-col overflow-hidden rounded-lg border border-border bg-surface', className)}>
+    <div className={cn('flex flex-col overflow-hidden rounded-lg border border-border bg-surface', className)}>
       <div className="overflow-x-auto">
         <Table>
           <TableHeader>
@@ -102,9 +98,5 @@ export function DataTable<T extends Record<string, unknown>>(
   );
 }
 
-export const DataTableForwarded = forwardRef(DataTable) as <T extends Record<string, unknown>>(
-  props: DataTableProps<T> & { ref?: React.Ref<HTMLDivElement> },
-) => React.ReactElement;
-
-export default DataTableForwarded;
+export default DataTable;
 export type { PaginationParams };

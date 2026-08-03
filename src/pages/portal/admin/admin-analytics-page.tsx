@@ -46,13 +46,12 @@ export const AdminAnalyticsPage = () => {
 
   return (
     <div className="space-y-6 pb-8">
-      {/* Banner */}
-      <div className="rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-700 p-6 text-white shadow-lg">
-        <div className="flex items-center gap-2 text-white/70 text-xs font-semibold uppercase tracking-wider">
+      <div className="rounded-2xl border border-border/60 bg-surface p-6 shadow-xs">
+        <div className="flex items-center gap-2 text-muted-foreground text-xs font-semibold uppercase tracking-wider">
           <icons.Activity className="h-4 w-4" /> Platform Business Intelligence
         </div>
-        <h1 className="text-2xl font-extrabold tracking-tight mt-1">Platform Operations Analytics</h1>
-        <p className="text-sm text-white/80 mt-1">Growth metrics, care request volume, emergency response velocity, and top performer rosters.</p>
+        <h1 className="text-2xl font-extrabold tracking-tight mt-1 text-foreground">Platform Operations Analytics</h1>
+        <p className="text-sm text-muted-foreground mt-1">Growth metrics, care request volume, emergency response velocity, and top performer rosters.</p>
       </div>
 
       {/* Overview Cards */}

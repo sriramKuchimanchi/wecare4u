@@ -1,9 +1,17 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { icons } from '@/config/icons';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { useAdminProvidersQuery, useApproveProviderMutation, useRejectProviderMutation, useSuspendProviderMutation } from '@/hooks/use-portal-queries';
+import { DataTable } from '@/components/shared/data-table';
+import {
+  useAdminProvidersQuery,
+  useAdminEmployeesQuery,
+  useApproveProviderMutation,
+  useRejectProviderMutation,
+  useSuspendProviderMutation,
+  useApproveEmployeeMutation,
+} from '@/hooks/use-portal-queries';
 import { useAdminStore } from '@/store/admin.store';
 
 const verifBadge: Record<string, string> = {
@@ -14,32 +22,105 @@ const verifBadge: Record<string, string> = {
   under_review: 'bg-blue-100 text-blue-700 border border-blue-200',
 };
 
+const availBadge: Record<string, string> = {
+  available: 'bg-green-100 text-green-700',
+  busy: 'bg-amber-100 text-amber-700',
+  emergency_duty: 'bg-red-100 text-red-700 font-bold animate-pulse',
+  offline: 'bg-gray-100 text-gray-600',
+  on_leave: 'bg-blue-100 text-blue-700',
+};
+
+type CombinedRow = {
+  id: string;
+  type: 'provider' | 'employee';
+  name: string;
+  organization: string;
+  role: string;
+  location: string;
+  status: string;
+  availability?: string;
+  providerId?: string;
+  employeeCount?: number;
+};
+
 export const ProvidersPage = () => {
   const navigate = useNavigate();
   const { providerFilters, setProviderFilters } = useAdminStore();
-  const [search, setSearch] = useState('');
-  const [verifFilter, setVerifFilter] = useState('all');
+  const [search, setSearch] = useState(providerFilters.search ?? '');
+  const [verifFilter, setVerifFilter] = useState(providerFilters.verificationStatus ?? 'all');
+  const [page, setPage] = useState(1);
   const [rejectId, setRejectId] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState('');
+  const pageSize = 8;
 
-  const { data: providers = [], isLoading, refetch } = useAdminProvidersQuery(providerFilters);
-  const approveMutation = useApproveProviderMutation();
+  const { data: providers = [], isLoading: providersLoading, refetch: refetchProviders } = useAdminProvidersQuery(providerFilters);
+  const { data: employees = [], isLoading: employeesLoading, refetch: refetchEmployees } = useAdminEmployeesQuery({ search: providerFilters.search, verificationStatus: providerFilters.verificationStatus });
+
+  const approveProviderMutation = useApproveProviderMutation();
   const rejectMutation = useRejectProviderMutation();
   const suspendMutation = useSuspendProviderMutation();
+  const approveEmployeeMutation = useApproveEmployeeMutation();
+
+  const combined = useMemo<CombinedRow[]>(() => {
+    const providerRows = providers.map((prov: any) => ({
+      id: prov.id,
+      type: 'provider' as const,
+      name: prov.name,
+      organization: prov.type?.replace('-', ' ') ?? 'Provider',
+      role: `${prov.employeeCount ?? 0} staff`,
+      location: `${prov.address?.city ?? ''}, ${prov.address?.state ?? ''}`.trim(),
+      status: prov.verificationStatus ?? 'pending',
+    }));
+
+    const employeeRows = employees.map((emp: any) => ({
+      id: emp.id,
+      type: 'employee' as const,
+      name: emp.name,
+      organization: emp.providerName ?? 'Independent',
+      role: emp.role,
+      location: `${emp.address?.city ?? ''}, ${emp.address?.state ?? ''}`.trim(),
+      status: emp.verificationStatus ?? 'approved',
+      availability: emp.availability ?? 'available',
+      providerId: emp.providerId,
+    }));
+
+    const merged = [...providerRows, ...employeeRows];
+    const q = (search || providerFilters.search || '').toLowerCase();
+    const status = verifFilter || providerFilters.verificationStatus || 'all';
+
+    return merged.filter((item) => {
+      const matchesQuery = !q || item.name.toLowerCase().includes(q) || item.organization.toLowerCase().includes(q) || item.role.toLowerCase().includes(q) || item.location.toLowerCase().includes(q);
+      const matchesStatus = status === 'all' || item.status === status;
+      return matchesQuery && matchesStatus;
+    });
+  }, [providers, employees, search, verifFilter, providerFilters.search, providerFilters.verificationStatus]);
+
+  const pagedRows = useMemo(() => {
+    const start = (page - 1) * pageSize;
+    return combined.slice(start, start + pageSize);
+  }, [combined, page]);
+
+  const totalPages = Math.max(1, Math.ceil(combined.length / pageSize));
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setProviderFilters({ search, verificationStatus: verifFilter });
+    setPage(1);
   };
 
-  const handleApprove = async (id: string) => {
-    await approveMutation.mutateAsync(id);
-    refetch();
+  const handleApproveProvider = async (id: string) => {
+    await approveProviderMutation.mutateAsync(id);
+    refetchProviders();
   };
 
-  const handleSuspend = async (id: string) => {
+  const handleSuspendProvider = async (id: string) => {
     await suspendMutation.mutateAsync(id);
-    refetch();
+    refetchProviders();
+  };
+
+  const handleApproveEmployee = async (id: string) => {
+    await approveEmployeeMutation.mutateAsync(id);
+    refetchEmployees();
   };
 
   const handleReject = async () => {
@@ -47,126 +128,146 @@ export const ProvidersPage = () => {
     await rejectMutation.mutateAsync({ id: rejectId, reason: rejectReason });
     setRejectId(null);
     setRejectReason('');
-    refetch();
+    refetchProviders();
   };
 
   return (
-    <div className="space-y-6 pb-8">
-      {/* Header */}
-      <div className="rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-700 p-6 text-white shadow-lg">
+    <div className="space-y-5 pb-8">
+      <div className="rounded-2xl border border-border/60 bg-surface p-4 shadow-xs">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <div className="flex items-center gap-2 text-white/70 text-xs font-semibold uppercase tracking-wider">
-              <icons.Building2 className="h-4 w-4" /> Administrator Portal
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              <icons.Building2 className="h-4 w-4" /> Service Providers
             </div>
-            <h1 className="text-2xl font-extrabold tracking-tight mt-1">Service Providers</h1>
-            <p className="text-sm text-white/80 mt-1">{providers.length} registered providers — manage verification & status</p>
+            <h1 className="mt-1 text-2xl font-extrabold tracking-tight">Service Providers</h1>
+            <p className="mt-1 text-sm text-muted-foreground">All registered providers and active platform staff in one place.</p>
           </div>
-          <Button onClick={() => navigate('/portal/admin/verification')} className="bg-white text-indigo-900 hover:bg-indigo-50 font-bold shadow-md text-sm">
-            <icons.ShieldCheck className="mr-2 h-4 w-4" /> Verification Center
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" size="sm" onClick={() => navigate('/portal/admin/providers')}>
+              <icons.Building2 className="mr-2 h-4 w-4" /> Providers
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => navigate('/portal/admin/notifications')}>
+              <icons.Bell className="mr-2 h-4 w-4" /> Notifications
+            </Button>
+          </div>
         </div>
       </div>
 
-      {/* Filters */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <form onSubmit={handleSearch} className="flex flex-1 gap-2">
           <div className="relative flex-1">
             <icons.Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search providers..." className="w-full rounded-lg border border-border bg-background pl-9 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
+            <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search provider, employee, organization..." className="w-full rounded-lg border border-border bg-background pl-9 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
           </div>
           <Button type="submit" size="sm" className="bg-primary text-white">Search</Button>
         </form>
         <div className="flex flex-wrap gap-2">
           {['all', 'approved', 'pending', 'rejected', 'suspended'].map((s) => (
-            <button key={s} onClick={() => { setVerifFilter(s); setProviderFilters({ verificationStatus: s, search }); }} className={cn('px-3 py-1.5 text-xs font-semibold rounded-lg capitalize border transition-colors', verifFilter === s ? 'bg-primary text-white border-primary' : 'bg-surface text-muted-foreground border-border hover:border-primary')}>
+            <button key={s} onClick={() => { setVerifFilter(s); setProviderFilters({ verificationStatus: s, search }); setPage(1); }} className={cn('px-3 py-1.5 text-xs font-semibold rounded-lg capitalize border transition-colors', verifFilter === s ? 'bg-primary text-white border-primary' : 'bg-surface text-muted-foreground border-border hover:border-primary')}>
               {s === 'all' ? 'All' : s}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Provider Cards */}
-      {isLoading ? (
-        <div className="flex h-40 items-center justify-center"><icons.Loader2 className="h-7 w-7 animate-spin text-primary" /></div>
-      ) : (
-        <div className="grid grid-cols-1 gap-4">
-          {providers.map((prov: any) => (
-            <div key={prov.id} className="rounded-2xl bg-surface border border-border/60 shadow-xs p-5 hover:shadow-md transition-all">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-                {/* Logo/avatar */}
-                <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-indigo-100 text-indigo-700 font-bold text-lg shrink-0">
-                  {prov.name.charAt(0)}
+      <DataTable
+        columns={[
+          {
+            key: 'name',
+            header: 'Name',
+            render: (row: CombinedRow) => (
+              <div className="flex items-center gap-3">
+                <div className={cn('flex h-9 w-9 items-center justify-center rounded-full font-bold text-sm shrink-0', row.type === 'provider' ? 'bg-indigo-100 text-indigo-700' : 'bg-violet-100 text-violet-700')}>
+                  {row.name.charAt(0)}
                 </div>
-
-                {/* Info */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex flex-wrap items-center gap-2 mb-1">
-                    <h3 className="font-bold text-foreground">{prov.name}</h3>
-                    <span className={cn('text-xs px-2 py-0.5 rounded-full font-semibold capitalize', verifBadge[prov.verificationStatus ?? 'pending'])}>
-                      {prov.verificationStatus ?? 'pending'}
-                    </span>
-                    {prov.isVerified && <icons.BadgeCheck className="h-4 w-4 text-green-600" />}
-                  </div>
-                  <p className="text-xs text-muted-foreground capitalize mb-2">{prov.type?.replace('-', ' ')} · {prov.address?.city}, {prov.address?.state}</p>
-                  <div className="flex flex-wrap gap-4 text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1"><icons.Users className="h-3 w-3" />{prov.employeeCount} staff</span>
-                    <span className="flex items-center gap-1"><icons.Star className="h-3 w-3 text-amber-500" />{prov.rating ?? 'N/A'}</span>
-                    <span className="flex items-center gap-1"><icons.ClipboardList className="h-3 w-3" />{prov.totalRequestsCount} requests</span>
-                    <span className="flex items-center gap-1"><icons.FileText className="h-3 w-3" />{prov.documentsCount} docs</span>
-                  </div>
-                  {prov.rejectionReason && (
-                    <p className="mt-2 text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-1.5">
-                      <span className="font-bold">Rejection:</span> {prov.rejectionReason}
-                    </p>
-                  )}
-                </div>
-
-                {/* Actions */}
-                <div className="flex flex-wrap gap-2 sm:flex-col sm:items-end">
-                  <Button variant="outline" size="sm" onClick={() => navigate(`/portal/admin/providers/${prov.id}`)}>
-                    <icons.Eye className="h-3 w-3 mr-1" /> View
-                  </Button>
-                  {prov.verificationStatus === 'pending' && (
-                    <>
-                      <Button size="sm" className="bg-green-600 text-white hover:bg-green-700 text-xs" onClick={() => handleApprove(prov.id)} disabled={approveMutation.isPending}>
-                        <icons.CheckCircle className="h-3 w-3 mr-1" /> Approve
-                      </Button>
-                      <Button size="sm" variant="outline" className="border-red-300 text-red-600 hover:bg-red-50 text-xs" onClick={() => setRejectId(prov.id)}>
-                        <icons.XCircle className="h-3 w-3 mr-1" /> Reject
-                      </Button>
-                    </>
-                  )}
-                  {prov.verificationStatus === 'approved' && (
-                    <Button size="sm" variant="outline" className="border-amber-300 text-amber-700 hover:bg-amber-50 text-xs" onClick={() => handleSuspend(prov.id)} disabled={suspendMutation.isPending}>
-                      <icons.AlertTriangle className="h-3 w-3 mr-1" /> Suspend
-                    </Button>
-                  )}
+                <div>
+                  <p className="font-semibold text-foreground">{row.name}</p>
+                  <p className="text-xs text-muted-foreground">{row.type === 'provider' ? 'Provider' : 'Employee'}</p>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
+            ),
+          },
+          { key: 'organization', header: 'Organization', render: (row: CombinedRow) => <span className="text-sm font-medium">{row.organization}</span> },
+          { key: 'role', header: 'Role / Type', render: (row: CombinedRow) => <span className="text-xs text-muted-foreground">{row.role}</span> },
+          { key: 'location', header: 'Location', render: (row: CombinedRow) => <span className="text-xs text-muted-foreground">{row.location || '—'}</span> },
+          {
+            key: 'status',
+            header: 'Verification',
+            render: (row: CombinedRow) => (
+              <span className={cn('px-2 py-0.5 rounded-full text-[11px] font-semibold capitalize border', verifBadge[row.status ?? 'pending'])}>
+                {row.status}
+              </span>
+            ),
+          },
+          {
+            key: 'actions',
+            header: 'Actions',
+            className: 'text-right',
+            render: (row: CombinedRow) => (
+              <div className="flex items-center justify-end gap-2">
+                {row.type === 'provider' ? (
+                  <>
+                    <Button variant="outline" size="sm" onClick={() => navigate(`/portal/admin/providers/${row.id}`)}>
+                      <icons.Eye className="h-3 w-3" />
+                    </Button>
+                    {row.status === 'pending' && (
+                      <>
+                        <Button size="sm" className="bg-green-600 text-white hover:bg-green-700 text-2xs h-7 px-2" onClick={() => handleApproveProvider(row.id)} disabled={approveProviderMutation.isPending}>
+                          <icons.CheckCircle className="h-3 w-3 mr-1" /> Approve
+                        </Button>
+                        <Button size="sm" variant="outline" className="border-red-300 text-red-600 hover:bg-red-50 text-2xs h-7 px-2" onClick={() => setRejectId(row.id)}>
+                          <icons.XCircle className="h-3 w-3 mr-1" /> Reject
+                        </Button>
+                      </>
+                    )}
+                    {row.status === 'approved' && (
+                      <Button size="sm" variant="outline" className="border-amber-300 text-amber-700 hover:bg-amber-50 text-2xs h-7 px-2" onClick={() => handleSuspendProvider(row.id)} disabled={suspendMutation.isPending}>
+                        <icons.AlertTriangle className="h-3 w-3 mr-1" /> Suspend
+                      </Button>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    {row.status === 'pending' && (
+                      <Button size="sm" className="bg-green-600 text-white hover:bg-green-700 text-2xs h-7 px-2" onClick={() => handleApproveEmployee(row.id)}>
+                        <icons.CheckCircle className="h-3 w-3 mr-1" /> Approve
+                      </Button>
+                    )}
+                    {row.status === 'approved' && (
+                      <Button size="sm" variant="outline" className="border-amber-300 text-amber-700 hover:bg-amber-50 text-2xs h-7 px-2" onClick={() => handleApproveEmployee(row.id)}>
+                        <icons.AlertTriangle className="h-3 w-3 mr-1" /> Suspend
+                      </Button>
+                    )}
+                    {row.availability && (
+                      <span className={cn('px-2 py-0.5 rounded-full text-[11px] font-semibold capitalize', availBadge[row.availability])}>{row.availability.replace('_', ' ')}</span>
+                    )}
+                  </>
+                )}
+              </div>
+            ),
+          },
+        ]}
+        data={pagedRows}
+        isLoading={providersLoading || employeesLoading}
+        page={page}
+        pageSize={pageSize}
+        total={combined.length}
+        totalPages={totalPages}
+        onPageChange={(next) => setPage(next)}
+        emptyTitle="No service providers or staff found"
+        emptyDescription="Try another search keyword or reset the status filter."
+        rowKey={(row: CombinedRow) => `${row.type}-${row.id}`}
+      />
 
-      {/* Reject Modal */}
       {rejectId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="rounded-2xl bg-background border border-border p-6 shadow-2xl max-w-md w-full mx-4">
             <h3 className="font-bold text-foreground mb-2">Reject Provider</h3>
             <p className="text-sm text-muted-foreground mb-4">Please provide a reason for rejection. This will be sent to the provider.</p>
-            <textarea
-              value={rejectReason}
-              onChange={(e) => setRejectReason(e.target.value)}
-              className="w-full rounded-lg border border-border p-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
-              rows={3}
-              placeholder="Enter rejection reason..."
-            />
+            <textarea value={rejectReason} onChange={(e) => setRejectReason(e.target.value)} className="w-full rounded-lg border border-border p-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none" rows={3} placeholder="Enter rejection reason..." />
             <div className="flex gap-3 mt-4">
               <Button variant="outline" className="flex-1" onClick={() => setRejectId(null)}>Cancel</Button>
-              <Button className="flex-1 bg-red-600 text-white hover:bg-red-700" onClick={handleReject} disabled={!rejectReason.trim() || rejectMutation.isPending}>
-                {rejectMutation.isPending ? <icons.Loader2 className="h-4 w-4 animate-spin" /> : 'Confirm Reject'}
-              </Button>
+              <Button className="flex-1 bg-red-600 text-white hover:bg-red-700" onClick={handleReject} disabled={!rejectReason.trim() || rejectMutation.isPending}>{rejectMutation.isPending ? <icons.Loader2 className="h-4 w-4 animate-spin" /> : 'Confirm Reject'}</Button>
             </div>
           </div>
         </div>

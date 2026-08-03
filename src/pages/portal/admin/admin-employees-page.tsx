@@ -46,15 +46,14 @@ export const AdminEmployeesPage = () => {
 
   return (
     <div className="space-y-6 pb-8">
-      {/* Header */}
-      <div className="rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-700 p-6 text-white shadow-lg">
+      <div className="rounded-2xl border border-border/60 bg-surface p-6 shadow-xs">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <div className="flex items-center gap-2 text-white/70 text-xs font-semibold uppercase tracking-wider">
+            <div className="flex items-center gap-2 text-muted-foreground text-xs font-semibold uppercase tracking-wider">
               <icons.Briefcase className="h-4 w-4" /> Administrator Portal
             </div>
-            <h1 className="text-2xl font-extrabold tracking-tight mt-1">Employee Management</h1>
-            <p className="text-sm text-white/80 mt-1">{employees.length} healthcare & service employees platform-wide</p>
+            <h1 className="text-2xl font-extrabold tracking-tight mt-1 text-foreground">Employee Management</h1>
+            <p className="text-sm text-muted-foreground mt-1">{employees.length} healthcare & service employees platform-wide</p>
           </div>
         </div>
       </div>

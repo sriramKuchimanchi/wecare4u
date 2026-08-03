@@ -47,23 +47,19 @@ export const EmergencyDetailPage = () => {
         <span className="font-semibold text-foreground">{emergency.memberName} SOS Log</span>
       </div>
 
-      {/* Header Banner */}
-      <div className={cn(
-        'rounded-2xl p-6 text-white shadow-xl flex flex-col md:flex-row justify-between gap-4',
-        emergency.status === 'active' ? 'bg-gradient-to-r from-red-600 to-rose-800' : 'bg-gradient-to-r from-slate-700 to-slate-900'
-      )}>
+      <div className="rounded-2xl border border-border/60 bg-surface p-6 shadow-xs flex flex-col md:flex-row justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-white/80 text-xs font-bold uppercase tracking-wider">
+          <div className="flex items-center gap-2 text-muted-foreground text-xs font-bold uppercase tracking-wider">
             <icons.Siren className="h-4 w-4" /> Live Emergency Incident
           </div>
-          <h1 className="text-2xl md:text-3xl font-black mt-1">{emergency.memberName} — Incident #{emergency.id}</h1>
-          <p className="text-sm text-white/90 mt-1">
-            Triggered {new Date(emergency.createdAt).toLocaleString()} · Status: <span className="font-bold uppercase underline">{emergency.status}</span>
+          <h1 className="text-2xl md:text-3xl font-black mt-1 text-foreground">{emergency.memberName} — Incident #{emergency.id}</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Triggered {new Date(emergency.createdAt).toLocaleString()} · Status: <span className="font-bold uppercase underline text-foreground">{emergency.status}</span>
           </p>
         </div>
         <div className="flex items-center gap-2">
           {emergency.status === 'active' && (
-            <Button className="bg-white text-red-700 hover:bg-red-50 font-bold text-sm">
+            <Button className="bg-red-600 text-white hover:bg-red-700 font-bold text-sm">
               <icons.PhoneCall className="mr-2 h-4 w-4" /> Call Family Contact
             </Button>
           )}
