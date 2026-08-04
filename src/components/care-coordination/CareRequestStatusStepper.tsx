@@ -1,5 +1,6 @@
 import { AlertCircle } from '@/config/icons';
-import type { CareRequestStatus } from '@/types';
+import type { CareRequestStatus, CareRequestTimelineStep } from '@/types';
+import { formatRelative } from '@/utils/date';
 import { ProgressTracker } from './ProgressTracker';
 
 export type StatusStep = {
@@ -8,24 +9,31 @@ export type StatusStep = {
   description: string;
 };
 
+// The single canonical pipeline every dashboard (family, provider, admin)
+// renders — there is no "assign an employee" step, since providers don't
+// pick named staff for a request; they simply move it through these stages.
 export const statusSteps: StatusStep[] = [
   { key: 'requested', label: 'Requested', description: 'Care request submitted' },
   { key: 'accepted', label: 'Accepted', description: 'Provider confirmed request' },
-  { key: 'professional_assigned', label: 'Professional Assigned', description: 'Healthcare expert assigned' },
-  { key: 'on_the_way', label: 'On The Way', description: 'Professional travelling to location' },
-  { key: 'arrived', label: 'Arrived', description: 'Professional arrived at address' },
+  { key: 'on_the_way', label: 'On The Way', description: 'Care professional travelling to location' },
+  { key: 'arrived', label: 'Arrived', description: 'Care professional arrived at address' },
   { key: 'in_progress', label: 'In Progress', description: 'Care service being delivered' },
   { key: 'completed', label: 'Completed', description: 'Service completed successfully' },
 ];
 
+type CareRequestStatusStepperProps = {
+  currentStatus: CareRequestStatus;
+  /** Per-step timestamps, sourced from the request's own timeline log. */
+  timeline?: CareRequestTimelineStep[];
+};
+
 /**
- * Read-only status display for a family's care request. The provider (or their
- * assigned staff) is the only one who ever moves this forward — see the
- * care-provider portal's request detail page for that control surface.
+ * Read-only status display for a family's care request. The provider is the
+ * only one who ever moves this forward — see the care-provider portal's
+ * request detail page for that control surface.
  */
-export const CareRequestStatusStepper = ({ currentStatus }: { currentStatus: CareRequestStatus }) => {
+export const CareRequestStatusStepper = ({ currentStatus, timeline }: CareRequestStatusStepperProps) => {
   const getStepIndex = (status: CareRequestStatus) => {
-    if (status === 'pending') return 0;
     if (status === 'cancelled') return -1;
     if (status === 'completed') return statusSteps.length;
     return statusSteps.findIndex((s) => s.key === status);
@@ -47,7 +55,15 @@ export const CareRequestStatusStepper = ({ currentStatus }: { currentStatus: Car
 
   return (
     <ProgressTracker
-      steps={statusSteps.map((s) => ({ key: s.key, label: s.label, description: s.description }))}
+      steps={statusSteps.map((s) => {
+        const entry = timeline?.find((t) => t.status === s.key);
+        return {
+          key: s.key,
+          label: s.label,
+          description: s.description,
+          timestamp: entry ? formatRelative(entry.timestamp) : undefined,
+        };
+      })}
       currentIndex={currentIndex}
     />
   );

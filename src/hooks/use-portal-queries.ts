@@ -134,6 +134,7 @@ export const useAcceptRequestMutation = () => {
     mutationFn: (id: string) => careProviderPortalService.acceptRequest(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['provider'] });
+      queryClient.invalidateQueries({ queryKey: ['care-request'] });
     },
   });
 };
@@ -144,18 +145,7 @@ export const useRejectRequestMutation = () => {
     mutationFn: ({ id, reason }: { id: string; reason?: string }) => careProviderPortalService.rejectRequest(id, reason),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['provider'] });
-    },
-  });
-};
-
-export const useAssignEmployeeMutation = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ requestId, employeeId }: { requestId: string; employeeId: string }) =>
-      careProviderPortalService.assignEmployee(requestId, employeeId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['provider'] });
-      queryClient.invalidateQueries({ queryKey: ['employee'] });
+      queryClient.invalidateQueries({ queryKey: ['care-request'] });
     },
   });
 };
@@ -167,7 +157,7 @@ export const useUpdateRequestStatusMutation = () => {
       careProviderPortalService.updateRequestStatus(id, status, note),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['provider'] });
-      queryClient.invalidateQueries({ queryKey: ['employee'] });
+      queryClient.invalidateQueries({ queryKey: ['care-request'] });
     },
   });
 };

@@ -4,15 +4,9 @@ import { icons } from '@/config/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import {
-  useProviderRequestDetailQuery,
-  useProviderEmployeesQuery,
-  useUpdateRequestStatusMutation,
-  useAssignEmployeeMutation,
-} from '@/hooks/use-portal-queries';
+import { useProviderRequestDetailQuery, useUpdateRequestStatusMutation } from '@/hooks/use-portal-queries';
 import { careProviderPortalService } from '@/services/care-provider-portal.service';
-import { cn } from '@/lib/utils';
-import type { CareRequestStatus } from '@/types';
+import { CareRequestStatusStepper, statusSteps } from '@/components/care-coordination/CareRequestStatusStepper';
 
 export const CareRequestDetailPage = () => {
   const { id: paramId } = useParams<{ id?: string }>();
@@ -24,13 +18,10 @@ export const CareRequestDetailPage = () => {
   const { toast } = useToast();
 
   const [newNote, setNewNote] = useState('');
-  const [selectedEmpId, setSelectedEmpId] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
 
   const { data: req, isLoading, refetch } = useProviderRequestDetailQuery(requestId);
-  const { data: employees = [] } = useProviderEmployeesQuery();
-
   const updateStatusMutation = useUpdateRequestStatusMutation();
-  const assignMutation = useAssignEmployeeMutation();
 
   if (isLoading || !req) {
     return (
@@ -40,27 +31,27 @@ export const CareRequestDetailPage = () => {
     );
   }
 
-  const handleStatusChange = async (nextStatus: CareRequestStatus) => {
+  const currentStepIndex = statusSteps.findIndex((s) => s.key === req.status);
+  const nextStep = req.status === 'completed' || req.status === 'cancelled' ? null : statusSteps[currentStepIndex + 1];
+
+  const handleAdvance = async () => {
+    if (!nextStep) return;
     try {
-      await updateStatusMutation.mutateAsync({ id: req.id, status: nextStatus });
-      toast({
-        title: 'Status Updated',
-        description: `Request status changed to ${nextStatus.replace(/_/g, ' ')}. Timeline & family notified.`,
-      });
+      await updateStatusMutation.mutateAsync({ id: req.id, status: nextStep.key });
+      toast({ title: 'Status Updated', description: `Request marked as "${nextStep.label}". Family notified.` });
       refetch();
     } catch {
       toast({ title: 'Error', description: 'Failed to update status.', variant: 'destructive' });
     }
   };
 
-  const handleAssignEmployee = async () => {
-    if (!selectedEmpId) return;
+  const handleCancel = async () => {
     try {
-      await assignMutation.mutateAsync({ requestId: req.id, employeeId: selectedEmpId });
-      toast({ title: 'Employee Assigned', description: 'Staff member assigned successfully.' });
+      await updateStatusMutation.mutateAsync({ id: req.id, status: 'cancelled', note: 'Provider was unable to fulfill request.' });
+      toast({ title: 'Request Cancelled', description: 'Family has been notified.' });
       refetch();
     } catch {
-      toast({ title: 'Error', description: 'Failed to assign staff.', variant: 'destructive' });
+      toast({ title: 'Error', description: 'Failed to cancel request.', variant: 'destructive' });
     }
   };
 
@@ -69,11 +60,29 @@ export const CareRequestDetailPage = () => {
     if (!newNote.trim()) return;
     try {
       await careProviderPortalService.addInternalNote(req.id, newNote.trim());
-      toast({ title: 'Note Added', description: 'Internal note saved.' });
+      toast({ title: 'Note Added', description: 'Visit note saved.' });
       setNewNote('');
       refetch();
     } catch {
       toast({ title: 'Error', description: 'Failed to add note.', variant: 'destructive' });
+    }
+  };
+
+  const handleUploadFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    setIsUploading(true);
+    try {
+      const url = URL.createObjectURL(file);
+      const kind = file.type.startsWith('image/') ? 'image' : 'document';
+      await careProviderPortalService.addAttachment(req.id, { name: file.name, url, kind });
+      toast({ title: 'File Uploaded', description: `${file.name} attached to this visit.` });
+      refetch();
+    } catch {
+      toast({ title: 'Error', description: 'Failed to upload file.', variant: 'destructive' });
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -94,19 +103,6 @@ export const CareRequestDetailPage = () => {
             </div>
             <p className="text-xs text-muted-foreground mt-0.5">Submitted by {req.familyName || 'Family'}</p>
           </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="flex flex-wrap items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => handleStatusChange('on_the_way')}>
-            <icons.Navigation className="mr-1.5 h-3.5 w-3.5" /> Mark On The Way
-          </Button>
-          <Button variant="outline" size="sm" onClick={() => handleStatusChange('in_progress')}>
-            <icons.Play className="mr-1.5 h-3.5 w-3.5" /> Start Service
-          </Button>
-          <Button size="sm" onClick={() => handleStatusChange('completed')}>
-            <icons.CheckCircle2 className="mr-1.5 h-3.5 w-3.5" /> Mark Completed
-          </Button>
         </div>
       </div>
 
@@ -169,33 +165,14 @@ export const CareRequestDetailPage = () => {
             </div>
           </div>
 
-          {/* Timeline & Status History */}
+          {/* Visit Notes & Attachments */}
           <div className="rounded-2xl bg-surface p-6 border border-border/60 shadow-xs space-y-4">
             <h2 className="text-base font-bold text-foreground flex items-center gap-2">
-              <icons.History className="h-5 w-5 text-primary" /> Status History & Live Timeline
+              <icons.FileText className="h-5 w-5 text-primary" /> Visit Notes & Attachments
             </h2>
-
-            <div className="relative pl-6 border-l-2 border-primary/20 space-y-6 pt-2">
-              {req.timeline?.map((step, idx) => (
-                <div key={idx} className="relative">
-                  <div className="absolute -left-[31px] top-0 flex h-4 w-4 items-center justify-center rounded-full bg-primary ring-4 ring-surface" />
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-bold text-foreground">{step.title}</h3>
-                    <span className="text-2xs text-muted-foreground">
-                      {new Date(step.timestamp).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
-                    </span>
-                  </div>
-                  {step.description && <p className="text-xs text-muted-foreground mt-1">{step.description}</p>}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Internal Staff Notes */}
-          <div className="rounded-2xl bg-surface p-6 border border-border/60 shadow-xs space-y-4">
-            <h2 className="text-base font-bold text-foreground flex items-center gap-2">
-              <icons.MessageSquare className="h-5 w-5 text-primary" /> Internal Provider Notes
-            </h2>
+            <p className="text-xs text-muted-foreground -mt-2">
+              Notes and files added here become visible to the family under this request once the visit is completed.
+            </p>
 
             <div className="space-y-2 max-h-48 overflow-y-auto">
               {req.internalNotes && req.internalNotes.length > 0 ? (
@@ -205,13 +182,30 @@ export const CareRequestDetailPage = () => {
                   </div>
                 ))
               ) : (
-                <p className="text-xs text-muted-foreground italic">No internal notes added yet.</p>
+                <p className="text-xs text-muted-foreground italic">No visit notes added yet.</p>
               )}
             </div>
 
+            {req.attachments && req.attachments.length > 0 && (
+              <div className="flex flex-wrap gap-2 pt-1">
+                {req.attachments.map((att) => (
+                  <a
+                    key={att.id}
+                    href={att.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-1.5 rounded-lg border border-border/60 bg-muted/30 px-2.5 py-1.5 text-2xs font-semibold text-foreground hover:border-primary/40"
+                  >
+                    {att.kind === 'image' ? <icons.Image className="h-3.5 w-3.5 text-primary" /> : <icons.FileText className="h-3.5 w-3.5 text-primary" />}
+                    <span className="max-w-[140px] truncate">{att.name}</span>
+                  </a>
+                ))}
+              </div>
+            )}
+
             <form onSubmit={handleAddNote} className="flex items-center gap-2 pt-2">
               <Input
-                placeholder="Add internal note for staff..."
+                placeholder="Add a visit note for this family..."
                 value={newNote}
                 onChange={(e) => setNewNote(e.target.value)}
                 className="text-xs"
@@ -220,99 +214,45 @@ export const CareRequestDetailPage = () => {
                 Add Note
               </Button>
             </form>
+
+            <label className="flex w-fit cursor-pointer items-center gap-2 rounded-lg border border-dashed border-border px-3 py-2 text-xs font-semibold text-muted-foreground hover:border-primary hover:text-primary transition-colors">
+              {isUploading ? <icons.Loader2 className="h-3.5 w-3.5 animate-spin" /> : <icons.Upload className="h-3.5 w-3.5" />}
+              Upload photo or document
+              <input type="file" accept="image/*,.pdf,.doc,.docx" className="hidden" onChange={handleUploadFile} disabled={isUploading} />
+            </label>
           </div>
         </div>
 
-        {/* Sidebar Column (1 col): Staff Assignment & Status Transition */}
+        {/* Sidebar Column (1 col): Progress Tracker */}
         <div className="space-y-6">
-          {/* Assigned Staff Card */}
           <div className="rounded-2xl bg-surface p-6 border border-border/60 shadow-xs space-y-4">
             <h2 className="text-base font-bold text-foreground flex items-center gap-2">
-              <icons.UserCheck className="h-5 w-5 text-primary" /> Assigned Care Staff
+              <icons.Activity className="h-5 w-5 text-primary" /> Request Progress
             </h2>
 
-            {req.employeeName ? (
-              <div className="rounded-xl bg-primary/5 p-4 border border-primary/20 space-y-2">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white font-bold">
-                    {req.employeeName.charAt(0)}
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-bold text-foreground">{req.employeeName}</h3>
-                    <p className="text-xs text-muted-foreground">{req.employeeRole || 'Care Staff'}</p>
-                  </div>
-                </div>
-                <div className="border-t pt-2 text-xs text-muted-foreground flex items-center justify-between">
-                  <span>Phone Contact:</span>
-                  <span className="font-semibold text-foreground">{req.employeePhone || '+971 50 555 1212'}</span>
-                </div>
-              </div>
+            {req.status === 'cancelled' ? (
+              <CareRequestStatusStepper currentStatus={req.status} timeline={req.timeline} />
             ) : (
-              <div className="rounded-xl bg-amber-500/10 p-4 border border-amber-500/20 text-center">
-                <p className="text-xs font-bold text-amber-700">No Employee Assigned Yet</p>
-                <p className="text-2xs text-amber-600 mt-0.5">Assign a staff member below to start visit</p>
-              </div>
+              <>
+                <CareRequestStatusStepper currentStatus={req.status} timeline={req.timeline} />
+                {nextStep && (
+                  <Button onClick={handleAdvance} disabled={updateStatusMutation.isPending} className="w-full font-bold">
+                    {updateStatusMutation.isPending ? <icons.Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <icons.ArrowRight className="mr-2 h-4 w-4" />}
+                    Mark as {nextStep.label}
+                  </Button>
+                )}
+                {req.status !== 'completed' && (
+                  <Button variant="ghost" onClick={handleCancel} disabled={updateStatusMutation.isPending} className="w-full text-destructive hover:text-destructive">
+                    Cancel Request
+                  </Button>
+                )}
+              </>
             )}
-
-            {/* Change Staff Form */}
-            <div className="space-y-2 pt-2 border-t">
-              <label className="text-xs font-semibold text-foreground block">Assign / Reassign Staff</label>
-              <select
-                value={selectedEmpId}
-                onChange={(e) => setSelectedEmpId(e.target.value)}
-                className="w-full h-10 rounded-lg border border-input bg-background px-3 py-2 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-              >
-                <option value="">-- Choose Employee --</option>
-                {employees.map((emp) => (
-                  <option key={emp.id} value={emp.id}>
-                    {emp.name} ({emp.role})
-                  </option>
-                ))}
-              </select>
-              <Button size="sm" className="w-full" onClick={handleAssignEmployee} disabled={!selectedEmpId}>
-                Assign Employee
-              </Button>
-            </div>
-          </div>
-
-          {/* Manual Status Selector */}
-          <div className="rounded-2xl bg-surface p-6 border border-border/60 shadow-xs space-y-4">
-            <h2 className="text-base font-bold text-foreground flex items-center gap-2">
-              <icons.Settings className="h-5 w-5 text-primary" /> Update Request Status
-            </h2>
-
-            <div className="space-y-2">
-              {(
-                [
-                  'pending',
-                  'accepted',
-                  'employee_assigned',
-                  'on_the_way',
-                  'arrived',
-                  'in_progress',
-                  'completed',
-                  'awaiting_review',
-                  'cancelled',
-                ] as CareRequestStatus[]
-              ).map((st) => (
-                <button
-                  key={st}
-                  onClick={() => handleStatusChange(st)}
-                  className={cn(
-                    'w-full flex items-center justify-between p-2.5 rounded-xl text-xs font-semibold border transition-all text-left',
-                    req.status === st
-                      ? 'bg-primary text-white border-primary shadow-xs'
-                      : 'bg-background hover:bg-muted text-foreground'
-                  )}
-                >
-                  <span className="capitalize">{st.replace(/_/g, ' ')}</span>
-                  {req.status === st && <icons.Check className="h-4 w-4" />}
-                </button>
-              ))}
-            </div>
           </div>
         </div>
       </div>
     </div>
   );
 };
+
+export default CareRequestDetailPage;

@@ -18,4 +18,5 @@ export { useNotificationStore } from './notification.store';
 export { useMedicalRecordsStore } from './medical-records.store';
 export { useSettingsStore } from './settings.store';
 export { useThemeStore } from './theme.store';
+export { useLocationStore } from './location.store';
 

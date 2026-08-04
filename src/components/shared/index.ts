@@ -18,5 +18,6 @@ export { TextField, TextAreaField, SelectField, CheckboxField, FieldError } from
 export { FullScreenLoader } from './full-screen-loader';
 export { ConfirmDialog } from './confirm-dialog';
 export { LocationPermissionDialog } from './location-permission-dialog';
+export { LocationCard } from './location-card';
 export { RequireAuth, RedirectIfAuth, RequireOnboarding } from './route-guards';
 export { AppAvatar } from './app-avatar';

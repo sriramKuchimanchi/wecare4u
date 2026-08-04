@@ -171,17 +171,13 @@ export type CareProvider = BaseEntity & {
 // ── Care Requests ────────────────────────────────────────────────────────
 
 export type CareRequestStatus =
-  | 'pending'
+  | 'requested'
   | 'accepted'
-  | 'employee_assigned'
-  | 'professional_assigned'
   | 'on_the_way'
   | 'arrived'
   | 'in_progress'
   | 'completed'
-  | 'awaiting_review'
-  | 'cancelled'
-  | 'requested';
+  | 'cancelled';
 
 export type CareRequestPriority = 'urgent' | 'emergency' | 'standard' | 'scheduled';
 
@@ -212,6 +208,7 @@ export type CareRequest = BaseEntity & {
   notes?: string;
   medicalNotes?: string;
   internalNotes?: string[];
+  attachments?: CareRequestAttachment[];
   address?: Address;
   estimatedCost?: number;
   currency?: string;
@@ -219,6 +216,14 @@ export type CareRequest = BaseEntity & {
   estimatedArrivalMinutes?: number;
   estimatedDuration?: string;
   timeline?: CareRequestTimelineStep[];
+};
+
+export type CareRequestAttachment = {
+  id: string;
+  name: string;
+  url: string;
+  kind: 'image' | 'document';
+  uploadedAt: ISODateString;
 };
 
 // ── Appointments ──────────────────────────────────────────────────────────

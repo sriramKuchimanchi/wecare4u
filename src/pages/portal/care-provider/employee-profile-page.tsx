@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { icons } from '@/config/icons';
 import { Button } from '@/components/ui/button';
-import { useProviderEmployeeDetailQuery, useProviderRequestsQuery } from '@/hooks/use-portal-queries';
+import { useProviderEmployeeDetailQuery } from '@/hooks/use-portal-queries';
 import { cn } from '@/lib/utils';
 import { AppAvatar } from '@/components/shared';
 
@@ -11,7 +11,6 @@ export const EmployeeProfilePage = () => {
 
   const empId = id ?? 'emp_1';
   const { data: employee, isLoading } = useProviderEmployeeDetailQuery(empId);
-  const { data: requests = [] } = useProviderRequestsQuery();
 
   if (isLoading || !employee) {
     return (
@@ -20,9 +19,6 @@ export const EmployeeProfilePage = () => {
       </div>
     );
   }
-
-  const assignedRequests = requests.filter((r) => r.employeeId === employee.id);
-  const completedRequests = assignedRequests.filter((r) => r.status === 'completed' || r.status === 'awaiting_review');
 
   return (
     <div className="space-y-6 pb-8">
@@ -63,11 +59,11 @@ export const EmployeeProfilePage = () => {
         <div className="grid grid-cols-3 gap-3 text-center border-t md:border-t-0 md:border-l pt-4 md:pt-0 md:pl-6">
           <div className="p-2">
             <span className="text-2xs text-muted-foreground uppercase font-semibold">Assigned</span>
-            <p className="text-xl font-black text-foreground">{assignedRequests.length}</p>
+            <p className="text-xl font-black text-foreground">{employee.assignedRequestsCount ?? 0}</p>
           </div>
           <div className="p-2 border-x">
             <span className="text-2xs text-muted-foreground uppercase font-semibold">Completed</span>
-            <p className="text-xl font-black text-emerald-600">{completedRequests.length || employee.completedRequestsCount || 98}</p>
+            <p className="text-xl font-black text-emerald-600">{employee.completedRequestsCount ?? 98}</p>
           </div>
           <div className="p-2">
             <span className="text-2xs text-muted-foreground uppercase font-semibold">Rating</span>
@@ -102,43 +98,6 @@ export const EmployeeProfilePage = () => {
             </div>
           </div>
 
-          {/* Today's Schedule & Assigned Visits */}
-          <div className="rounded-2xl bg-surface p-6 border border-border/60 shadow-xs space-y-4">
-            <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-              <icons.CalendarDays className="h-5 w-5 text-primary" /> Today's Assigned Care Visits
-            </h3>
-
-            {assignedRequests.length === 0 ? (
-              <p className="text-xs text-muted-foreground italic">No visits assigned to this staff member currently.</p>
-            ) : (
-              <div className="space-y-3">
-                {assignedRequests.map((r) => (
-                  <div
-                    key={r.id}
-                    onClick={() => navigate(`/portal/care-provider/requests/${r.id}`)}
-                    className="cursor-pointer rounded-xl bg-muted/30 p-4 border border-border/60 hover:border-primary/40 transition-all flex items-center justify-between gap-4"
-                  >
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h4 className="text-sm font-bold text-foreground">{r.patientName || 'Madhav Rao'}</h4>
-                        <span className="text-2xs font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
-                          {r.categoryLabel || r.category}
-                        </span>
-                      </div>
-                      <p className="text-xs text-muted-foreground mt-1">{r.address?.line1 || 'Dubai'}</p>
-                    </div>
-
-                    <div className="text-right">
-                      <span className="text-xs font-semibold text-foreground">
-                        {new Date(r.scheduledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      </span>
-                      <p className="text-2xs font-bold text-emerald-600 capitalize mt-0.5">{r.status.replace(/_/g, ' ')}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
         </div>
 
         {/* Right Column (1 col): Credentials & Certificates */}

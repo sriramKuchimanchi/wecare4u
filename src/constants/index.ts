@@ -37,6 +37,7 @@ export const STORAGE_KEYS = {
   USER_PREFERENCES: 'wecare:user_prefs',
   ONBOARDED: 'wecare:onboarded',
   LANGUAGE: 'wecare:language',
+  USER_LOCATION: 'wecare:user_location',
 } as const;
 
 export const API_TIMEOUT_MS = 30000;

@@ -60,19 +60,6 @@ export const employeePortalService = {
     return mockRequest({ request: req, notes }, { latency: 200 });
   },
 
-  async acceptAssignment(requestId: string, employeeId = 'emp_1'): Promise<ApiResult<CareRequest>> {
-    const employee = (employeeRepository.getById(employeeId) ?? employeeRepository.getAll().data[0]) as Employee;
-    const updated = careRequestRepository.updateStatus(requestId, 'employee_assigned', {
-      employeeId: employee.id,
-      employeeName: employee.name,
-      employeeRole: employee.role,
-      employeePhone: employee.contact.phone,
-      note: `${employee.name} accepted the request assignment.`,
-    });
-    if (!updated) return { success: false, error: { code: 'NOT_FOUND', message: 'Request not found' } };
-    return mockRequest(updated, { latency: 350 });
-  },
-
   async updateWorkflowStatus(requestId: string, nextStatus: CareRequestStatus, stepNote?: string): Promise<ApiResult<CareRequest>> {
     const updated = careRequestRepository.updateStatus(requestId, nextStatus, {
       note: stepNote ?? `Status updated to ${nextStatus.replace(/_/g, ' ')} by field staff`,

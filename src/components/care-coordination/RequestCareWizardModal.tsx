@@ -2,15 +2,14 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Stethoscope, Building2, Users, HeartPulse, Pill, FlaskConical, Ambulance, Car, Zap, Wrench, Home, Activity, HandHeart,
-  ArrowRight, ArrowLeft, Check, Calendar, Clock, User, FileText, CheckCircle2, Loader2, Sparkles, X,
+  ArrowRight, ArrowLeft, Check, MapPin, Navigation, Pencil, Loader2, X,
 } from '@/config/icons';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { mockCareCategories, mockCareProviders, mockFamilyMembers } from '@/utils/mock-data';
-import { useCareRequestStore, useNotificationStore, useTimelineStore } from '@/store';
+import { useNotificationStore, useTimelineStore, useLocationStore } from '@/store';
 import careRequestService from '@/services/care-request.service';
 import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
@@ -37,6 +36,9 @@ export const RequestCareWizardModal = ({
   const { user } = useAuth();
   const addNotification = useNotificationStore((s) => s.addNotification);
   const addTimelineEntry = useTimelineStore((s) => s.addEntry);
+  const deviceLocation = useLocationStore((s) => s.location);
+  const isLocating = useLocationStore((s) => s.isLoading);
+  const refreshLocation = useLocationStore((s) => s.refresh);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -49,7 +51,8 @@ export const RequestCareWizardModal = ({
   const [step, setStep] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory || 'doctor');
   const [selectedProviderId, setSelectedProviderId] = useState<string | null>(initialProviderId || null);
-  const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(null);
+  const [locationMode, setLocationMode] = useState<'current' | 'manual'>('current');
+  const [manualAddress, setManualAddress] = useState({ line1: '', city: '' });
   const [selectedMemberId, setSelectedMemberId] = useState<string>('mem_1');
   const [date, setDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [time, setTime] = useState<string>('10:00');
@@ -67,9 +70,12 @@ export const RequestCareWizardModal = ({
   );
 
   const providerObj = mockCareProviders.find((p) => p.id === selectedProviderId) || filteredProviders[0] || mockCareProviders[0];
-  const employeeObj = providerObj?.employees?.find((e) => e.id === selectedEmployeeId);
   const selfMember = { id: 'self', name: user?.name ?? 'Myself', relationship: 'Myself' };
   const memberObj = selectedMemberId === 'self' ? selfMember : (mockFamilyMembers.find((m) => m.id === selectedMemberId) || mockFamilyMembers[0]);
+
+  const resolvedAddress = locationMode === 'manual'
+    ? { line1: manualAddress.line1 || 'Address not specified', city: manualAddress.city || '' }
+    : { line1: deviceLocation?.address ?? 'Current location', city: deviceLocation?.city ?? '' };
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
@@ -82,14 +88,18 @@ export const RequestCareWizardModal = ({
       memberName: memberObj?.name,
       providerId: providerObj?.id,
       providerName: providerObj?.name,
-      employeeId: employeeObj?.id,
-      employeeName: employeeObj?.name,
-      employeeRole: employeeObj?.role,
       category: selectedCategory,
       categoryLabel: categoryObj.label,
       status: 'requested',
       scheduledAt,
       notes,
+      address: {
+        line1: resolvedAddress.line1,
+        city: resolvedAddress.city,
+        state: '',
+        postalCode: '',
+        country: 'India',
+      },
       estimatedCost: providerObj?.startingPrice || 150,
       currency: providerObj?.currency || '₹',
     });
@@ -128,7 +138,7 @@ export const RequestCareWizardModal = ({
   const stepTitles = [
     'Choose Category',
     'Choose Service Provider',
-    'Choose Professional',
+    'Pick Location',
     'Choose Date & Time',
     'Describe Requirement',
     'Review Summary',
@@ -239,53 +249,83 @@ export const RequestCareWizardModal = ({
             </div>
           )}
 
-          {/* STEP 3: Choose Professional */}
+          {/* STEP 3: Pick Location */}
           {step === 3 && (
             <div className="flex flex-col gap-4">
-              <p className="text-sm text-muted-foreground">Select a professional from <strong>{providerObj.name}</strong> (or auto-assign):</p>
+              <p className="text-sm text-muted-foreground">Where should the care professional visit?</p>
               <div className="flex flex-col gap-3">
                 <button
                   type="button"
-                  onClick={() => setSelectedEmployeeId(null)}
+                  onClick={() => { setLocationMode('current'); if (!deviceLocation) refreshLocation(); }}
                   className={cn(
                     'flex items-center gap-3 rounded-xl border p-4 text-left transition-all',
-                    selectedEmployeeId === null ? 'border-primary bg-primary/5 ring-2 ring-primary/20' : 'border-border bg-card hover:border-primary'
+                    locationMode === 'current' ? 'border-primary bg-primary/5 ring-2 ring-primary/20' : 'border-border bg-card hover:border-primary'
                   )}
                 >
-                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary/10 text-secondary font-bold">
-                    <Sparkles className="h-5 w-5" />
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary/10 text-secondary">
+                    <Navigation className="h-5 w-5" />
+                  </span>
+                  <div className="flex flex-1 flex-col">
+                    <span className="text-sm font-bold text-foreground">Use my current location</span>
+                    <span className="text-xs text-muted-foreground">
+                      {isLocating ? 'Detecting…' : deviceLocation ? `${deviceLocation.address}, ${deviceLocation.city}` : 'Tap to detect automatically'}
+                    </span>
+                  </div>
+                  {locationMode === 'current' && (
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={(e) => { e.stopPropagation(); refreshLocation(); }}
+                      disabled={isLocating}
+                      className="shrink-0"
+                    >
+                      {isLocating ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : 'Refresh'}
+                    </Button>
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setLocationMode('manual')}
+                  className={cn(
+                    'flex items-center gap-3 rounded-xl border p-4 text-left transition-all',
+                    locationMode === 'manual' ? 'border-primary bg-primary/5 ring-2 ring-primary/20' : 'border-border bg-card hover:border-primary'
+                  )}
+                >
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <Pencil className="h-5 w-5" />
                   </span>
                   <div className="flex flex-col">
-                    <span className="text-sm font-bold text-foreground">Auto-assign Nearest Professional</span>
-                    <span className="text-xs text-muted-foreground">Fastest dispatch response time (~15 mins)</span>
+                    <span className="text-sm font-bold text-foreground">Enter address manually</span>
+                    <span className="text-xs text-muted-foreground">Useful when booking for a different address</span>
                   </div>
                 </button>
 
-                {providerObj.employees?.map((emp) => {
-                  const isSelected = selectedEmployeeId === emp.id;
-                  return (
-                    <button
-                      key={emp.id}
-                      type="button"
-                      onClick={() => setSelectedEmployeeId(emp.id)}
-                      className={cn(
-                        'flex items-center gap-3 rounded-xl border p-4 text-left transition-all',
-                        isSelected ? 'border-primary bg-primary/5 ring-2 ring-primary/20' : 'border-border bg-card hover:border-primary'
-                      )}
-                    >
-                      <Avatar className="h-10 w-10 border border-border">
-                        <AvatarFallback className="bg-primary/10 text-xs font-bold text-primary">
-                          {emp.name.split(' ').map((n) => n[0]).join('')}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex flex-1 flex-col">
-                        <span className="text-sm font-bold text-foreground">{emp.name}</span>
-                        <span className="text-xs text-muted-foreground">{emp.role} · {emp.experience}</span>
-                      </div>
-                      {emp.rating && <Badge variant="outline" className="text-xs">★ {emp.rating}</Badge>}
-                    </button>
-                  );
-                })}
+                {locationMode === 'manual' && (
+                  <div className="grid gap-3 rounded-xl border border-border bg-muted/20 p-4 sm:grid-cols-2">
+                    <div className="flex flex-col gap-1.5 sm:col-span-2">
+                      <label className="text-xs font-medium">Address</label>
+                      <input
+                        type="text"
+                        value={manualAddress.line1}
+                        onChange={(e) => setManualAddress((a) => ({ ...a, line1: e.target.value }))}
+                        placeholder="Flat / Street / Landmark"
+                        className="h-10 rounded-xl border border-input bg-surface px-3 text-sm focus:border-primary focus:outline-none"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs font-medium">City</label>
+                      <input
+                        type="text"
+                        value={manualAddress.city}
+                        onChange={(e) => setManualAddress((a) => ({ ...a, city: e.target.value }))}
+                        placeholder="City"
+                        className="h-10 rounded-xl border border-input bg-surface px-3 text-sm focus:border-primary focus:outline-none"
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -357,9 +397,11 @@ export const RequestCareWizardModal = ({
                   <span className="text-xs font-semibold text-muted-foreground uppercase">Service Provider</span>
                   <span className="text-sm font-bold text-foreground">{providerObj.name}</span>
                 </div>
-                <div className="flex items-center justify-between border-b border-border pb-3">
-                  <span className="text-xs font-semibold text-muted-foreground uppercase">Assigned Professional</span>
-                  <span className="text-sm font-bold text-foreground">{employeeObj ? employeeObj.name : 'Auto-assign nearest'}</span>
+                <div className="flex items-center justify-between gap-4 border-b border-border pb-3">
+                  <span className="flex shrink-0 items-center gap-1.5 text-xs font-semibold text-muted-foreground uppercase">
+                    <MapPin className="h-3.5 w-3.5" /> Location
+                  </span>
+                  <span className="truncate text-sm font-bold text-foreground">{resolvedAddress.line1}{resolvedAddress.city ? `, ${resolvedAddress.city}` : ''}</span>
                 </div>
                 <div className="flex items-center justify-between border-b border-border pb-3">
                   <span className="text-xs font-semibold text-muted-foreground uppercase">Recipient Member</span>

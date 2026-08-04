@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { icons } from '@/config/icons';
 import { Button } from '@/components/ui/button';
+import { LocationCard } from '@/components/shared';
 import { useProviderOverviewQuery, useProviderServicesQuery } from '@/hooks/use-portal-queries';
 import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
@@ -33,6 +34,8 @@ export const CareProviderDashboard = () => {
 
   return (
     <div className="space-y-6 pb-8">
+      <LocationCard />
+
       {/* Top Banner & Quick Actions */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between rounded-2xl bg-gradient-to-r from-primary to-primary-hover p-6 text-white shadow-lg">
         <div>

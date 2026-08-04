@@ -177,14 +177,13 @@ export function generateExpandedDatabase() {
   // 4. Care Requests (500+)
   const requests: CareRequest[] = [...seedRequests];
   const categoriesList = ['home-nurse', 'doctor', 'physiotherapy', 'caregiver', 'laboratory', 'medicine', 'ambulance', 'transport'];
-  const statuses: CareRequest['status'][] = ['pending', 'accepted', 'employee_assigned', 'on_the_way', 'arrived', 'in_progress', 'completed', 'cancelled'];
+  const statuses: CareRequest['status'][] = ['requested', 'accepted', 'on_the_way', 'arrived', 'in_progress', 'completed', 'cancelled'];
   const priorities: CareRequest['priority'][] = ['standard', 'urgent', 'scheduled', 'emergency'];
 
   for (let r = 106; r <= 520; r++) {
     const fam = randomItem(families);
     const mem = randomItem(fam.members) ?? fam.members[0];
     const prov = randomItem(providers);
-    const emp = randomItem(employees.filter(e => e.providerId === prov.id) ?? employees);
     const cat = randomItem(categoriesList);
     const status = randomItem(statuses);
     const priority = randomItem(priorities);
@@ -197,10 +196,6 @@ export function generateExpandedDatabase() {
       patientName: mem?.name ?? fam.primaryContactName,
       providerId: prov.id,
       providerName: prov.name,
-      employeeId: emp?.id,
-      employeeName: emp?.name,
-      employeeRole: emp?.role,
-      employeePhone: emp?.contact.phone,
       category: cat,
       categoryLabel: cat.split('-').map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join(' '),
       priority,

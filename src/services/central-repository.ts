@@ -10,7 +10,7 @@
  */
 
 import type {
-  Family, FamilyMember, CareProvider, Employee, CareRequest, Notification, TimelineEntry,
+  Family, FamilyMember, CareProvider, Employee, CareRequest, CareRequestStatus, Notification, TimelineEntry,
   EmergencySession, Appointment, MedicalRecord, MedicationReminder,
 } from '@/types';
 import { generateExpandedDatabase } from '@/utils/mock-data-generator';
@@ -382,10 +382,10 @@ export const careRequestRepository = {
     const req: CareRequest = {
       ...input,
       id: createId('req'),
-      status: 'pending',
+      status: 'requested',
       createdAt: nowISO(),
       updatedAt: nowISO(),
-      timeline: [{ status: 'pending', title: 'Request Submitted', timestamp: nowISO(), description: 'Your care request has been received and is awaiting provider acceptance.' }],
+      timeline: [{ status: 'requested', title: 'Request Submitted', timestamp: nowISO(), description: 'Your care request has been received and is awaiting provider acceptance.' }],
     };
     db.requests.unshift(req);
 
@@ -400,7 +400,7 @@ export const careRequestRepository = {
   updateStatus(
     id: string,
     status: CareRequest['status'],
-    options?: { employeeId?: string; employeeName?: string; employeeRole?: string; employeePhone?: string; note?: string }
+    options?: { note?: string }
   ) {
     const db = getDb();
     const req = db.requests.find((r) => r.id === id);
@@ -408,17 +408,10 @@ export const careRequestRepository = {
 
     req.status = status;
     req.updatedAt = nowISO();
-    if (options?.employeeId) {
-      req.employeeId = options.employeeId;
-      req.employeeName = options.employeeName;
-      req.employeeRole = options.employeeRole;
-      req.employeePhone = options.employeePhone;
-    }
 
-    const stepTitles: Record<string, string> = {
+    const stepTitles: Record<CareRequestStatus, string> = {
+      requested: 'Request Submitted',
       accepted: 'Request Accepted',
-      employee_assigned: 'Professional Assigned',
-      professional_assigned: 'Professional Assigned',
       on_the_way: 'Professional On The Way',
       arrived: 'Professional Arrived',
       in_progress: 'Service Started',
@@ -426,12 +419,11 @@ export const careRequestRepository = {
       cancelled: 'Request Cancelled',
     };
 
-    const stepDescriptions: Record<string, string> = {
+    const stepDescriptions: Record<CareRequestStatus, string> = {
+      requested: 'Your care request has been received and is awaiting provider acceptance.',
       accepted: `${req.providerName} has accepted your care request.`,
-      employee_assigned: `${options?.employeeName ?? req.employeeName} has been assigned to your request.`,
-      professional_assigned: `${options?.employeeName ?? req.employeeName} has been assigned to your request.`,
-      on_the_way: `${req.employeeName} is on the way to your location. ETA: ${req.estimatedArrivalMinutes} minutes.`,
-      arrived: `${req.employeeName} has arrived at your location.`,
+      on_the_way: `Your care professional is on the way to your location. ETA: ${req.estimatedArrivalMinutes} minutes.`,
+      arrived: 'Your care professional has arrived at your location.',
       in_progress: 'The care service is now in progress.',
       completed: 'Service has been completed successfully.',
       cancelled: options?.note ?? 'The request has been cancelled.',
@@ -459,27 +451,20 @@ export const careRequestRepository = {
       addNotification('user_admin_1', `Request ${stepTitles[status]}`, `Care Request #${req.id} for ${req.patientName} — ${stepTitles[status]}.`, 'info');
     }
 
-    // Employee notification
-    if (status === 'employee_assigned' && options?.employeeId) {
-      addNotification(`user_employee_${options.employeeId}`, 'New Assignment', `You have been assigned to ${req.patientName}'s ${req.categoryLabel} request.`, 'info');
-      // Update employee stats
-      const emp = db.employees.find((e) => e.id === options.employeeId);
-      if (emp) {
-        emp.availability = 'busy';
-        emp.assignedRequestsCount = (emp.assignedRequestsCount ?? 0) + 1;
-      }
-    }
-
-    if (status === 'completed') {
-      const emp = db.employees.find((e) => e.id === req.employeeId);
-      if (emp) {
-        emp.availability = 'available';
-        emp.assignedRequestsCount = Math.max(0, (emp.assignedRequestsCount ?? 1) - 1);
-        emp.completedRequestsCount = (emp.completedRequestsCount ?? 0) + 1;
-      }
-    }
-
     emitChange('care-request:status_updated', { id, status });
+    return req;
+  },
+
+  addAttachment(id: string, attachment: { name: string; url: string; kind: 'image' | 'document' }) {
+    const db = getDb();
+    const req = db.requests.find((r) => r.id === id);
+    if (!req) return null;
+
+    if (!req.attachments) req.attachments = [];
+    req.attachments.push({ id: createId('att'), ...attachment, uploadedAt: nowISO() });
+    req.updatedAt = nowISO();
+
+    emitChange('care-request:attachment_added', { id });
     return req;
   },
 };
@@ -734,7 +719,7 @@ export const analyticsRepository = {
       pendingActions: {
         verifications: pendingProviderVerifications + pendingEmployeeVerifications,
         flaggedReviews: (db.reviews ?? []).filter((r: any) => r.isComplaint).length,
-        pendingRequests: db.requests.filter((r) => r.status === 'pending').length,
+        pendingRequests: db.requests.filter((r) => r.status === 'requested').length,
       },
     };
   },

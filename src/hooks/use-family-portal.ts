@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { familyService } from '@/services/family.service';
 import { careProviderService } from '@/services/care-provider.service';
 import { bookingService } from '@/services/booking.service';
+import { careRequestService } from '@/services/care-request.service';
 import { timelineService } from '@/services/timeline.service';
 import { notificationService } from '@/services/notification.service';
 import { useAuthStore } from '@/store';
@@ -114,9 +115,18 @@ export function useCareProvider(id: string) {
 
 export function useCareRequests(familyId = FAMILY_ID) {
   return useQuery({
-    queryKey: ['care-requests', familyId],
-    queryFn: () => bookingService.listRequests(familyId),
+    queryKey: ['care-request', 'list', familyId],
+    queryFn: () => careRequestService.list(familyId),
     select: (r) => r.data ?? [],
+  });
+}
+
+export function useCareRequestDetail(id: string) {
+  return useQuery({
+    queryKey: ['care-request', 'detail', id],
+    queryFn: () => careRequestService.get(id),
+    select: (r) => r.data,
+    enabled: Boolean(id),
   });
 }
 
@@ -125,12 +135,26 @@ export function useSubmitCareRequestMutation() {
   const { toast } = useToast();
   return useMutation({
     mutationFn: (input: Omit<CareRequest, 'id' | 'createdAt' | 'updatedAt'>) =>
-      bookingService.submitRequest(input),
+      careRequestService.submit(input),
     onSuccess: (result) => {
       if (result.success) {
-        qc.invalidateQueries({ queryKey: ['care-requests'] });
+        qc.invalidateQueries({ queryKey: ['care-request'] });
         qc.invalidateQueries({ queryKey: ['timeline'] });
         toast({ title: 'Care request submitted', description: 'Your request has been sent to the provider.' });
+      }
+    },
+  });
+}
+
+export function useCancelCareRequestMutation() {
+  const qc = useQueryClient();
+  const { toast } = useToast();
+  return useMutation({
+    mutationFn: (id: string) => careRequestService.updateStatus(id, 'cancelled'),
+    onSuccess: (result) => {
+      if (result.success) {
+        qc.invalidateQueries({ queryKey: ['care-request'] });
+        toast({ title: 'Request cancelled', description: 'Your care request has been cancelled.' });
       }
     },
   });

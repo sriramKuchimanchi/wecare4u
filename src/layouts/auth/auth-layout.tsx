@@ -18,9 +18,9 @@ type AuthLayoutProps = {
 export const AuthLayout = ({ title, subtitle, children, footer }: AuthLayoutProps) => (
   <div className="flex min-h-dvh flex-col bg-background">
     <AppHeader variant="public" />
-    <div className="flex flex-1 flex-col md:flex-row">
+    <div className="flex flex-1 flex-col lg:flex-row">
       {/* Brand panel */}
-      <aside className="relative hidden flex-col items-center justify-between overflow-hidden bg-primary p-10 text-center text-primary-foreground md:sticky md:top-16 md:flex md:h-[calc(100dvh-4rem)] md:w-1/2 lg:p-16">
+      <aside className="relative hidden flex-col items-center justify-between overflow-hidden bg-primary p-10 text-center text-primary-foreground lg:sticky lg:top-16 lg:flex lg:h-[calc(100dvh-4rem)] lg:w-1/2 lg:p-16">
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 20% 20%, white 0, transparent 40%), radial-gradient(circle at 80% 80%, white 0, transparent 35%)' }} />
         <div className="absolute -bottom-24 -right-24 h-72 w-72 rounded-full border border-white/10 bg-white/5" />
         <Link to="/" className="relative mx-auto flex w-fit items-center gap-2.5">
@@ -45,14 +45,14 @@ export const AuthLayout = ({ title, subtitle, children, footer }: AuthLayoutProp
 
       {/* Form panel */}
       <div className="flex flex-1 flex-col">
-        <div className="flex flex-1 flex-col justify-start p-6 pb-10 pt-2 md:items-center md:justify-center md:p-10">
+        <div className="flex flex-1 flex-col justify-start p-6 pb-10 pt-12 lg:items-center lg:justify-center lg:p-10">
           <div className="mx-auto w-full max-w-md animate-fade-in-up">
-            <div className="mb-6 flex flex-col items-center gap-2 text-center md:hidden">
-              <span className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 ring-1 ring-primary/15">
-                <img src="/logo2.png" alt="We Care For You" className="h-11 w-11 object-contain" />
+            <Link to="/" className="mb-8 flex flex-col items-center gap-3 text-center lg:hidden">
+              <span className="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 ring-1 ring-primary/15">
+                <img src="/logo2.png" alt="We Care For You" className="h-16 w-16 object-contain" />
               </span>
-              <span className="text-base font-bold text-foreground">{APP_NAME}</span>
-            </div>
+              <span className="text-xl font-bold text-foreground">{APP_NAME}</span>
+            </Link>
             <div className="flex flex-col gap-1 pb-6">
               <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">{title}</h1>
               {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}

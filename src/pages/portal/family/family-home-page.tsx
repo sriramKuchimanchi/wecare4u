@@ -3,7 +3,7 @@ import {
   Siren, Users, Calendar,
   Bell, HandHeart,
 } from '@/config/icons';
-import { PageHeader, SectionHeader, EmptyState, StatusIndicator, AppAvatar } from '@/components/shared';
+import { PageHeader, SectionHeader, EmptyState, StatusIndicator, AppAvatar, LocationCard } from '@/components/shared';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -32,6 +32,8 @@ export const FamilyHomePage = () => {
 
   return (
     <div className="flex flex-col gap-6">
+      <LocationCard />
+
       {/* Welcome Banner */}
       <div className="flex flex-col gap-3 rounded-xl border border-border bg-primary p-5 text-primary-foreground md:p-6 shadow-sm">
         <div className="flex items-center justify-between gap-3">

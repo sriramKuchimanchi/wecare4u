@@ -122,7 +122,7 @@ export const EmployeeDashboard = () => {
           </div>
           <div>
             <span className="text-2xs text-primary-foreground/80">Pending Action</span>
-            <p className="text-lg font-bold">{assignedRequests.filter((r) => r.status === 'accepted' || r.status === 'employee_assigned').length}</p>
+            <p className="text-lg font-bold">{assignedRequests.filter((r) => r.status === 'accepted').length}</p>
           </div>
           <div>
             <span className="text-2xs text-primary-foreground/80">Rating</span>

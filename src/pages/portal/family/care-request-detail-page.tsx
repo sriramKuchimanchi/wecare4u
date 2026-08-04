@@ -1,22 +1,16 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import {
-  ArrowLeft, Phone, Clock, UserCheck, XCircle, CheckCircle2, MessageSquare, AlertCircle,
+  ArrowLeft, Phone, MapPin, XCircle, CheckCircle2, AlertCircle, FileText, Image as ImageIcon,
 } from '@/config/icons';
 import { PageHeader, SectionHeader, EmptyState } from '@/components/shared';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { AppAvatar } from '@/components/shared';
 import { Skeleton } from '@/components/shared/skeleton';
 import { CareRequestStatusStepper } from '@/components/care-coordination/CareRequestStatusStepper';
 import { LiveMapPlaceholder } from '@/components/care-coordination/LiveMapPlaceholder';
-import careRequestService from '@/services/care-request.service';
-import { useCareRequestStore, useNotificationStore, useTimelineStore } from '@/store';
+import { useCareRequestDetail, useCancelCareRequestMutation } from '@/hooks/use-family-portal';
 import { formatDate, formatTime, formatRelative } from '@/utils/date';
-import type { CareRequest, CareRequestStatus } from '@/types';
-import { useToast } from '@/hooks/use-toast';
 
 export const CareRequestDetailPage = () => {
   const { requestId: paramId } = useParams<{ requestId?: string }>();
@@ -25,58 +19,8 @@ export const CareRequestDetailPage = () => {
   const requestId = paramId || segments[segments.length - 1];
 
   const navigate = useNavigate();
-  const { toast } = useToast();
-
-  const [request, setRequest] = useState<CareRequest | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const addNotification = useNotificationStore((s) => s.addNotification);
-  const addTimelineEntry = useTimelineStore((s) => s.addEntry);
-  const updateRequestStatusStore = useCareRequestStore((s) => s.updateRequestStatus);
-
-  useEffect(() => {
-    if (!requestId) return;
-    setIsLoading(true);
-    careRequestService.get(requestId).then((res) => {
-      if (res.success && res.data) setRequest(res.data);
-      setIsLoading(false);
-    });
-  }, [requestId]);
-
-  const handleAdvanceStatus = async (nextStatus: CareRequestStatus) => {
-    if (!request) return;
-    const now = new Date().toISOString();
-    const res = await careRequestService.updateStatus(request.id, nextStatus);
-
-    if (res.success && res.data) {
-      setRequest(res.data);
-      updateRequestStatusStore(request.id, nextStatus);
-
-      addNotification({
-        id: `notif_st_${Date.now()}`,
-        userId: 'user_family_1',
-        title: `Care Request Status Updated`,
-        message: `Request for ${request.categoryLabel || request.category} is now "${nextStatus.replace('_', ' ')}".`,
-        read: false,
-        type: nextStatus === 'completed' ? 'success' : nextStatus === 'cancelled' ? 'error' : 'info',
-        createdAt: now,
-        updatedAt: now,
-      });
-
-      addTimelineEntry({
-        id: `tl_st_${Date.now()}`,
-        familyId: request.familyId,
-        memberId: request.memberId,
-        eventType: `care-request-${nextStatus}`,
-        title: `Care Request Status: ${nextStatus.replace('_', ' ').toUpperCase()}`,
-        description: `Provider: ${request.providerName} · Member: ${request.memberName || 'Family Member'}`,
-        createdAt: now,
-        updatedAt: now,
-      });
-
-      toast({ title: 'Status updated', description: `Request status set to ${nextStatus.replace('_', ' ')}.` });
-    }
-  };
+  const { data: request, isLoading } = useCareRequestDetail(requestId ?? '');
+  const cancelMutation = useCancelCareRequestMutation();
 
   if (isLoading) {
     return (
@@ -133,7 +77,8 @@ export const CareRequestDetailPage = () => {
               variant="ghost"
               size="sm"
               className="text-destructive hover:text-destructive"
-              onClick={() => handleAdvanceStatus('cancelled')}
+              onClick={() => cancelMutation.mutate(request.id)}
+              disabled={cancelMutation.isPending}
             >
               <XCircle className="mr-1.5 h-4 w-4" /> Cancel Request
             </Button>
@@ -145,7 +90,7 @@ export const CareRequestDetailPage = () => {
       <Card className="p-5 border-border bg-card">
         <SectionHeader title="Care Request Status Tracker" description="Live status updates from acceptance to completion" />
         <div className="mt-4">
-          <CareRequestStatusStepper currentStatus={request.status} />
+          <CareRequestStatusStepper currentStatus={request.status} timeline={request.timeline} />
         </div>
       </Card>
 
@@ -157,34 +102,25 @@ export const CareRequestDetailPage = () => {
             title={`${request.categoryLabel || 'Care'} Professional En Route`}
             subtitle="GPS location active"
             etaMinutes={request.estimatedArrivalMinutes || 12}
-            providerName={request.employeeName || request.providerName || 'Care Professional'}
+            providerName={request.providerName || 'Care Professional'}
           />
         </section>
       )}
 
-      {/* Assigned Professional & Provider Contact */}
+      {/* Service Location & Details */}
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="flex flex-col gap-4 p-5">
-          <SectionHeader title="Assigned Healthcare Professional" />
-          <div className="flex items-center gap-4">
-            <AppAvatar
-              src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=300"
-              name={request.employeeName || 'Kavya Menon'}
-              className="h-14 w-14 rounded-full border border-border"
-            />
+          <SectionHeader title="Service Location" />
+          <div className="flex items-start gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              <MapPin className="h-5 w-5" />
+            </span>
             <div className="flex flex-1 flex-col">
-              <span className="text-base font-bold text-foreground">{request.employeeName || 'Kavya Menon'}</span>
-              <span className="text-xs text-muted-foreground">{request.employeeRole || 'Senior Nurse / Caregiver'}</span>
-              <span className="mt-1 text-2xs font-semibold text-success">✓ Verified & Background Checked</span>
+              <span className="text-sm font-bold text-foreground">{request.address?.line1 || 'Address not specified'}</span>
+              <span className="text-xs text-muted-foreground">
+                {[request.address?.city, request.address?.state, request.address?.country].filter(Boolean).join(', ')}
+              </span>
             </div>
-          </div>
-          <div className="flex gap-2 border-t border-border pt-3">
-            <Button size="sm" variant="outline" className="flex-1 gap-1.5" onClick={() => window.location.href = 'tel:+971505551212'}>
-              <Phone className="h-4 w-4 text-primary" /> Call Professional
-            </Button>
-            <Button size="sm" variant="outline" className="flex-1 gap-1.5" onClick={() => navigate('/portal/family/ai-assistant')}>
-              <MessageSquare className="h-4 w-4 text-secondary" /> Message
-            </Button>
           </div>
         </Card>
 
@@ -193,7 +129,7 @@ export const CareRequestDetailPage = () => {
           <div className="flex flex-col gap-2.5 text-xs">
             <div className="flex justify-between border-b border-border pb-2">
               <span className="text-muted-foreground">Recipient Member</span>
-              <span className="font-bold text-foreground">{request.memberName || 'Madhav Rao'}</span>
+              <span className="font-bold text-foreground">{request.memberName || 'Family Member'}</span>
             </div>
             <div className="flex justify-between border-b border-border pb-2">
               <span className="text-muted-foreground">Estimated Cost</span>
@@ -232,6 +168,27 @@ export const CareRequestDetailPage = () => {
                 </div>
               ))}
             </div>
+          </Card>
+        </section>
+      )}
+
+      {/* Visit Documents — only once the provider has completed the visit */}
+      {request.status === 'completed' && request.attachments && request.attachments.length > 0 && (
+        <section className="flex flex-col gap-3">
+          <SectionHeader title="Visit Documents" description="Photos and documents shared by your care provider" />
+          <Card className="flex flex-wrap gap-3 p-5">
+            {request.attachments.map((att) => (
+              <a
+                key={att.id}
+                href={att.url}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 rounded-xl border border-border bg-muted/20 px-3 py-2 text-xs font-semibold text-foreground hover:border-primary/40"
+              >
+                {att.kind === 'image' ? <ImageIcon className="h-4 w-4 text-primary" /> : <FileText className="h-4 w-4 text-primary" />}
+                <span className="max-w-[160px] truncate">{att.name}</span>
+              </a>
+            ))}
           </Card>
         </section>
       )}

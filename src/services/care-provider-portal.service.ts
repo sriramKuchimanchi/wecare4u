@@ -39,11 +39,11 @@ export const careProviderPortalService = {
     const today = new Date().toISOString().split('T')[0];
     const allProviderRequests = careRequestRepository.getAll({ providerId: PROVIDER_ID }).data;
     const todayRequests = allProviderRequests.filter((r) => r.scheduledAt?.startsWith(today) || r.createdAt.startsWith(today));
-    const pending = allProviderRequests.filter((r) => r.status === 'pending');
+    const pending = allProviderRequests.filter((r) => r.status === 'requested');
     const active = allProviderRequests.filter((r) =>
-      ['accepted', 'employee_assigned', 'professional_assigned', 'on_the_way', 'arrived', 'in_progress'].includes(r.status)
+      ['accepted', 'on_the_way', 'arrived', 'in_progress'].includes(r.status)
     );
-    const completed = allProviderRequests.filter((r) => r.status === 'completed' || r.status === 'awaiting_review');
+    const completed = allProviderRequests.filter((r) => r.status === 'completed');
     const allProviderEmployees = employeeRepository.getAll({ providerId: PROVIDER_ID }).data;
     const availableEmployees = allProviderEmployees.filter((e) => e.availability === 'available');
     const unavailableEmployees = allProviderEmployees.filter((e) => e.availability !== 'available');
@@ -107,19 +107,6 @@ export const careProviderPortalService = {
     return mockRequest(updated, { latency: 350 });
   },
 
-  async assignEmployee(requestId: string, employeeId: string): Promise<ApiResult<CareRequest>> {
-    const employee = employeeRepository.getById(employeeId);
-    if (!employee) return { success: false, error: { code: 'NOT_FOUND', message: 'Employee not found' } };
-    const updated = careRequestRepository.updateStatus(requestId, 'employee_assigned', {
-      employeeId: employee.id,
-      employeeName: employee.name,
-      employeeRole: employee.role,
-      employeePhone: employee.contact.phone,
-    });
-    if (!updated) return { success: false, error: { code: 'NOT_FOUND', message: 'Care request not found' } };
-    return mockRequest(updated, { latency: 400 });
-  },
-
   async updateRequestStatus(
     id: string,
     status: CareRequestStatus,
@@ -137,6 +124,12 @@ export const careProviderPortalService = {
     (req as any).internalNotes = internalNotes;
     (req as any).updatedAt = nowISO();
     return mockRequest(req, { latency: 250 });
+  },
+
+  async addAttachment(requestId: string, attachment: { name: string; url: string; kind: 'image' | 'document' }): Promise<ApiResult<CareRequest>> {
+    const updated = careRequestRepository.addAttachment(requestId, attachment);
+    if (!updated) return { success: false, error: { code: 'NOT_FOUND', message: 'Request not found' } };
+    return mockRequest(updated, { latency: 400 });
   },
 
   // ── Employee Management (via central repository) ──────────────────────────

@@ -54,7 +54,7 @@ const PublicNavbar = ({ className }: { className?: string }) => {
   const isLoginPage = location.pathname.startsWith('/login');
 
   return (
-  <header className={cn('sticky top-0 z-[100] w-full border-b border-border/60 bg-background/95 backdrop-blur-md safe-top', className)}>
+  <header className={cn('sticky top-0 z-[100] w-full border-b border-border/60 bg-background/95 backdrop-blur-md safe-top', (isLoginPage || isSignupPage) && 'hidden lg:block', className)}>
     <div className="public-landing-container relative flex h-16 items-center justify-between">
       <div className="flex items-center gap-2.5">
         <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setMenuOpen((open) => !open)} aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen}>

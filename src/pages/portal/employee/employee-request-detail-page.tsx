@@ -98,7 +98,7 @@ export const EmployeeRequestDetailPage = () => {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
           <Button
             size="sm"
-            variant={req.status === 'accepted' || req.status === 'employee_assigned' ? 'secondary' : 'outline'}
+            variant={req.status === 'accepted' ? 'secondary' : 'outline'}
             className={cn('text-xs font-bold', req.status === 'on_the_way' ? 'bg-white text-primary' : 'text-white border-white/30')}
             onClick={() => handleStepAdvance('on_the_way')}
           >

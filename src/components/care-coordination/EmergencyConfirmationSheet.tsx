@@ -4,7 +4,7 @@ import { Siren, ArrowLeft, User, Users } from '@/config/icons';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useEmergencyStore, useNotificationStore, useTimelineStore } from '@/store';
+import { useEmergencyStore, useNotificationStore, useTimelineStore, useLocationStore } from '@/store';
 import { useAuth } from '@/hooks/use-auth';
 import { useFamilyMembers } from '@/hooks/use-family-portal';
 
@@ -19,6 +19,7 @@ export const EmergencyConfirmationSheet = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { data: familyMembers = [] } = useFamilyMembers();
+  const knownLocation = useLocationStore((s) => s.location);
 
   const [step, setStep] = useState<'target' | 'confirm'>('target');
   const [target, setTarget] = useState<Target | null>(null);
@@ -51,15 +52,25 @@ export const EmergencyConfirmationSheet = () => {
       status: 'active' as const,
       currentStepIndex: 1,
       notifiedContactsCount: 3,
-      location: {
-        line1: 'Marina Heights, Apt 1203',
-        city: 'Dubai',
-        state: 'Dubai',
-        country: 'United Arab Emirates',
-        postalCode: '00000',
-        lat: 25.0772,
-        lng: 55.1332,
-      },
+      location: !target.memberId && knownLocation
+        ? {
+            line1: knownLocation.address,
+            city: knownLocation.city,
+            state: '',
+            country: 'India',
+            postalCode: '',
+            lat: knownLocation.lat,
+            lng: knownLocation.lng,
+          }
+        : {
+            line1: 'Marina Heights, Apt 1203',
+            city: 'Dubai',
+            state: 'Dubai',
+            country: 'United Arab Emirates',
+            postalCode: '00000',
+            lat: 25.0772,
+            lng: 55.1332,
+          },
       assignedProvider: {
         id: 'prov_1',
         name: 'Sunrise Emergency Healthcare',

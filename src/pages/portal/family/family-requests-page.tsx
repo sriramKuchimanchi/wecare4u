@@ -1,27 +1,26 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { icons, HandHeart, Plus, Eye, Search } from '@/config/icons';
 import { PageHeader } from '@/components/shared';
 import { DataTable } from '@/components/shared/data-table';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import careRequestService from '@/services/care-request.service';
+import { useCareRequests } from '@/hooks/use-family-portal';
 import { formatDate, formatTime } from '@/utils/date';
 import type { CareRequest } from '@/types';
 
 const STATUS_TABS = [
   { id: 'all', label: 'All Requests' },
-  { id: 'pending', label: 'Pending' },
+  { id: 'requested', label: 'Requested' },
   { id: 'accepted', label: 'Accepted' },
-  { id: 'in_progress', label: 'In Progress' },
+  { id: 'in_progress', label: 'Active' },
   { id: 'completed', label: 'Completed' },
   { id: 'cancelled', label: 'Cancelled' },
 ];
 
 const statusBadge: Record<string, string> = {
-  pending: 'bg-amber-100 text-amber-700',
+  requested: 'bg-amber-100 text-amber-700',
   accepted: 'bg-blue-100 text-blue-700',
-  employee_assigned: 'bg-indigo-100 text-indigo-700',
   on_the_way: 'bg-purple-100 text-purple-700',
   arrived: 'bg-violet-100 text-violet-700',
   in_progress: 'bg-sky-100 text-sky-700 font-semibold',
@@ -40,18 +39,10 @@ const PAGE_SIZE = 8;
 
 export const FamilyRequestsPage = () => {
   const navigate = useNavigate();
-  const [requests, setRequests] = useState<CareRequest[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: requests = [], isLoading } = useCareRequests();
   const [activeTab, setActiveTab] = useState('all');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
-
-  useEffect(() => {
-    careRequestService.list().then((res) => {
-      if (res.success && res.data) setRequests(res.data);
-      setIsLoading(false);
-    });
-  }, []);
 
   // Filter by tab + search query
   const filteredRequests = useMemo(() => {
@@ -59,7 +50,7 @@ export const FamilyRequestsPage = () => {
       // Tab filter
       if (activeTab !== 'all') {
         if (activeTab === 'in_progress') {
-          if (!['in_progress', 'on_the_way', 'arrived', 'employee_assigned'].includes(r.status)) return false;
+          if (!['in_progress', 'on_the_way', 'arrived'].includes(r.status)) return false;
         } else if (r.status !== activeTab) {
           return false;
         }
@@ -70,8 +61,7 @@ export const FamilyRequestsPage = () => {
         const matchesCategory = (r.categoryLabel || r.category || '').toLowerCase().includes(q);
         const matchesProvider = (r.providerName || '').toLowerCase().includes(q);
         const matchesMember = (r.memberName || '').toLowerCase().includes(q);
-        const matchesStaff = (r.employeeName || '').toLowerCase().includes(q);
-        if (!matchesCategory && !matchesProvider && !matchesMember && !matchesStaff) return false;
+        if (!matchesCategory && !matchesProvider && !matchesMember) return false;
       }
       return true;
     });
@@ -117,7 +107,7 @@ export const FamilyRequestsPage = () => {
           const count = t.id === 'all'
             ? requests.length
             : requests.filter((r) => {
-                if (t.id === 'in_progress') return ['in_progress', 'on_the_way', 'arrived', 'employee_assigned'].includes(r.status);
+                if (t.id === 'in_progress') return ['in_progress', 'on_the_way', 'arrived'].includes(r.status);
                 return r.status === t.id;
               }).length;
 
@@ -177,11 +167,11 @@ export const FamilyRequestsPage = () => {
             ),
           },
           {
-            key: 'employeeName',
-            header: 'Assigned Staff',
+            key: 'address',
+            header: 'Location',
             render: (row: CareRequest) => (
               <span className="text-sm text-muted-foreground">
-                {(row as any).employeeName || '—'}
+                {row.address?.line1 ? `${row.address.line1}, ${row.address.city}` : '—'}
               </span>
             ),
           },
