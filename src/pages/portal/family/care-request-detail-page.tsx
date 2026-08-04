@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { AppAvatar } from '@/components/shared';
 import { Skeleton } from '@/components/shared/skeleton';
-import { CareRequestStatusStepper, statusSteps } from '@/components/care-coordination/CareRequestStatusStepper';
+import { CareRequestStatusStepper } from '@/components/care-coordination/CareRequestStatusStepper';
 import { LiveMapPlaceholder } from '@/components/care-coordination/LiveMapPlaceholder';
 import careRequestService from '@/services/care-request.service';
 import { useCareRequestStore, useNotificationStore, useTimelineStore } from '@/store';
@@ -146,27 +146,6 @@ export const CareRequestDetailPage = () => {
         <SectionHeader title="Care Request Status Tracker" description="Live status updates from acceptance to completion" />
         <div className="mt-4">
           <CareRequestStatusStepper currentStatus={request.status} />
-        </div>
-      </Card>
-
-      {/* Real-time Status Simulator Controls (For Interactive Testing) */}
-      <Card className="flex flex-col gap-3 p-4 bg-muted/20 border-dashed border-border">
-        <div className="flex items-center justify-between">
-          <span className="text-xs font-bold text-foreground">Status Simulator (Simulate Real-Time Progress)</span>
-          <span className="text-2xs text-muted-foreground">Tap any state to test automatic timeline & notification updates</span>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {statusSteps.map((step) => (
-            <Button
-              key={step.key}
-              size="sm"
-              variant={request.status === step.key ? 'default' : 'outline'}
-              onClick={() => handleAdvanceStatus(step.key)}
-              className="text-xs"
-            >
-              {step.label}
-            </Button>
-          ))}
         </div>
       </Card>
 

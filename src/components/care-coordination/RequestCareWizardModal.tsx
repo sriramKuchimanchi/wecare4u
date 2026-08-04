@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Stethoscope, Building2, Users, HeartPulse, Pill, FlaskConical, Ambulance, Car, Zap, Wrench, Home, Activity, HandHeart,
@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { mockCareCategories, mockCareProviders, mockFamilyMembers } from '@/utils/mock-data';
 import { useCareRequestStore, useNotificationStore, useTimelineStore } from '@/store';
 import careRequestService from '@/services/care-request.service';
+import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
 import type { LucideIcon } from '@/config/icons';
 
@@ -33,8 +34,17 @@ export const RequestCareWizardModal = ({
   initialProviderId,
 }: RequestCareWizardModalProps) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const addNotification = useNotificationStore((s) => s.addNotification);
   const addTimelineEntry = useTimelineStore((s) => s.addEntry);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    requestAnimationFrame(() => {
+      const el = scrollContainerRef.current;
+      el?.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+    });
+  };
 
   const [step, setStep] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory || 'doctor');
@@ -58,7 +68,8 @@ export const RequestCareWizardModal = ({
 
   const providerObj = mockCareProviders.find((p) => p.id === selectedProviderId) || filteredProviders[0] || mockCareProviders[0];
   const employeeObj = providerObj?.employees?.find((e) => e.id === selectedEmployeeId);
-  const memberObj = mockFamilyMembers.find((m) => m.id === selectedMemberId) || mockFamilyMembers[0];
+  const selfMember = { id: 'self', name: user?.name ?? 'Myself', relationship: 'Myself' };
+  const memberObj = selectedMemberId === 'self' ? selfMember : (mockFamilyMembers.find((m) => m.id === selectedMemberId) || mockFamilyMembers[0]);
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
@@ -126,7 +137,7 @@ export const RequestCareWizardModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] w-full max-w-2xl overflow-y-auto p-0 sm:rounded-2xl">
+      <DialogContent ref={scrollContainerRef} className="max-h-[90vh] w-full max-w-2xl overflow-y-auto p-0 sm:rounded-2xl">
         <DialogHeader className="sticky top-0 z-10 border-b border-border bg-primary p-4 text-primary-foreground">
           <div className="flex items-center justify-between">
             <div className="flex flex-col text-left">
@@ -154,7 +165,7 @@ export const RequestCareWizardModal = ({
           {step === 1 && (
             <div className="flex flex-col gap-4">
               <p className="text-sm text-muted-foreground">Select the type of care service your family needs:</p>
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              <div className="flex flex-wrap justify-center gap-3">
                 {mockCareCategories.map((cat) => {
                   const Icon = iconMap[cat.icon] || Stethoscope;
                   const isSelected = selectedCategory === cat.id;
@@ -162,9 +173,9 @@ export const RequestCareWizardModal = ({
                     <button
                       key={cat.id}
                       type="button"
-                      onClick={() => setSelectedCategory(cat.id)}
+                      onClick={() => { setSelectedCategory(cat.id); scrollToBottom(); }}
                       className={cn(
-                        'flex flex-col items-start gap-2 rounded-xl border p-4 text-left transition-all',
+                        'flex w-[calc(50%-0.375rem)] flex-col items-start gap-2 rounded-xl border p-4 text-left transition-all sm:w-[calc(33.333%-0.5rem)]',
                         isSelected ? 'border-primary bg-primary/5 ring-2 ring-primary/20' : 'border-border bg-card hover:border-primary'
                       )}
                     >
@@ -289,6 +300,7 @@ export const RequestCareWizardModal = ({
                   onChange={(e) => setSelectedMemberId(e.target.value)}
                   className="h-10 rounded-xl border border-input bg-surface px-3 text-sm focus:border-primary focus:outline-none"
                 >
+                  <option value="self">{user?.name ?? 'Myself'} (Myself)</option>
                   {mockFamilyMembers.map((m) => (
                     <option key={m.id} value={m.id}>{m.name} ({m.relationship})</option>
                   ))}

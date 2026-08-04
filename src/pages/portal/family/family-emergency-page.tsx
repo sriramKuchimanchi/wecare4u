@@ -1,50 +1,90 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Siren, Phone, MapPin, CheckCircle2, AlertCircle, Play, ShieldAlert, Heart, Building2, UserCheck, ArrowRight, XCircle, RefreshCw,
+  Siren, Phone, ShieldAlert, Heart, Building2, UserCheck,
 } from '@/config/icons';
 import { PageHeader, SectionHeader } from '@/components/shared';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useEmergencyStore, useEmergencyContactsStore, useNotificationStore, useTimelineStore } from '@/store';
 import { LiveMapPlaceholder } from '@/components/care-coordination/LiveMapPlaceholder';
-import { cn } from '@/lib/utils';
+import { ProgressTracker } from '@/components/care-coordination/ProgressTracker';
 import { formatRelative } from '@/utils/date';
+
+const AUTO_ADVANCE_MS = 4500;
 
 export const FamilyEmergencyPage = () => {
   const navigate = useNavigate();
   const activeSession = useEmergencyStore((s) => s.activeSession);
   const advanceSessionStep = useEmergencyStore((s) => s.advanceSessionStep);
   const resolveSession = useEmergencyStore((s) => s.resolveActiveSession);
+  const cancelSession = useEmergencyStore((s) => s.cancelActiveSession);
   const setConfirmationOpen = useEmergencyStore((s) => s.setConfirmationOpen);
 
   const contacts = useEmergencyContactsStore((s) => s.contacts);
   const addNotification = useNotificationStore((s) => s.addNotification);
   const addTimelineEntry = useTimelineStore((s) => s.addEntry);
 
-  const handleResolve = () => {
+  // The response workflow is driven by the assigned provider/dispatch system, not the
+  // family — this simulates those live updates arriving automatically over time.
+  useEffect(() => {
+    if (!activeSession) return;
+    const isAtFinalStep = activeSession.currentStepIndex >= activeSession.steps.length - 1;
+
+    if (isAtFinalStep) {
+      const timeout = setTimeout(() => {
+        const now = new Date().toISOString();
+        resolveSession();
+        addNotification({
+          id: `notif_emg_res_${Date.now()}`,
+          userId: 'user_family_1',
+          title: '✅ Emergency Resolved',
+          message: 'Responders arrived on scene and patient is in safe care.',
+          read: false,
+          type: 'success',
+          createdAt: now,
+          updatedAt: now,
+        });
+        addTimelineEntry({
+          id: `tl_emg_res_${Date.now()}`,
+          familyId: 'fam_1',
+          eventType: 'emergency-resolved',
+          title: 'Emergency SOS Resolved',
+          description: 'Patient stabilized and emergency responders resolved the case.',
+          createdAt: now,
+          updatedAt: now,
+        });
+      }, AUTO_ADVANCE_MS);
+      return () => clearTimeout(timeout);
+    }
+
+    const interval = setTimeout(() => advanceSessionStep(), AUTO_ADVANCE_MS);
+    return () => clearTimeout(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeSession?.currentStepIndex, activeSession?.id]);
+
+  const handleStandDown = () => {
     const now = new Date().toISOString();
-    resolveSession();
+    cancelSession();
 
     addNotification({
-      id: `notif_emg_res_${Date.now()}`,
+      id: `notif_emg_standdown_${Date.now()}`,
       userId: 'user_family_1',
-      title: '✅ Emergency Resolved',
-      message: 'Responders arrived on scene and patient is in safe care.',
+      title: 'Emergency SOS Cancelled',
+      message: 'You marked yourself safe and stood down the emergency response.',
       read: false,
-      type: 'success',
+      type: 'info',
       createdAt: now,
       updatedAt: now,
     });
 
     addTimelineEntry({
-      id: `tl_emg_res_${Date.now()}`,
+      id: `tl_emg_standdown_${Date.now()}`,
       familyId: 'fam_1',
       eventType: 'emergency-resolved',
-      title: 'Emergency SOS Resolved',
-      description: 'Patient stabilized and emergency responders resolved the case.',
+      title: 'Emergency SOS Cancelled by Family',
+      description: 'Family reported the situation as safe and stood down the response.',
       createdAt: now,
       updatedAt: now,
     });
@@ -132,25 +172,14 @@ export const FamilyEmergencyPage = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={advanceSessionStep}
-                disabled={activeSession.currentStepIndex >= activeSession.steps.length - 1}
-                className="bg-white text-destructive font-bold hover:bg-white/90"
-              >
-                <Play className="mr-1.5 h-4 w-4" /> Advance Stage
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleResolve}
-                className="border-white/40 text-black hover:bg-white/20 font-bold"
-              >
-                Resolve Emergency
-              </Button>
-            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleStandDown}
+              className="border-white/40 text-white hover:bg-white/20 font-bold"
+            >
+              <ShieldAlert className="mr-1.5 h-4 w-4" /> I'm Safe — Stand Down
+            </Button>
           </div>
 
           {/* Live Activity Map Tracking View */}
@@ -218,40 +247,19 @@ export const FamilyEmergencyPage = () => {
             </Card>
           </div>
 
-          {/* Emergency Flow Workflow Tracker (All 10 Stages) */}
+          {/* Emergency Flow Workflow Tracker (All 10 Stages) — updated live by the response system, view-only for the family */}
           <section className="flex flex-col gap-3">
             <SectionHeader title="Emergency Response Workflow" description="Real-time status of emergency stages" />
             <Card className="p-5">
-              <div className="flex flex-col space-y-4">
-                {activeSession.steps.map((st, idx) => {
-                  const isDone = st.status === 'completed';
-                  const isCurrent = st.status === 'in-progress';
-
-                  return (
-                    <div key={st.step} className="flex items-start gap-3">
-                      <span
-                        className={cn(
-                          'mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold transition-all',
-                          isDone && 'bg-success/15 text-success',
-                          isCurrent && 'bg-secondary text-secondary-foreground ring-4 ring-secondary/20 animate-pulse',
-                          !isDone && !isCurrent && 'bg-muted text-muted-foreground'
-                        )}
-                      >
-                        {isDone ? <CheckCircle2 className="h-4 w-4" /> : idx + 1}
-                      </span>
-                      <div className="flex flex-1 flex-col">
-                        <div className="flex items-center justify-between">
-                          <span className={cn('text-sm font-bold', isCurrent ? 'text-secondary' : isDone ? 'text-foreground' : 'text-muted-foreground')}>
-                            {st.title}
-                          </span>
-                          {st.completedAt && <span className="text-2xs text-muted-foreground">{formatRelative(st.completedAt)}</span>}
-                        </div>
-                        <span className="text-xs text-muted-foreground">{st.description}</span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+              <ProgressTracker
+                currentIndex={activeSession.currentStepIndex}
+                steps={activeSession.steps.map((st) => ({
+                  key: st.step,
+                  label: st.title,
+                  description: st.description,
+                  timestamp: st.completedAt ? formatRelative(st.completedAt) : undefined,
+                }))}
+              />
             </Card>
           </section>
         </div>

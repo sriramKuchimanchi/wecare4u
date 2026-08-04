@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Stethoscope, Building2, HeartPulse, Users, Pill, FlaskConical, Ambulance, Car,
@@ -28,6 +28,13 @@ export const RequestCarePage = () => {
   const [search, setSearch] = useState('');
   const [wizardOpen, setWizardOpen] = useState(false);
   const [preselectedProviderId, setPreselectedProviderId] = useState<string | undefined>();
+  const providersSectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (selectedCategory) {
+      providersSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [selectedCategory]);
 
   // Filter criteria states
   const [availabilityFilter, setAvailabilityFilter] = useState<string>('all');
@@ -75,11 +82,13 @@ export const RequestCarePage = () => {
           description="Choose a category to discover verified professionals"
         />
         {catLoading ? (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-            {Array.from({ length: 12 }).map((_, i) => <Skeleton key={i} className="h-28" />)}
+          <div className="flex flex-wrap justify-center gap-3">
+            {Array.from({ length: 12 }).map((_, i) => (
+              <Skeleton key={i} className="h-28 w-[calc(50%-0.375rem)] sm:w-[calc(33.333%-0.5rem)] lg:w-[calc(25%-0.5625rem)]" />
+            ))}
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          <div className="flex flex-wrap justify-center gap-3">
             {categories.map((cat) => {
               const Icon = iconMap[cat.icon] ?? Stethoscope;
               const active = selectedCategory === cat.id;
@@ -89,7 +98,7 @@ export const RequestCarePage = () => {
                   type="button"
                   onClick={() => setSelectedCategory(active ? null : cat.id)}
                   className={cn(
-                    'flex flex-col items-start gap-2.5 rounded-xl border bg-card p-4 text-left transition-all hover:shadow-sm',
+                    'flex w-[calc(50%-0.375rem)] flex-col items-start gap-2.5 rounded-xl border bg-card p-4 text-left transition-all hover:shadow-sm sm:w-[calc(33.333%-0.5rem)] lg:w-[calc(25%-0.5625rem)]',
                     active ? 'border-primary bg-primary/5 ring-2 ring-primary/20' : 'border-border hover:border-primary'
                   )}
                 >
@@ -115,7 +124,7 @@ export const RequestCarePage = () => {
       </section>
 
       {/* Search & Filter Controls */}
-      <section className="flex flex-col gap-4">
+      <section ref={providersSectionRef} className="flex flex-col gap-4 scroll-mt-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="w-full sm:w-80">
             <SearchBar value={search} onChange={setSearch} placeholder="Search providers, services..." />

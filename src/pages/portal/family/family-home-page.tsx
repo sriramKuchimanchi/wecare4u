@@ -47,7 +47,7 @@ export const FamilyHomePage = () => {
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         {[
           { label: 'Family Members', value: members.length, icon: Users, to: '/portal/family/members' },
-          { label: 'Active Requests', value: activeRequests.length, icon: HandHeart, to: '/portal/family/request-care' },
+          { label: 'Active Requests', value: activeRequests.length, icon: HandHeart, to: '/portal/family/requests' },
           { label: 'Upcoming', value: appointments.length, icon: Calendar, to: '/portal/family/appointments' },
           { label: 'Notifications', value: notifications.filter((n) => !n.read).length, icon: Bell, to: '/portal/family/notifications' },
         ].map((stat) => (
