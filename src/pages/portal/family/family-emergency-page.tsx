@@ -146,7 +146,7 @@ export const FamilyEmergencyPage = () => {
                 variant="outline"
                 size="sm"
                 onClick={handleResolve}
-                className="border-white/40 text-white hover:bg-white/20 font-bold"
+                className="border-white/40 text-black hover:bg-white/20 font-bold"
               >
                 Resolve Emergency
               </Button>

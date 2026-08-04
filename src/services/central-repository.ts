@@ -343,7 +343,14 @@ export const careRequestRepository = {
       }
     }
     if (filters?.priority && filters.priority !== 'all') {
-      result = result.filter((r) => r.priority === filters.priority);
+      // Group priorities: treat 'urgent' as part of 'emergency' and 'scheduled' as part of 'standard'
+      if (filters.priority === 'emergency') {
+        result = result.filter((r) => r.priority === 'emergency' || r.priority === 'urgent');
+      } else if (filters.priority === 'standard') {
+        result = result.filter((r) => r.priority === 'standard' || r.priority === 'scheduled');
+      } else {
+        result = result.filter((r) => r.priority === filters.priority);
+      }
     }
     if (filters?.search) {
       const q = filters.search.toLowerCase();
