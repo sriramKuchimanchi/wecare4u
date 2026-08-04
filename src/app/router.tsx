@@ -7,50 +7,56 @@ import {
 } from '@/pages';
 import { PortalRouter } from '@/pages/portal/portal-router';
 import { ROUTES } from '@/constants/routes';
+import RootLayout from './root-layout';
 
 export const routes: RouteObject[] = [
   {
-    path: ROUTES.landing,
-    element: <PublicLayout />,
+    element: <RootLayout />,
     children: [
-      { index: true, element: <LandingPage /> },
+      {
+        path: ROUTES.landing,
+        element: <PublicLayout />,
+        children: [
+          { index: true, element: <LandingPage /> },
+        ],
+      },
+      {
+        path: ROUTES.login,
+        element: <LoginPage />,
+      },
+      {
+        path: ROUTES.register,
+        element: <RegisterPage />,
+      },
+      {
+        path: '/register/family',
+        element: <FamilyRegisterPage />,
+      },
+      {
+        path: '/register/care-provider',
+        element: <ProviderRegisterPage />,
+      },
+      {
+        path: '/forgot-password',
+        element: <ForgotPasswordPage />,
+      },
+      {
+        path: '/onboarding',
+        element: <OnboardingPage />,
+      },
+      {
+        path: '/portal/:role',
+        element: <PortalLayout />,
+        children: [
+          { index: true, element: <PortalRouter /> },
+          { path: '*', element: <PortalRouter /> },
+        ],
+      },
+      {
+        path: ROUTES.notFound,
+        element: <NotFoundPage />,
+      },
     ],
-  },
-  {
-    path: ROUTES.login,
-    element: <LoginPage />,
-  },
-  {
-    path: ROUTES.register,
-    element: <RegisterPage />,
-  },
-  {
-    path: '/register/family',
-    element: <FamilyRegisterPage />,
-  },
-  {
-    path: '/register/care-provider',
-    element: <ProviderRegisterPage />,
-  },
-  {
-    path: '/forgot-password',
-    element: <ForgotPasswordPage />,
-  },
-  {
-    path: '/onboarding',
-    element: <OnboardingPage />,
-  },
-  {
-    path: '/portal/:role',
-    element: <PortalLayout />,
-    children: [
-      { index: true, element: <PortalRouter /> },
-      { path: '*', element: <PortalRouter /> },
-    ],
-  },
-  {
-    path: ROUTES.notFound,
-    element: <NotFoundPage />,
   },
 ];
 
