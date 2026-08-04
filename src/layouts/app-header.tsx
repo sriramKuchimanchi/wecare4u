@@ -60,7 +60,7 @@ const PublicNavbar = ({ className }: { className?: string }) => {
           {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </Button>
         <Link to="/" onClick={closeMenu} className="flex items-center gap-2.5">
-        <img src="/logo.png" alt="We Care For You" className="h-11 w-11 object-contain" />
+        <img src="/logo2.png" alt="We Care For You" className="h-11 w-11 object-contain" />
         <span className="flex flex-col leading-none">
           <span className="text-base font-bold text-foreground">{APP_NAME}</span>
           <span className="hidden text-2xs text-muted-foreground sm:block">{APP_TAGLINE}</span>
@@ -163,7 +163,7 @@ const PortalNavbar = ({ onToggleSidebar, isSidebarOpen = false, role: routeRole,
             {isSidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
           <Link to="/" className="flex items-center gap-2.5">
-            <img src="/logo.png" alt="We Care For You" className="h-9 w-auto object-contain" />
+            <img src="/logo2.png" alt="We Care For You" className="h-9 w-auto object-contain" />
             <span className="hidden text-base font-bold tracking-tight text-primary sm:block">{APP_NAME}</span>
           </Link>
           {role && (

@@ -1,11 +1,11 @@
 // We Care For You — Service Worker (PWA Offline Caching & Background Sync)
-const CACHE_NAME = 'wecare4u-v1';
+const CACHE_NAME = 'wecare4u-v2';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
   '/manifest.json',
   '/favicon.svg',
-  '/logo.png',
+  '/logo2.png',
 ];
 
 self.addEventListener('install', (event) => {

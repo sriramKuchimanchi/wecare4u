@@ -35,7 +35,7 @@ export const PublicFooter = () => (
       <div className="grid gap-10 md:grid-cols-4">
         <div className="flex flex-col gap-3">
           <Link to="/" className="flex items-center gap-2.5">
-            <img src="/logo.png" alt="We Care For You" className="h-11 w-11 object-contain" />
+            <img src="/logo2.png" alt="We Care For You" className="h-11 w-11 object-contain" />
             <span className="flex flex-col leading-tight">
               <span className="text-base font-bold text-foreground">{APP_NAME}</span>
               <span className="text-2xs uppercase tracking-[0.18em] text-muted-foreground">Care coordination</span>
