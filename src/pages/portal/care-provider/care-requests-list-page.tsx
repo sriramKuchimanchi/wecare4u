@@ -24,6 +24,16 @@ export const CareRequestsListPage = () => {
   const [assignModalReqId, setAssignModalReqId] = useState<string | null>(null);
   const [selectedEmpId, setSelectedEmpId] = useState('');
 
+  const STATUS_TABS: { value: string; label: string }[] = [
+    { value: 'all', label: 'All' },
+    { value: 'pending', label: 'Pending' },
+    { value: 'accepted', label: 'Accepted' },
+    { value: 'employee_assigned', label: 'Employee Assigned' },
+    { value: 'on_the_way', label: 'On The Way' },
+    { value: 'in_progress', label: 'In Progress' },
+    { value: 'completed', label: 'Completed' },
+  ];
+
   const { data: requests = [], isLoading } = useProviderRequestsQuery({
     search,
     status: statusFilter,
@@ -101,43 +111,56 @@ export const CareRequestsListPage = () => {
       </div>
 
       {/* Filters Bar */}
-      <div className="flex flex-col md:flex-row gap-3 rounded-2xl bg-surface p-4 border border-border/60 shadow-xs">
-        <div className="relative flex-1">
-          <icons.Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search patient, family or category..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 text-sm"
-          />
+      <div className="flex flex-col gap-3 rounded-2xl bg-surface p-4 border border-border/60 shadow-xs">
+        <div className="flex items-center gap-3">
+          <div className="relative flex-1">
+            <icons.Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search patient, family or category..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-9 text-sm"
+            />
+          </div>
+
+          <div className="flex-shrink-0">
+            <select
+              value={priorityFilter}
+              onChange={(e) => setPriorityFilter(e.target.value)}
+              className="h-10 rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+            >
+              <option value="all">All Priorities</option>
+              <option value="emergency">Emergency</option>
+              {/* <option value="urgent">Urgent</option> */}
+              <option value="standard">Standard</option>
+              {/* <option value="scheduled">Scheduled</option> */}
+            </select>
+          </div>
         </div>
 
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="h-10 rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-        >
-          <option value="all">All Statuses</option>
-          <option value="pending">Pending</option>
-          <option value="accepted">Accepted</option>
-          <option value="employee_assigned">Employee Assigned</option>
-          <option value="on_the_way">On The Way</option>
-          <option value="in_progress">In Progress</option>
-          <option value="completed">Completed</option>
-        </select>
-
-        <select
-          value={priorityFilter}
-          onChange={(e) => setPriorityFilter(e.target.value)}
-          className="h-10 rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-        >
-          <option value="all">All Priorities</option>
-          <option value="emergency">Emergency</option>
-          <option value="urgent">Urgent</option>
-          <option value="standard">Standard</option>
-          <option value="scheduled">Scheduled</option>
-        </select>
       </div>
+        <div>
+          <div className="flex items-center gap-3 overflow-x-auto border-b border-border/60 pb-3">
+            {STATUS_TABS.map((tab) => {
+              const active = statusFilter === tab.value;
+              return (
+                <button
+                  key={tab.value}
+                  onClick={() => setStatusFilter(tab.value)}
+                  className={cn(
+                    'flex-shrink-0 text-sm font-medium transition-colors select-none whitespace-nowrap',
+                    active
+                      ? 'bg-primary text-white px-3 py-1 rounded-md shadow-sm'
+                      : 'text-muted-foreground px-2 py-1 hover:text-primary'
+                  )}
+                  aria-pressed={active}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
       {/* Request Cards / Table */}
       {isLoading ? (
