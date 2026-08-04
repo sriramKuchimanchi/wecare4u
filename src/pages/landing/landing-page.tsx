@@ -152,7 +152,14 @@ export const LandingPage = () => {
             <span className="mb-4 inline-flex w-fit items-center gap-2 rounded-full bg-[#e7f6ec] px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-[#1f9e57]"><MessageCircle className="h-4 w-4" /> WhatsApp assistant</span>
             <h3 className="font-serif text-2xl font-bold leading-tight md:text-3xl">Care answers, right in your WhatsApp</h3>
             <p className="mt-3 max-w-sm text-sm leading-6 text-[#718096]">Book a visit, check an appointment or reach the family circle &mdash; no new app to open, no waiting on hold.</p>
-            <a href="#" className="mt-6 inline-flex w-fit items-center gap-2 text-sm font-bold text-[#1f9e57]">Message us on WhatsApp <ArrowRight className="h-4 w-4" /></a>
+            <a
+              href="https://wa.me/919494530799?text=Hi!%20I%27d%20like%20to%20know%20more%20about%20We%20Care%20For%20You."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-6 inline-flex w-fit items-center gap-2 text-sm font-bold text-[#1f9e57]"
+            >
+              Message us on WhatsApp <ArrowRight className="h-4 w-4" />
+            </a>
           </div>
         </div>
       </section>
