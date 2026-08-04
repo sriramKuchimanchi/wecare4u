@@ -31,8 +31,8 @@ export const PortalBottomNav = () => {
             {({ isActive }) => (
               <>
                 {isActive && <span className="absolute top-0 h-0.5 w-8 rounded-full bg-primary" />}
-                <Icon className="h-5 w-5" />
-                <span className="max-w-[64px] truncate">{item.label}</span>
+                <Icon className="h-5 w-5 shrink-0" />
+                <span className="max-w-[72px] text-center leading-[1.1] break-words">{item.label}</span>
               </>
             )}
           </NavLink>

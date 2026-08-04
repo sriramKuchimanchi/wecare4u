@@ -10,10 +10,10 @@ const hoursAgo = (n: number) => new Date(Date.now() - n * 3600000).toISOString()
 const daysFromNow = (n: number) => new Date(Date.now() + n * 86400000).toISOString();
 
 export const mockUsers: User[] = [
-  { id: 'user_family_1', name: 'Rajesh Sharma', email: 'rajesh.family@example.com', phone: '+91 98200 12345', role: 'family', avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=300', isActive: true, createdAt: now(), updatedAt: now() },
+  { id: 'user_family_1', name: 'Rajesh Sharma', email: 'rajesh.family@example.com', phone: '+91 98200 12345', role: 'family', avatarUrl: 'https://plus.unsplash.com/premium_photo-1682089804117-cea5d901647f?auto=format&fit=crop&q=80&w=300', isActive: true, createdAt: now(), updatedAt: now() },
   { id: 'user_provider_1', name: 'Dr. Vikram Malhotra (Aastha Care)', email: 'vikram.provider@example.com', phone: '+91 98100 98765', role: 'care-provider', avatarUrl: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&q=80&w=300', isActive: true, createdAt: now(), updatedAt: now() },
-  { id: 'user_employee_1', name: 'Anjali Sharma (Nurse)', email: 'anjali.employee@example.com', phone: '+91 98330 55512', role: 'employee', avatarUrl: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=300', isActive: true, createdAt: now(), updatedAt: now() },
-  { id: 'user_admin_1', name: 'Ananya Verma (Administrator)', email: 'admin@lomaa.com', phone: '+91 98000 00000', role: 'admin', avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=300', isActive: true, createdAt: now(), updatedAt: now() },
+  { id: 'user_employee_1', name: 'Anjali Sharma (Nurse)', email: 'anjali.employee@example.com', phone: '+91 98330 55512', role: 'employee', avatarUrl: 'https://images.unsplash.com/photo-1623854767648-e7bb8009f0db?auto=format&fit=crop&q=80&w=300', isActive: true, createdAt: now(), updatedAt: now() },
+  { id: 'user_admin_1', name: 'Ananya Verma (Administrator)', email: 'admin@lomaa.com', phone: '+91 98000 00000', role: 'admin', avatarUrl: 'https://plus.unsplash.com/premium_photo-1682089859052-6e9e4463b18c?auto=format&fit=crop&q=80&w=300', isActive: true, createdAt: now(), updatedAt: now() },
 ];
 
 export const mockCareCategories: CareCategory[] = [
@@ -34,7 +34,7 @@ export const mockCareCategories: CareCategory[] = [
 
 export const mockFamilyMembers: FamilyMember[] = [
   {
-    id: 'mem_1', familyId: 'fam_1', name: 'Ramachandra Sharma', relationship: 'Father', avatarUrl: 'https://images.unsplash.com/photo-1584999734482-0361aecad844?auto=format&fit=crop&q=80&w=300',
+    id: 'mem_1', familyId: 'fam_1', name: 'Ramachandra Sharma', relationship: 'Father', avatarUrl: 'https://images.unsplash.com/photo-1632414237690-7713a79fe9d3?auto=format&fit=crop&q=80&w=300',
     gender: 'male', dateOfBirth: '1948-05-14', bloodGroup: 'B+',
     medicalConditions: ['Hypertension', 'Type 2 Diabetes'], allergies: ['Penicillin'],
     insurance: { provider: 'Star Health Insurance', policyNumber: 'SH-8891234' },
@@ -44,7 +44,7 @@ export const mockFamilyMembers: FamilyMember[] = [
     createdAt: daysAgo(90), updatedAt: daysAgo(2),
   },
   {
-    id: 'mem_2', familyId: 'fam_1', name: 'Savitri Sharma', relationship: 'Mother', avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=300',
+    id: 'mem_2', familyId: 'fam_1', name: 'Savitri Sharma', relationship: 'Mother', avatarUrl: 'https://plus.unsplash.com/premium_photo-1726873351723-cb980a1d6dcb?auto=format&fit=crop&q=80&w=300',
     gender: 'female', dateOfBirth: '1952-11-03', bloodGroup: 'A+',
     medicalConditions: ['Arthritis', 'Osteoporosis'], allergies: ['Aspirin', 'Latex'],
     insurance: { provider: 'Star Health Insurance', policyNumber: 'SH-8891235' },
@@ -54,7 +54,7 @@ export const mockFamilyMembers: FamilyMember[] = [
     createdAt: daysAgo(88), updatedAt: daysAgo(5),
   },
   {
-    id: 'mem_3', familyId: 'fam_1', name: 'Amit Sharma', relationship: 'Brother', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=300',
+    id: 'mem_3', familyId: 'fam_1', name: 'Amit Sharma', relationship: 'Brother', avatarUrl: 'https://images.unsplash.com/photo-1670110531916-41045e83cb0a?auto=format&fit=crop&q=80&w=300',
     gender: 'male', dateOfBirth: '1985-09-22', bloodGroup: 'O+',
     medicalConditions: [], allergies: [],
     insurance: { provider: 'HDFC ERGO Health' },

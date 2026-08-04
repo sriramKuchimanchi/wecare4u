@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { z } from 'zod';
 import { Upload, CheckSquare, Square } from '@/config/icons';
 import { AuthLayout } from '@/layouts';
-import { FormWrapper, TextField } from '@/components/shared';
+import { FormWrapper, TextField, LocationPermissionDialog } from '@/components/shared';
 import { Button } from '@/components/ui/button';
 import { ROUTES } from '@/constants/routes';
 import { useAdminCategoriesQuery } from '@/hooks/use-portal-queries';
@@ -38,6 +38,7 @@ export const ProviderRegisterPage = () => {
   const navigate = useNavigate();
   const { data: adminCategories, isLoading: categoriesLoading } = useAdminCategoriesQuery();
   const [selectedSubCategories, setSelectedSubCategories] = useState<string[]>([]);
+  const [showLocationPrompt, setShowLocationPrompt] = useState(false);
 
   // Build grouped sub-categories from categories
   const categoriesGrouped: { categoryName: string; items: { id: string; name: string }[] }[] = [];
@@ -83,7 +84,7 @@ export const ProviderRegisterPage = () => {
     } catch {
       // ignore
     }
-    navigate(ROUTES.careProvider, { replace: true });
+    setShowLocationPrompt(true);
   };
 
   return (
@@ -219,6 +220,11 @@ export const ProviderRegisterPage = () => {
           </div>
         )}
       </FormWrapper>
+
+      <LocationPermissionDialog
+        open={showLocationPrompt}
+        onDone={() => navigate(ROUTES.careProvider, { replace: true })}
+      />
     </AuthLayout>
   );
 };

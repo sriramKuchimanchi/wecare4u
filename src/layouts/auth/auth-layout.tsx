@@ -47,6 +47,12 @@ export const AuthLayout = ({ title, subtitle, children, footer }: AuthLayoutProp
       <div className="flex flex-1 flex-col">
         <div className="flex flex-1 flex-col justify-start p-6 pb-10 pt-2 md:items-center md:justify-center md:p-10">
           <div className="mx-auto w-full max-w-md animate-fade-in-up">
+            <div className="mb-6 flex flex-col items-center gap-2 text-center md:hidden">
+              <span className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 ring-1 ring-primary/15">
+                <img src="/logo2.png" alt="We Care For You" className="h-11 w-11 object-contain" />
+              </span>
+              <span className="text-base font-bold text-foreground">{APP_NAME}</span>
+            </div>
             <div className="flex flex-col gap-1 pb-6">
               <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">{title}</h1>
               {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}

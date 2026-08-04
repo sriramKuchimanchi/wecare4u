@@ -153,6 +153,10 @@ export default {
         shimmer: {
           '100%': { transform: 'translateX(100%)' },
         },
+        marquee: {
+          from: { transform: 'translateX(0)' },
+          to: { transform: 'translateX(-50%)' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
@@ -162,6 +166,7 @@ export default {
         'fade-in-down': 'fade-in-down 300ms cubic-bezier(0.4, 0, 0.2, 1)',
         'scale-in': 'scale-in 200ms cubic-bezier(0.4, 0, 0.2, 1)',
         shimmer: 'shimmer 1.5s infinite',
+        marquee: 'marquee 40s linear infinite',
       },
     },
   },

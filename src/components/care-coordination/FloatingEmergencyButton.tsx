@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 export const FloatingEmergencyButton = () => {
   const navigate = useNavigate();
   const activeSession = useEmergencyStore((s) => s.activeSession);
+  const setConfirmationOpen = useEmergencyStore((s) => s.setConfirmationOpen);
 
   return (
     <div className="fixed bottom-20 right-4 z-40 flex flex-col items-end gap-2 md:bottom-6 md:right-6">
@@ -15,7 +16,7 @@ export const FloatingEmergencyButton = () => {
       )}
       <button
         type="button"
-        onClick={() => navigate('/portal/family/emergency')}
+        onClick={() => (activeSession ? navigate('/portal/family/emergency') : setConfirmationOpen(true))}
         className={cn(
           'group relative flex h-14 w-14 items-center justify-center rounded-full bg-destructive text-destructive-foreground shadow-floating transition-all hover:scale-105 active:scale-95 md:h-16 md:w-16',
           activeSession && 'ring-4 ring-destructive/40'

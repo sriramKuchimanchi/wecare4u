@@ -10,6 +10,7 @@ import {
 import { useAuth } from '@/hooks/use-auth';
 import { useNotificationStore } from '@/store';
 import { APP_NAME, APP_TAGLINE, PORTAL_LABELS, ROLE_LABELS } from '@/constants';
+import { ROUTES } from '@/constants/routes';
 import { cn } from '@/lib/utils';
 import { GlobalSearchModal } from '@/components/shared/global-search-modal';
 import { usePwaInstallPrompt } from '@/hooks/use-pwa-install';
@@ -68,7 +69,7 @@ const PublicNavbar = ({ className }: { className?: string }) => {
         </Link>
       </div>
 
-      <nav className="hidden items-center gap-1 md:flex">
+      <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 md:flex">
         {[
           { label: 'Home', to: '/' },
           { label: 'Services', to: '/#services' },
@@ -145,7 +146,7 @@ const PortalNavbar = ({ onToggleSidebar, isSidebarOpen = false, role: routeRole,
 
   const handleLogout = () => {
     reset();
-    navigate('/');
+    navigate(ROUTES.login);
   };
 
   return (

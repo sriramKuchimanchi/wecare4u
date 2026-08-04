@@ -1,9 +1,11 @@
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { Activity, Ambulance, ArrowRight, Bell, Brain, Building2, Calendar, Car, CheckCircle2, ChevronDown, ChevronRight, Clock, Droplet, Dumbbell, FileText, FlaskConical, Heart, HeartHandshake, HeartPulse, Home, Lock, MapPin, MessageCircle, MessageSquare, Pill, Scan, ShieldAlert, ShieldCheck, Siren, Sparkles, Stethoscope, TestTube, Users, Video, Wrench, Zap, type LucideIcon } from '@/config/icons';
 import { icons, type IconName } from '@/config/icons';
 import { Button } from '@/components/ui/button';
 import { APP_NAME, APP_TAGLINE } from '@/constants';
+import { ROUTES } from '@/constants/routes';
 import { useAdminCategoriesQuery } from '@/hooks/use-portal-queries';
+import { useIsMobile } from '@/hooks/use-media-query';
 
 const journey: [LucideIcon, string, string, string][] = [
   [Users, '01', 'Create family', 'Bring your family circle together and add the details that help us care well.'],
@@ -20,13 +22,16 @@ const platform: [LucideIcon, string, string][] = [
 
 const familyBenefits = ['Care timeline', 'Medical records', 'Appointments', 'AI guidance', 'Emergency support', 'Notifications'];
 const providerBenefits = ['Bookings', 'Employees', 'Availability', 'Schedules', 'Analytics', 'Reviews'];
-const clientLogos = [
-  'Apollo Hospitals',
-  'KIMS Hospitals',
-  'Fortis Healthcare',
-  'Aster',
-  'Narayana Health',
-  'Manipal Hospitals',
+const partners = [
+  { name: 'Apollo Hospitals', src: '/partners/apollo.png' },
+  { name: 'KIMS Hospitals', src: '/partners/kims.png' },
+  { name: 'Aster DM Healthcare', src: '/partners/aster.svg' },
+  { name: 'Narayana Health', src: '/partners/narayana.jpg' },
+  { name: 'Yashoda Hospitals', src: '/partners/yashoda.png' },
+  { name: 'Continental Hospitals', src: '/partners/continental.png' },
+  { name: 'CARE Hospitals', src: '/partners/care.svg' },
+  { name: 'Medicover Hospitals', src: '/partners/medicover.png' },
+  { name: 'Vijaya Diagnostic Centre', src: '/partners/vijaya.png' },
 ];
 
 const Benefits = ({ items }: { items: string[] }) => <ul className="grid grid-cols-2 gap-x-4 gap-y-3">{items.map((item) => <li key={item} className="flex items-center gap-2 text-sm"><CheckCircle2 className="h-4 w-4 text-secondary" />{item}</li>)}</ul>;
@@ -35,6 +40,11 @@ const SectionLabel = ({ children }: { children: React.ReactNode }) => <p classNa
 export const LandingPage = () => {
   const { data: categories = [], isLoading } = useAdminCategoriesQuery();
   const enabledCategories = categories.filter((c: any) => c.enabled !== false);
+  const isMobile = useIsMobile();
+
+  if (isMobile) {
+    return <Navigate to={ROUTES.login} replace />;
+  }
 
   return (
     <div className="landing-page overflow-hidden bg-[#fffaf4] text-[#10243e]">
@@ -53,7 +63,26 @@ export const LandingPage = () => {
 
       <section className="border-b border-[#e7ddd2] py-8"><div className="container grid gap-6 text-center sm:grid-cols-4 sm:text-left"><div><p className="font-serif text-3xl font-bold text-secondary">24/7</p><p className="text-xs uppercase tracking-[0.14em] text-[#718096]">Support when needed</p></div><div><p className="font-serif text-3xl font-bold">1.5k+</p><p className="text-xs uppercase tracking-[0.14em] text-[#718096]">Verified providers</p></div><div><p className="font-serif text-3xl font-bold">4.9/5</p><p className="text-xs uppercase tracking-[0.14em] text-[#718096]">Family rating</p></div><div><p className="font-serif text-3xl font-bold">One app</p><p className="text-xs uppercase tracking-[0.14em] text-[#718096]">For every care moment</p></div></div></section>
 
-      <section className="border-b border-[#243b59] bg-[#10243e] py-14 text-white md:py-16"><div className="container"><div className="grid items-end gap-8 lg:grid-cols-[0.8fr_1.2fr]"><div><div className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-[#f5a06a]"><Building2 className="h-4 w-4" /> Care, trusted across India</div><h2 className="max-w-xl font-serif text-4xl font-bold leading-tight md:text-5xl">The care network<br /><span className="text-[#f5a06a]">families can count on.</span></h2><p className="mt-4 max-w-md text-sm leading-6 text-white/65">Designed to bring families, hospitals, clinicians and home-care teams into one clear circle of support.</p></div><div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">{clientLogos.map((client) => <div key={client} className="group flex min-h-[84px] flex-col justify-center rounded-xl border border-white/10 bg-white/[0.07] px-3 py-3 text-center transition-all hover:-translate-y-0.5 hover:border-[#f5a06a]/60 hover:bg-white/10"><span className="text-[0.95rem] font-black tracking-[0.04em] text-white/90 group-hover:text-[#f5a06a] sm:text-lg">{client}</span></div>)}</div></div><div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-white/10 pt-5 text-xs text-white/55"><span><strong className="text-white">6</strong> care networks featured</span><span><strong className="text-white">24/7</strong> coordination ready</span><span><strong className="text-white">One view</strong> for every family</span></div></div></section>
+      <section className="border-b border-[#e7ddd2] bg-white py-12 md:py-14">
+        <div className="container flex flex-col items-center gap-5">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#a3a3a3]">Our official partners</p>
+          <div className="relative w-full overflow-hidden rounded-2xl bg-[#faf9f7] py-8">
+            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-12 bg-gradient-to-r from-[#faf9f7] to-transparent sm:w-20" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-12 bg-gradient-to-l from-[#faf9f7] to-transparent sm:w-20" />
+            <div className="flex w-max animate-marquee items-center gap-14 motion-reduce:animate-none sm:gap-20">
+              {[...partners, ...partners].map((partner, i) => (
+                <img
+                  key={`${partner.name}-${i}`}
+                  src={partner.src}
+                  alt={partner.name}
+                  title={partner.name}
+                  className="h-9 w-auto max-w-[140px] shrink-0 object-contain sm:h-11 sm:max-w-[170px]"
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
 
       <section id="services" className="container py-16 md:py-20">
         <div className="mb-9 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">

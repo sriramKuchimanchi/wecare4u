@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Loader2, Phone, ShieldCheck } from '@/config/icons';
 import { AuthLayout } from '@/layouts';
-import { TextField } from '@/components/shared';
+import { TextField, LocationPermissionDialog } from '@/components/shared';
 import { Button } from '@/components/ui/button';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { useSendOtpMutation, useVerifyOtpMutation } from '@/hooks/use-auth-mutations';
@@ -14,6 +14,7 @@ export const FamilyRegisterPage = () => {
   const [otp, setOtp] = useState('');
   const [otpSent, setOtpSent] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
+  const [showLocationPrompt, setShowLocationPrompt] = useState(false);
   const sendOtp = useSendOtpMutation();
   const verifyOtp = useVerifyOtpMutation();
   const { toast } = useToast();
@@ -25,7 +26,7 @@ export const FamilyRegisterPage = () => {
     await verifyOtp.mutateAsync({ target: targetPhone, otp: targetOtp, remember: false });
     setOtpVerified(true);
     toast({ title: 'Account created!', description: 'Setting up your family dashboard…' });
-    setTimeout(() => navigate(ROUTES.family, { replace: true }), 400);
+    setTimeout(() => setShowLocationPrompt(true), 400);
   };
 
   const handleSendOtp = async () => {
@@ -119,6 +120,11 @@ export const FamilyRegisterPage = () => {
           You can add family members and complete profile details anytime after logging in.
         </p>
       </div>
+
+      <LocationPermissionDialog
+        open={showLocationPrompt}
+        onDone={() => navigate(ROUTES.family, { replace: true })}
+      />
     </AuthLayout>
   );
 };

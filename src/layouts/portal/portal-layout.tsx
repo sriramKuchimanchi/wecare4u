@@ -10,6 +10,7 @@ import { PORTAL_LABELS } from '@/constants';
 import { portalPathForRole } from '@/constants/routes';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { FloatingEmergencyButton } from '@/components/care-coordination/FloatingEmergencyButton';
+import { EmergencyConfirmationSheet } from '@/components/care-coordination/EmergencyConfirmationSheet';
 import type { UserRole } from '@/types';
 
 const buildBreadcrumbs = (role: string, pathname: string): BreadcrumbItem[] => {
@@ -96,7 +97,7 @@ export const PortalLayout = () => {
         {/* Desktop sidebar */}
         <div className="hidden w-64 shrink-0 border-r border-border lg:block">
           <div className="sticky top-16 h-[calc(100dvh-4rem)] overflow-y-auto">
-            <PortalSidebar role={role} />
+            <PortalSidebar role={role} pinAiAssistant />
           </div>
         </div>
 
@@ -116,6 +117,7 @@ export const PortalLayout = () => {
 
           {/* Family Portal Floating Action Buttons */}
           {isFamily && <FloatingEmergencyButton />}
+          {isFamily && <EmergencyConfirmationSheet />}
         </div>
       </div>
     </div>

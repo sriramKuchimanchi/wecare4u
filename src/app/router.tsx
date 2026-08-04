@@ -6,6 +6,7 @@ import {
   ForgotPasswordPage, OnboardingPage, NotFoundPage,
 } from '@/pages';
 import { PortalRouter } from '@/pages/portal/portal-router';
+import { RequireAuth } from '@/components/shared/route-guards';
 import { ROUTES } from '@/constants/routes';
 
 export const routes: RouteObject[] = [
@@ -42,7 +43,11 @@ export const routes: RouteObject[] = [
   },
   {
     path: '/portal/:role',
-    element: <PortalLayout />,
+    element: (
+      <RequireAuth>
+        <PortalLayout />
+      </RequireAuth>
+    ),
     children: [
       { index: true, element: <PortalRouter /> },
       { path: '*', element: <PortalRouter /> },

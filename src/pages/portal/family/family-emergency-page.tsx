@@ -10,7 +10,6 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useEmergencyStore, useEmergencyContactsStore, useNotificationStore, useTimelineStore } from '@/store';
 import { LiveMapPlaceholder } from '@/components/care-coordination/LiveMapPlaceholder';
-import EmergencyConfirmationSheet from '@/components/care-coordination/EmergencyConfirmationSheet';
 import { cn } from '@/lib/utils';
 import { formatRelative } from '@/utils/date';
 
@@ -257,9 +256,6 @@ export const FamilyEmergencyPage = () => {
           </section>
         </div>
       )}
-
-      {/* Confirmation Sheet */}
-      <EmergencyConfirmationSheet />
     </div>
   );
 };
