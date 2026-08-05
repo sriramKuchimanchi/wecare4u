@@ -37,9 +37,9 @@ export const CareRequestDetailPage = () => {
       <Card>
         <EmptyState
           icon={AlertCircle}
-          title="Request Not Found"
-          description="The requested care request details could not be found."
-          action={<Button onClick={() => navigate('/portal/family/request-care')}>Back to Request Care</Button>}
+          title="Booking Not Found"
+          description="The requested care booking details could not be found."
+          action={<Button onClick={() => navigate('/portal/family/request-care')}>Back to Request Service</Button>}
         />
       </Card>
     );
@@ -50,14 +50,14 @@ export const CareRequestDetailPage = () => {
   return (
     <div className="flex flex-col gap-6">
       <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="w-fit">
-        <ArrowLeft className="mr-1 h-4 w-4" /> Back to Requests
+        <ArrowLeft className="mr-1 h-4 w-4" /> Back to Bookings
       </Button>
 
       {/* Header Info Card */}
       <Card className="flex flex-col gap-4 p-5 md:flex-row md:items-center justify-between border-border bg-card shadow-sm">
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-secondary">Care Request #{request.id.slice(-6)}</span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-secondary">Care Booking #{request.id.slice(-6)}</span>
             <Badge variant="outline" className="text-xs font-bold capitalize">
               {request.categoryLabel || request.category}
             </Badge>
@@ -80,7 +80,7 @@ export const CareRequestDetailPage = () => {
               onClick={() => cancelMutation.mutate(request.id)}
               disabled={cancelMutation.isPending}
             >
-              <XCircle className="mr-1.5 h-4 w-4" /> Cancel Request
+              <XCircle className="mr-1.5 h-4 w-4" /> Cancel Booking
             </Button>
           )}
         </div>
@@ -88,7 +88,7 @@ export const CareRequestDetailPage = () => {
 
       {/* Status Progress Stepper */}
       <Card className="p-5 border-border bg-card">
-        <SectionHeader title="Care Request Status Tracker" description="Live status updates from acceptance to completion" />
+        <SectionHeader title="Care Booking Status Tracker" description="Live status updates from acceptance to completion" />
         <div className="mt-4">
           <CareRequestStatusStepper currentStatus={request.status} timeline={request.timeline} />
         </div>
@@ -152,7 +152,7 @@ export const CareRequestDetailPage = () => {
       {/* Live Timeline History */}
       {request.timeline && request.timeline.length > 0 && (
         <section className="flex flex-col gap-3">
-          <SectionHeader title="Request Progress Timeline" description="Chronological log of state updates" />
+          <SectionHeader title="Booking Progress Timeline" description="Chronological log of state updates" />
           <Card className="p-5">
             <div className="flex flex-col space-y-4">
               {request.timeline.map((step, idx) => (

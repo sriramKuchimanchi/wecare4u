@@ -52,7 +52,7 @@ export const AdminDashboard = () => {
   const recentRequests = useMemo(() => requests.slice(0, 5), [requests]);
 
   const tabs = [
-    { id: 'all', label: 'All Requests' },
+    { id: 'all', label: 'All Bookings' },
     { id: 'pending', label: 'Pending' },
     { id: 'accepted', label: 'Accepted' },
     { id: 'in_progress', label: 'In Progress' },
@@ -86,8 +86,8 @@ export const AdminDashboard = () => {
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Button variant="outline" size="sm" onClick={() => navigate('/portal/admin/requests')}>
-              <icons.ClipboardList className="mr-2 h-4 w-4" /> Requests
+            <Button variant="outline" size="sm" onClick={() => navigate('/portal/admin/bookings')}>
+              <icons.ClipboardList className="mr-2 h-4 w-4" /> Bookings
             </Button>
             <Button variant="outline" size="sm" onClick={() => navigate('/portal/admin/emergency')}>
               <icons.Siren className="mr-2 h-4 w-4" /> Emergency Center
@@ -101,7 +101,7 @@ export const AdminDashboard = () => {
           <div className="grid grid-cols-2 gap-2.5">
             <StatCard icon={icons.Users} label="Families" value={stats.totalFamilies} color="bg-blue-100 text-blue-600" onClick={() => navigate('/portal/admin/families')} />
             <StatCard icon={icons.Building2} label="Providers & Staff" value={stats.totalProviders + stats.totalEmployees} color="bg-violet-100 text-violet-600" onClick={() => navigate('/portal/admin/providers')} />
-            <StatCard icon={icons.ClipboardList} label="Requests" value={stats.todayCareRequests} color="bg-sky-100 text-sky-600" onClick={() => navigate('/portal/admin/requests')} />
+            <StatCard icon={icons.ClipboardList} label="Bookings" value={stats.todayCareRequests} color="bg-sky-100 text-sky-600" onClick={() => navigate('/portal/admin/bookings')} />
             <StatCard icon={icons.Siren} label="Emergencies" value={stats.activeEmergencies} color="bg-red-100 text-red-600" onClick={() => navigate('/portal/admin/emergency')} />
             <StatCard icon={icons.ShieldCheck} label="Pending" value={stats.pendingProviderVerifications + stats.pendingEmployeeVerifications} color="bg-amber-100 text-amber-600" onClick={() => navigate('/portal/admin/providers')} />
             <StatCard icon={icons.Heart} label="Members" value={stats.totalFamilyMembers} color="bg-pink-100 text-pink-600" />
@@ -147,10 +147,10 @@ export const AdminDashboard = () => {
       <div className="rounded-2xl border border-border/60 bg-surface p-3 shadow-xs">
         <div className="mb-3 flex items-center justify-between gap-2">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Recent Requests</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Recent Bookings</p>
             <h2 className="text-sm font-bold text-foreground">Live queue</h2>
           </div>
-          <Button variant="outline" size="sm" onClick={() => navigate('/portal/admin/requests')}>
+          <Button variant="outline" size="sm" onClick={() => navigate('/portal/admin/bookings')}>
             View all
           </Button>
         </div>
@@ -174,7 +174,7 @@ export const AdminDashboard = () => {
           columns={[
             {
               key: 'categoryLabel',
-              header: 'Request',
+              header: 'Booking',
               render: (row: any) => (
                 <div className="space-y-1">
                   <div className="flex flex-wrap items-center gap-2">
@@ -212,7 +212,7 @@ export const AdminDashboard = () => {
           <div className="w-full max-w-xl rounded-2xl border border-border bg-background p-5 shadow-2xl">
             <div className="mb-4 flex items-center justify-between gap-3">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Care Request</p>
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Service Booking</p>
                 <h3 className="text-lg font-bold text-foreground">{selectedRequest.categoryLabel ?? selectedRequest.category}</h3>
               </div>
               <Button variant="outline" size="sm" onClick={() => setSelectedRequest(null)}>

@@ -157,18 +157,18 @@ export const FamilyEmergencyPage = () => {
         /* ACTIVE EMERGENCY WORKFLOW & LIVE TRACKING SCREEN */
         <div className="flex flex-col gap-6">
           {/* Active Emergency Banner */}
-          <div className="flex flex-col gap-3 rounded-2xl bg-destructive p-5 text-destructive-foreground shadow-elevated md:flex-row md:items-center justify-between">
+          <div className="flex flex-col gap-3 rounded-2xl border border-destructive/20 bg-destructive/[0.04] p-5 md:flex-row md:items-center justify-between">
             <div className="flex items-center gap-4">
-              <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-white/20 text-white animate-pulse">
-                <Siren className="h-8 w-8" />
+              <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+                <Siren className="h-7 w-7 animate-pulse" />
               </span>
               <div className="flex flex-col">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold uppercase tracking-wider text-white/90">🚨 EMERGENCY ACTIVE</span>
-                  <Badge variant="outline" className="text-2xs border-white/40 text-white">Live Tracking</Badge>
+                  <span className="text-xs font-bold uppercase tracking-wider text-destructive">Emergency Active</span>
+                  <Badge variant="outline" className="text-2xs border-destructive/30 text-destructive">Live Tracking</Badge>
                 </div>
-                <h2 className="text-xl font-black text-white">{activeSession.memberName || 'Madhav Rao'}</h2>
-                <p className="text-xs text-white/80">Location: {activeSession.location.line1}, {activeSession.location.city}</p>
+                <h2 className="text-xl font-black text-foreground">{activeSession.memberName || 'Madhav Rao'}</h2>
+                <p className="text-xs text-muted-foreground">Location: {activeSession.location.line1}, {activeSession.location.city}</p>
               </div>
             </div>
 
@@ -176,91 +176,86 @@ export const FamilyEmergencyPage = () => {
               variant="outline"
               size="sm"
               onClick={handleStandDown}
-              className="border-white/40 text-white hover:bg-white/20 font-bold"
+              className="shrink-0 border-destructive/30 text-destructive hover:bg-destructive/10 font-bold"
             >
               <ShieldAlert className="mr-1.5 h-4 w-4" /> I'm Safe — Stand Down
             </Button>
           </div>
 
-          {/* Live Activity Map Tracking View */}
+          {/* Live Tracking: Map & Response Workflow side by side */}
           <section className="flex flex-col gap-3">
-            <SectionHeader title="Live Responder Location & ETA" description="GPS tracking of assigned ambulance & responders" />
-            <LiveMapPlaceholder
-              title="Ambulance & Responders En Route"
-              subtitle="Rapid Response AMB-9912"
-              isEmergency
-              etaMinutes={activeSession.assignedAmbulance?.etaMinutes || 6}
-              providerName={activeSession.assignedProvider?.name || 'Sunrise Response'}
-            />
-          </section>
+            <SectionHeader title="Live Tracking & Response Progress" description="Responder location and real-time dispatch status, at a glance" />
+            <div className="grid items-stretch gap-5 lg:grid-cols-2">
+              <div className="flex flex-col gap-5">
+                <LiveMapPlaceholder
+                  title="Ambulance & Responders En Route"
+                  subtitle="Rapid Response AMB-9912"
+                  isEmergency
+                  etaMinutes={activeSession.assignedAmbulance?.etaMinutes || 6}
+                  providerName={activeSession.assignedProvider?.name || 'Sunrise Response'}
+                  lat={activeSession.location?.lat}
+                  lng={activeSession.location?.lng}
+                />
 
-          {/* Emergency Responders & Hospital Details */}
-          <div className="grid gap-6 md:grid-cols-3">
-            {/* Assigned Provider */}
-            <Card className="flex flex-col gap-3 p-4 border-border bg-card">
-              <div className="flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                  <Building2 className="h-5 w-5" />
-                </span>
-                <div className="flex flex-1 flex-col">
-                  <span className="text-2xs font-semibold uppercase text-muted-foreground">Assigned Provider</span>
-                  <span className="text-sm font-bold text-foreground">{activeSession.assignedProvider?.name}</span>
-                </div>
+                {/* Assigned Provider, Responder & Hospital — fills the remaining space under the
+                    square map so this column's bottom edge lines up with the tracker card. */}
+                <Card className="flex flex-1 flex-col divide-y divide-border p-0">
+                  <div className="flex items-center gap-3 p-4">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                      <Building2 className="h-5 w-5" />
+                    </span>
+                    <div className="flex flex-1 flex-col">
+                      <span className="text-2xs font-semibold uppercase text-muted-foreground">Assigned Provider</span>
+                      <span className="text-sm font-bold text-foreground">{activeSession.assignedProvider?.name}</span>
+                    </div>
+                    <Button size="sm" variant="outline" className="shrink-0 gap-1.5" onClick={() => window.location.href = `tel:${activeSession.assignedProvider?.phone}`}>
+                      <Phone className="h-4 w-4 text-primary" /> Call
+                    </Button>
+                  </div>
+
+                  <div className="flex items-center gap-3 p-4">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary/10 text-secondary">
+                      <UserCheck className="h-5 w-5" />
+                    </span>
+                    <div className="flex flex-1 flex-col">
+                      <span className="text-2xs font-semibold uppercase text-muted-foreground">Lead Responder</span>
+                      <span className="text-sm font-bold text-foreground">{activeSession.assignedProfessional?.name}</span>
+                      <span className="text-2xs text-muted-foreground">{activeSession.assignedProfessional?.role}</span>
+                    </div>
+                    <Button size="sm" variant="outline" className="shrink-0 gap-1.5" onClick={() => window.location.href = `tel:${activeSession.assignedProfessional?.phone}`}>
+                      <Phone className="h-4 w-4 text-primary" /> Call
+                    </Button>
+                  </div>
+
+                  <div className="flex items-center gap-3 p-4">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-destructive/10 text-destructive">
+                      <Heart className="h-5 w-5" />
+                    </span>
+                    <div className="flex flex-1 flex-col">
+                      <span className="text-2xs font-semibold uppercase text-muted-foreground">Notified Hospital</span>
+                      <span className="text-sm font-bold text-foreground">{activeSession.notifiedHospital?.name}</span>
+                      <span className="text-2xs text-muted-foreground">Medical Records Sent</span>
+                    </div>
+                    <Button size="sm" variant="outline" className="shrink-0 gap-1.5" onClick={() => window.location.href = `tel:${activeSession.notifiedHospital?.phone}`}>
+                      <Phone className="h-4 w-4 text-primary" /> Call
+                    </Button>
+                  </div>
+                </Card>
               </div>
-              <Button size="sm" variant="outline" className="w-full gap-1.5" onClick={() => window.location.href = `tel:${activeSession.assignedProvider?.phone}`}>
-                <Phone className="h-4 w-4 text-primary" /> Call Provider
-              </Button>
-            </Card>
 
-            {/* Assigned Professional */}
-            <Card className="flex flex-col gap-3 p-4 border-border bg-card">
-              <div className="flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary/10 text-secondary">
-                  <UserCheck className="h-5 w-5" />
-                </span>
-                <div className="flex flex-1 flex-col">
-                  <span className="text-2xs font-semibold uppercase text-muted-foreground">Lead Responder</span>
-                  <span className="text-sm font-bold text-foreground">{activeSession.assignedProfessional?.name}</span>
-                  <span className="text-2xs text-muted-foreground">{activeSession.assignedProfessional?.role}</span>
-                </div>
-              </div>
-              <Button size="sm" variant="outline" className="w-full gap-1.5" onClick={() => window.location.href = `tel:${activeSession.assignedProfessional?.phone}`}>
-                <Phone className="h-4 w-4 text-primary" /> Call Responder
-              </Button>
-            </Card>
-
-            {/* Notified Hospital */}
-            <Card className="flex flex-col gap-3 p-4 border-border bg-card">
-              <div className="flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-destructive/10 text-destructive">
-                  <Heart className="h-5 w-5" />
-                </span>
-                <div className="flex flex-1 flex-col">
-                  <span className="text-2xs font-semibold uppercase text-muted-foreground">Notified Hospital</span>
-                  <span className="text-sm font-bold text-foreground">{activeSession.notifiedHospital?.name}</span>
-                  <span className="text-2xs text-muted-foreground">Medical Records Sent</span>
-                </div>
-              </div>
-              <Button size="sm" variant="outline" className="w-full gap-1.5" onClick={() => window.location.href = `tel:${activeSession.notifiedHospital?.phone}`}>
-                <Phone className="h-4 w-4 text-primary" /> Call ER Desk
-              </Button>
-            </Card>
-          </div>
-
-          {/* Emergency Flow Workflow Tracker (All 10 Stages) — updated live by the response system, view-only for the family */}
-          <section className="flex flex-col gap-3">
-            <SectionHeader title="Emergency Response Workflow" description="Real-time status of emergency stages" />
-            <Card className="p-5">
-              <ProgressTracker
-                currentIndex={activeSession.currentStepIndex}
-                steps={activeSession.steps.map((st) => ({
-                  key: st.step,
-                  label: st.title,
-                  description: st.description,
-                  timestamp: st.completedAt ? formatRelative(st.completedAt) : undefined,
-                }))}
-              />
-            </Card>
+              <Card className="flex flex-col p-5">
+                <h3 className="mb-4 text-sm font-bold text-foreground">Emergency Response Workflow</h3>
+                <ProgressTracker
+                  currentIndex={activeSession.currentStepIndex}
+                  steps={activeSession.steps.map((st) => ({
+                    key: st.step,
+                    label: st.title,
+                    description: st.description,
+                    timestamp: st.completedAt ? formatRelative(st.completedAt) : undefined,
+                  }))}
+                />
+              </Card>
+            </div>
           </section>
         </div>
       )}

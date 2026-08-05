@@ -29,7 +29,7 @@ export const ProviderSettingsPage = () => {
 
           <div className="flex items-center justify-between py-2 border-b">
             <div>
-              <p className="text-sm font-semibold text-foreground">Email Notifications for New Requests</p>
+              <p className="text-sm font-semibold text-foreground">Email Notifications for New Bookings</p>
               <p className="text-xs text-muted-foreground">Receive instant email alert whenever a family books care</p>
             </div>
             <input

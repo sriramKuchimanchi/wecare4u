@@ -19,6 +19,7 @@ import { FamilyTimelinePage } from './family/family-timeline-page';
 import { FamilyNotificationsPage } from './family/family-notifications-page';
 import { FamilyProfilePage } from './family/family-profile-page';
 import { FamilyAppointmentsPage } from './family/family-appointments-page';
+import { HealthRemindersPage } from './family/health-reminders-page';
 
 // ─── Service Provider Portal ──────────────────────────────────────────────────
 import { CareProviderDashboard } from './care-provider/care-provider-dashboard';
@@ -101,7 +102,8 @@ const FamilyPortalRouter = ({ sub }: { sub: string[] }) => {
     return <FamilyMembersPage />;
   }
 
-  if (first === 'requests') return <FamilyRequestsPage />;
+  if (first === 'bookings') return <FamilyRequestsPage />;
+  if (first === 'health-reminders') return <HealthRemindersPage />;
   if (first === 'timeline') return <FamilyTimelinePage />;
   if (first === 'notifications') return <FamilyNotificationsPage />;
   if (first === 'profile') return <FamilyProfilePage />;
@@ -116,7 +118,7 @@ const CareProviderPortalRouter = ({ sub }: { sub: string[] }) => {
 
   if (!first) return <CareProviderDashboard />;
 
-  if (first === 'requests') {
+  if (first === 'bookings') {
     if (second) return <ProviderCareRequestDetailPage />;
     return <CareRequestsListPage />;
   }
@@ -138,7 +140,7 @@ const EmployeePortalRouter = ({ sub }: { sub: string[] }) => {
 
   if (!first) return <EmployeeDashboard />;
 
-  if (first === 'requests') {
+  if (first === 'bookings') {
     if (second) return <EmployeeRequestDetailPage />;
     return <EmployeeDashboard />;
   }
@@ -169,7 +171,7 @@ const AdminPortalRouter = ({ sub }: { sub: string[] }) => {
 
   if (first === 'employees') return <ProvidersPage />;
 
-  if (first === 'requests') return <AdminCareRequestsPage />;
+  if (first === 'bookings') return <AdminCareRequestsPage />;
 
   if (first === 'emergency') {
     if (second) return <EmergencyDetailPage />;

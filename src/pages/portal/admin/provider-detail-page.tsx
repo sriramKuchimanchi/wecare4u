@@ -68,8 +68,8 @@ export const ProviderDetailPage = () => {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
           { label: 'Employees', value: provider.employeeCount, icon: icons.Users, color: 'bg-blue-100 text-blue-600' },
-          { label: 'Active Requests', value: provider.activeRequestsCount, icon: icons.Activity, color: 'bg-sky-100 text-sky-600' },
-          { label: 'Total Requests', value: provider.totalRequestsCount, icon: icons.ClipboardList, color: 'bg-indigo-100 text-indigo-600' },
+          { label: 'Active Bookings', value: provider.activeRequestsCount, icon: icons.Activity, color: 'bg-sky-100 text-sky-600' },
+          { label: 'Total Bookings', value: provider.totalRequestsCount, icon: icons.ClipboardList, color: 'bg-indigo-100 text-indigo-600' },
           { label: 'Documents', value: provider.documentsCount, icon: icons.FileText, color: 'bg-violet-100 text-violet-600' },
         ].map(({ label, value, icon: Icon, color }) => (
           <div key={label} className="rounded-xl bg-surface border border-border/60 p-4 shadow-xs">

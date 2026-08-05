@@ -66,11 +66,11 @@ export const RequestCarePage = () => {
   return (
     <div className="flex flex-col gap-6">
       <PageHeader
-        title="Request Care"
+        title="Request Service"
         description="Connect with top verified healthcare and service providers for your family"
         actions={
           <Button onClick={() => handleStartWizard()} className="bg-secondary hover:bg-secondary/90 text-secondary-foreground font-bold shadow-md">
-            <Plus className="mr-1.5 h-4 w-4" /> Start Care Request
+            <Plus className="mr-1.5 h-4 w-4" /> Book a Service
           </Button>
         }
       />
@@ -266,7 +266,7 @@ export const RequestCarePage = () => {
                       Profile
                     </Button>
                     <Button size="sm" onClick={() => handleStartWizard(provider.id)} className="bg-primary text-primary-foreground font-bold">
-                      Request Care
+                      Request Service
                     </Button>
                   </div>
                 </div>

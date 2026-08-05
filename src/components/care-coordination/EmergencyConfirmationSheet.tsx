@@ -1,14 +1,32 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Siren, ArrowLeft, User, Users } from '@/config/icons';
+import { Siren, ArrowLeft, User, Users, Mic, Square } from '@/config/icons';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useEmergencyStore, useNotificationStore, useTimelineStore, useLocationStore } from '@/store';
 import { useAuth } from '@/hooks/use-auth';
 import { useFamilyMembers } from '@/hooks/use-family-portal';
+import { cn } from '@/lib/utils';
 
 type Target = { memberId?: string; memberName: string };
+
+type SpeechRecognitionLike = {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  start: () => void;
+  stop: () => void;
+  onresult: ((event: any) => void) | null;
+  onend: (() => void) | null;
+  onerror: (() => void) | null;
+};
+
+const getSpeechRecognition = (): (new () => SpeechRecognitionLike) | null => {
+  if (typeof window === 'undefined') return null;
+  return (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition || null;
+};
 
 export const EmergencyConfirmationSheet = () => {
   const isOpen = useEmergencyStore((s) => s.isConfirmationOpen);
@@ -24,6 +42,10 @@ export const EmergencyConfirmationSheet = () => {
   const [step, setStep] = useState<'target' | 'confirm'>('target');
   const [target, setTarget] = useState<Target | null>(null);
   const [confirmed, setConfirmed] = useState(false);
+  const [note, setNote] = useState('');
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
+  const speechSupported = Boolean(getSpeechRecognition());
 
   // Reset the flow back to the start each time the sheet is (re)opened.
   useEffect(() => {
@@ -31,12 +53,52 @@ export const EmergencyConfirmationSheet = () => {
       setStep('target');
       setTarget(null);
       setConfirmed(false);
+      setNote('');
+      setIsListening(false);
+      recognitionRef.current?.stop();
     }
   }, [isOpen]);
+
+  useEffect(() => () => recognitionRef.current?.stop(), []);
 
   const handleSelectTarget = (next: Target) => {
     setTarget(next);
     setStep('confirm');
+  };
+
+  const toggleListening = () => {
+    if (isListening) {
+      recognitionRef.current?.stop();
+      setIsListening(false);
+      return;
+    }
+
+    const SpeechRecognitionCtor = getSpeechRecognition();
+    if (!SpeechRecognitionCtor) return;
+
+    const recognition = new SpeechRecognitionCtor();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'en-US';
+
+    const baseNote = note.trim();
+    let finalTranscript = '';
+    recognition.onresult = (event) => {
+      let interim = '';
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) finalTranscript += `${transcript} `;
+        else interim += transcript;
+      }
+      const spoken = (finalTranscript + interim).trim();
+      setNote(spoken ? [baseNote, spoken].filter(Boolean).join(' ') : baseNote);
+    };
+    recognition.onend = () => setIsListening(false);
+    recognition.onerror = () => setIsListening(false);
+
+    recognitionRef.current = recognition;
+    recognition.start();
+    setIsListening(true);
   };
 
   const handleTriggerEmergency = () => {
@@ -111,12 +173,14 @@ export const EmergencyConfirmationSheet = () => {
     setActiveSession(newSession);
     setOpen(false);
 
+    const trimmedNote = note.trim();
+
     // Notify user & add to timeline
     addNotification({
       id: `notif_sos_${Date.now()}`,
       userId: 'user_family_1',
       title: '🚨 Emergency SOS Triggered',
-      message: `AI Care Coordinator activated for ${target.memberName}. Ambulance and responders dispatched.`,
+      message: `AI Care Coordinator activated for ${target.memberName}. Ambulance and responders dispatched.${trimmedNote ? ` Note: "${trimmedNote}"` : ''}`,
       read: false,
       type: 'error',
       createdAt: now,
@@ -128,7 +192,9 @@ export const EmergencyConfirmationSheet = () => {
       familyId: 'fam_1',
       eventType: 'emergency-triggered',
       title: 'Emergency SOS Triggered',
-      description: `Emergency response activated for ${target.memberName} at Marina Heights.`,
+      description: trimmedNote
+        ? `Emergency response activated for ${target.memberName} at Marina Heights. Note: "${trimmedNote}"`
+        : `Emergency response activated for ${target.memberName} at Marina Heights.`,
       createdAt: now,
       updatedAt: now,
     });
@@ -138,7 +204,7 @@ export const EmergencyConfirmationSheet = () => {
 
   return (
     <Sheet open={isOpen} onOpenChange={setOpen}>
-      <SheetContent side="bottom" className="mx-auto max-w-lg rounded-t-2xl p-6">
+      <SheetContent side="bottom" className="mx-auto max-h-[90vh] max-w-lg overflow-y-auto rounded-t-2xl p-6">
         {step === 'target' ? (
           <>
             <SheetHeader className="flex flex-col items-center text-center">
@@ -155,20 +221,20 @@ export const EmergencyConfirmationSheet = () => {
               <button
                 type="button"
                 onClick={() => handleSelectTarget({ memberName: user?.name ?? 'Myself' })}
-                className="flex items-center gap-3 rounded-xl border border-border bg-surface p-4 text-left transition-all hover:border-destructive hover:shadow-soft"
+                className="flex w-full items-center gap-3 rounded-xl border border-border bg-surface p-4 text-left transition-all hover:border-destructive hover:shadow-soft"
               >
                 <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive">
                   <User className="h-5 w-5" />
                 </span>
-                <div className="flex flex-1 flex-col">
-                  <span className="text-sm font-semibold text-foreground">Myself</span>
-                  <span className="text-xs text-muted-foreground">{user?.name ?? 'This is for me'}</span>
+                <div className="flex min-w-0 flex-1 flex-col justify-center gap-0.5">
+                  <span className="truncate text-sm font-semibold leading-tight text-foreground">Myself</span>
+                  <span className="truncate text-xs leading-tight text-muted-foreground">{user?.name ?? 'This is for me'}</span>
                 </div>
               </button>
 
               {familyMembers.length > 0 && (
                 <>
-                  <p className="mt-2 flex items-center gap-1.5 px-1 text-2xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  <p className="mt-2 flex items-center gap-1.5 px-4 text-2xs font-semibold uppercase tracking-wider text-muted-foreground">
                     <Users className="h-3.5 w-3.5" /> A family member
                   </p>
                   {familyMembers.map((m) => (
@@ -176,20 +242,57 @@ export const EmergencyConfirmationSheet = () => {
                       key={m.id}
                       type="button"
                       onClick={() => handleSelectTarget({ memberId: m.id, memberName: m.name })}
-                      className="flex items-center gap-3 rounded-xl border border-border bg-surface p-4 text-left transition-all hover:border-destructive hover:shadow-soft"
+                      className="flex w-full items-center gap-3 rounded-xl border border-border bg-surface p-4 text-left transition-all hover:border-destructive hover:shadow-soft"
                     >
                       <Avatar className="h-11 w-11 shrink-0">
                         <AvatarImage src={m.avatarUrl} alt={m.name} />
                         <AvatarFallback>{m.name.charAt(0)}</AvatarFallback>
                       </Avatar>
-                      <div className="flex flex-1 flex-col">
-                        <span className="text-sm font-semibold text-foreground">{m.name}</span>
-                        <span className="text-xs text-muted-foreground">{m.relationship}</span>
+                      <div className="flex min-w-0 flex-1 flex-col justify-center gap-0.5">
+                        <span className="truncate text-sm font-semibold leading-tight text-foreground">{m.name}</span>
+                        <span className="truncate text-xs leading-tight text-muted-foreground">{m.relationship}</span>
                       </div>
                     </button>
                   ))}
                 </>
               )}
+
+              <div className="mt-3 flex flex-col gap-1.5">
+                <label htmlFor="sos-note" className="px-1 text-2xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Anything responders should know? (optional)
+                </label>
+                <div className="relative">
+                  <Textarea
+                    id="sos-note"
+                    value={note}
+                    onChange={(e) => setNote(e.target.value)}
+                    placeholder={speechSupported ? "Type or tap the mic to speak — e.g. 'chest pain, difficulty breathing'" : "e.g. 'chest pain, difficulty breathing'"}
+                    rows={2}
+                    className="min-h-[64px] resize-none rounded-xl bg-surface pr-12 text-sm"
+                  />
+                  {speechSupported && (
+                    <button
+                      type="button"
+                      onClick={toggleListening}
+                      aria-label={isListening ? 'Stop voice input' : 'Start voice input'}
+                      aria-pressed={isListening}
+                      className={cn(
+                        'absolute right-2 top-2 flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-colors',
+                        isListening
+                          ? 'bg-destructive text-white shadow-sm'
+                          : 'bg-muted text-muted-foreground hover:bg-destructive/10 hover:text-destructive',
+                      )}
+                    >
+                      {isListening ? <Square className="h-3.5 w-3.5 fill-current" /> : <Mic className="h-4 w-4" />}
+                    </button>
+                  )}
+                </div>
+                {isListening && (
+                  <span className="flex items-center gap-1.5 px-1 text-2xs font-medium text-destructive">
+                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-destructive" /> Listening…
+                  </span>
+                )}
+              </div>
 
               <Button variant="outline" size="lg" onClick={() => setOpen(false)} className="mt-2 w-full">
                 Cancel

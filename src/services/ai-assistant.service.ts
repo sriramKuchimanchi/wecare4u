@@ -47,7 +47,7 @@ export const aiAssistantService = {
     } else {
       text = `I have received your request: "${prompt}". Let me guide you to the right care service or emergency action immediately.`;
       actions = [
-        { id: 'act_gen_req', label: 'Request Care', actionType: 'request_care', icon: 'HandHeart', tone: 'primary' },
+        { id: 'act_gen_req', label: 'Request Service', actionType: 'request_care', icon: 'HandHeart', tone: 'primary' },
         { id: 'act_gen_sos', label: 'Emergency SOS', actionType: 'emergency_sos', icon: 'Siren', tone: 'danger' },
         { id: 'act_gen_providers', label: 'Explore All Providers', actionType: 'view_care_providers', icon: 'Search', tone: 'secondary' },
       ];

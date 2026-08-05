@@ -41,7 +41,7 @@ export const CareProviderProfilePage = () => {
           icon={Users}
           title="Provider not found"
           description="This service provider could not be found."
-          action={<Button onClick={() => navigate('/portal/family/request-care')}>Back to Request Care</Button>}
+          action={<Button onClick={() => navigate('/portal/family/request-care')}>Back to Request Service</Button>}
         />
       </Card>
     );
@@ -92,7 +92,7 @@ export const CareProviderProfilePage = () => {
         </div>
 
         <Button onClick={() => setWizardOpen(true)} size="lg" className="bg-primary text-primary-foreground font-bold shrink-0 shadow-md">
-          Request Care Now
+          Request Service Now
         </Button>
       </Card>
 

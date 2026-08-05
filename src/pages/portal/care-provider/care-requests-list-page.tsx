@@ -42,7 +42,7 @@ export const CareRequestsListPage = () => {
   const handleAccept = async (id: string) => {
     try {
       await acceptMutation.mutateAsync(id);
-      toast({ title: 'Request Accepted', description: 'Care request accepted. Track its progress from the request details.' });
+      toast({ title: 'Booking Accepted', description: 'Care booking accepted. Track its progress from the booking details.' });
     } catch {
       toast({ title: 'Error', description: 'Failed to accept request.', variant: 'destructive' });
     }
@@ -51,7 +51,7 @@ export const CareRequestsListPage = () => {
   const handleReject = async (id: string) => {
     try {
       await rejectMutation.mutateAsync({ id, reason: 'Staff unavailable' });
-      toast({ title: 'Request Declined', description: 'Care request declined.' });
+      toast({ title: 'Booking Declined', description: 'Care booking declined.' });
     } catch {
       toast({ title: 'Error', description: 'Failed to decline request.', variant: 'destructive' });
     }
@@ -83,8 +83,8 @@ export const CareRequestsListPage = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Care Requests</h1>
-          <p className="text-xs text-muted-foreground mt-0.5">Manage incoming family requests and their live progress</p>
+          <h1 className="text-2xl font-bold text-foreground">Service Bookings</h1>
+          <p className="text-xs text-muted-foreground mt-0.5">Manage incoming family bookings and their live progress</p>
         </div>
       </div>
 
@@ -148,7 +148,7 @@ export const CareRequestsListPage = () => {
       ) : requests.length === 0 ? (
         <div className="rounded-2xl bg-surface p-12 text-center border border-border/60">
           <icons.ClipboardList className="mx-auto h-12 w-12 text-muted-foreground/50" />
-          <h3 className="text-base font-bold text-foreground mt-3">No Care Requests Found</h3>
+          <h3 className="text-base font-bold text-foreground mt-3">No Service Bookings Found</h3>
           <p className="text-xs text-muted-foreground mt-1">Try resetting your search or status filters.</p>
         </div>
       ) : (
@@ -169,7 +169,7 @@ export const CareRequestsListPage = () => {
                         {req.patientName || 'Madhav Rao'}
                       </h3>
                       <span className="text-2xs font-semibold px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
-                        {req.familyName || 'Family Request'}
+                        {req.familyName || 'Family Booking'}
                       </span>
                     </div>
                     <p className="text-xs text-muted-foreground mt-0.5">
@@ -232,7 +232,7 @@ export const CareRequestsListPage = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => navigate(`/portal/care-provider/requests/${req.id}`)}
+                  onClick={() => navigate(`/portal/care-provider/bookings/${req.id}`)}
                 >
                   <icons.Eye className="mr-1.5 h-3.5 w-3.5" /> View Details
                 </Button>
@@ -248,7 +248,7 @@ export const CareRequestsListPage = () => {
                       Reject
                     </Button>
                     <Button size="sm" onClick={() => handleAccept(req.id)}>
-                      <icons.Check className="mr-1.5 h-3.5 w-3.5" /> Accept Request
+                      <icons.Check className="mr-1.5 h-3.5 w-3.5" /> Accept Booking
                     </Button>
                   </div>
                 )}

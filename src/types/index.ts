@@ -405,6 +405,7 @@ export type ProviderServiceItem = {
   pricing: { amount: number; unit: string; currency: string };
   responseTime: string;
   coverageArea: string;
+  contactNumber?: string;
 };
 
 export type AvailabilityConfig = {

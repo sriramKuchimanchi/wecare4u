@@ -136,7 +136,7 @@ export const EmployeeDashboard = () => {
       {/* Quick Action Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <button
-          onClick={() => navigate('/portal/employee/requests')}
+          onClick={() => navigate('/portal/employee/bookings')}
           className="rounded-2xl bg-surface p-4 border border-border/60 shadow-xs hover:border-primary transition-all text-left space-y-2 group"
         >
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
@@ -200,7 +200,7 @@ export const EmployeeDashboard = () => {
               <p className="text-xs text-muted-foreground">Sequential patient visits for today</p>
             </div>
           </div>
-          <Button variant="outline" size="sm" onClick={() => navigate('/portal/employee/requests')}>
+          <Button variant="outline" size="sm" onClick={() => navigate('/portal/employee/bookings')}>
             View All Jobs
           </Button>
         </div>
@@ -244,7 +244,7 @@ export const EmployeeDashboard = () => {
                 </div>
 
                 <div className="flex items-center justify-end gap-2 border-t pt-3">
-                  <Button size="sm" onClick={() => navigate(`/portal/employee/requests/${req.id}`)} className="w-full sm:w-auto gap-1.5">
+                  <Button size="sm" onClick={() => navigate(`/portal/employee/bookings/${req.id}`)} className="w-full sm:w-auto gap-1.5">
                     Open Field Console <icons.ArrowRight className="h-3.5 w-3.5" />
                   </Button>
                 </div>

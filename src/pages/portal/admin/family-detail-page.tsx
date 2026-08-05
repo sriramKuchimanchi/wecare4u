@@ -129,7 +129,7 @@ export const FamilyDetailPage = () => {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
           { label: 'Members', value: family.members?.length ?? 0, icon: icons.Users, color: 'bg-blue-100 text-blue-600' },
-          { label: 'Total Requests', value: family.careRequests?.length ?? 0, icon: icons.ClipboardList, color: 'bg-sky-100 text-sky-600' },
+          { label: 'Total Bookings', value: family.careRequests?.length ?? 0, icon: icons.ClipboardList, color: 'bg-sky-100 text-sky-600' },
           { label: 'Emergencies', value: family.emergencies?.length ?? 0, icon: icons.Siren, color: 'bg-red-100 text-red-600' },
           { label: 'Status', value: 'active', icon: icons.CheckCircle, color: 'bg-green-100 text-green-600' },
         ].map(({ label, value, icon: Icon, color }) => (
@@ -205,8 +205,8 @@ export const FamilyDetailPage = () => {
       {family.careRequests?.length > 0 && (
         <div className="rounded-2xl bg-surface border border-border/60 shadow-xs overflow-hidden">
           <div className="px-5 py-4 border-b border-border/50 flex items-center justify-between">
-            <h2 className="font-bold text-foreground">Care Requests</h2>
-            <Button variant="ghost" size="sm" onClick={() => navigate('/portal/admin/requests')} className="text-xs text-primary">View All</Button>
+            <h2 className="font-bold text-foreground">Service Bookings</h2>
+            <Button variant="ghost" size="sm" onClick={() => navigate('/portal/admin/bookings')} className="text-xs text-primary">View All</Button>
           </div>
           <div className="divide-y divide-border/40">
             {family.careRequests.slice(0, 5).map((req: any) => (

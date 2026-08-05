@@ -24,7 +24,7 @@ const initialMessages: AiChatMessage[] = [
     text: "Hello Aisha! I am your AI Care Coordinator. How can I assist your family today? You can ask me for a doctor, home nurse, caregiver, emergency help, or medicine delivery.",
     timestamp: new Date().toISOString(),
     actions: [
-      { id: 'act_1', label: 'Request Care', actionType: 'request_care', icon: 'HandHeart', tone: 'primary' },
+      { id: 'act_1', label: 'Request Service', actionType: 'request_care', icon: 'HandHeart', tone: 'primary' },
       { id: 'act_2', label: 'Emergency SOS', actionType: 'emergency_sos', icon: 'Siren', tone: 'danger' },
       { id: 'act_3', label: 'Call Emergency Contact', actionType: 'call_emergency_contact', icon: 'Phone', tone: 'secondary' },
       { id: 'act_4', label: 'View Nearby Hospitals', actionType: 'view_nearby_hospitals', icon: 'Building2', tone: 'primary' },

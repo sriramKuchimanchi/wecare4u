@@ -19,6 +19,7 @@ export const ServicesManagementPage = () => {
   const [priceUnit, setPriceUnit] = useState<string>('per visit');
   const [responseTime, setResponseTime] = useState<string>('30 mins');
   const [coverageArea, setCoverageArea] = useState<string>('All Dubai Areas');
+  const [contactNumber, setContactNumber] = useState<string>('');
 
   const handleToggle = async (srv: ProviderServiceItem) => {
     try {
@@ -39,6 +40,7 @@ export const ServicesManagementPage = () => {
     setPriceUnit(srv.pricing.unit);
     setResponseTime(srv.responseTime);
     setCoverageArea(srv.coverageArea);
+    setContactNumber(srv.contactNumber ?? '');
   };
 
   const handleSaveEdit = async () => {
@@ -50,6 +52,7 @@ export const ServicesManagementPage = () => {
           pricing: { amount: priceAmount, unit: priceUnit, currency: '₹' },
           responseTime,
           coverageArea,
+          contactNumber: contactNumber.trim() || undefined,
         },
       });
       toast({ title: 'Service Updated', description: 'Pricing and response time updated successfully.' });
@@ -140,6 +143,13 @@ export const ServicesManagementPage = () => {
                       <span className="text-2xs text-muted-foreground block font-medium">Coverage Zone</span>
                       <span className="font-semibold text-foreground truncate block">{srv.coverageArea}</span>
                     </div>
+
+                    {srv.contactNumber && (
+                      <div className="col-span-3 border-t border-border/60 pt-2">
+                        <span className="text-2xs text-muted-foreground block font-medium">Contact Number</span>
+                        <span className="font-semibold text-foreground">{srv.contactNumber}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -156,7 +166,7 @@ export const ServicesManagementPage = () => {
 
       {/* Edit Pricing Modal */}
       {editingService && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs">
+        <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs">
           <div className="w-full max-w-md rounded-2xl bg-surface p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b pb-3">
               <h3 className="text-base font-bold text-foreground">Edit Service Pricing & Details</h3>
@@ -206,6 +216,16 @@ export const ServicesManagementPage = () => {
                   value={coverageArea}
                   onChange={(e) => setCoverageArea(e.target.value)}
                   placeholder="e.g. All Dubai Areas"
+                />
+              </div>
+
+              <div>
+                <label className="font-semibold text-foreground mb-1 block">Contact Number</label>
+                <Input
+                  type="tel"
+                  value={contactNumber}
+                  onChange={(e) => setContactNumber(e.target.value)}
+                  placeholder="e.g. +91 98200 11223"
                 />
               </div>
             </div>

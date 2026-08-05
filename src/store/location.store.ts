@@ -22,15 +22,48 @@ type LocationActions = {
 
 export type LocationStore = LocationState & LocationActions;
 
-// This is a demo app with no real geocoding API — resolving detected
-// coordinates to a realistic, stable address for the current family
-// reads much better in the UI than raw lat/lng.
-const reverseGeocodeMock = (lat: number, lng: number): UserLocation => ({
-  address: 'Gokuldham Heights, Flat 402',
-  city: 'Mumbai',
-  lat,
-  lng,
-});
+// Coarse fallback used only if the device's coordinates can't be resolved to a
+// real address at all (no geolocation support, or the reverse-geocode call fails
+// with no cached location to fall back on).
+const FALLBACK_LOCATION: UserLocation = {
+  address: 'Location unavailable',
+  city: '',
+  lat: 19.076,
+  lng: 72.8777,
+};
+
+// No Google Maps key in this app — BigDataCloud's free, key-less client-side
+// reverse-geocode endpoint resolves the device's real GPS coordinates to an
+// actual street-level locality/city instead of a hardcoded placeholder address.
+const reverseGeocode = async (lat: number, lng: number): Promise<UserLocation> => {
+  try {
+    const res = await fetch(
+      `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`,
+    );
+    if (!res.ok) throw new Error('reverse-geocode failed');
+    const data = await res.json();
+    const city: string = data.city || data.principalSubdivision || data.countryName || '';
+
+    // Prefer a finer-grained area/neighbourhood name that's actually distinct from the
+    // city — BigDataCloud's `locality` field often just repeats the city name, which
+    // would otherwise render as "Mumbai, Mumbai" instead of e.g. "Bandra West, Mumbai".
+    const adminNames: string[] = (data.localityInfo?.administrative ?? [])
+      .slice()
+      .reverse()
+      .map((a: { name?: string }) => a.name)
+      .filter(Boolean);
+    const area = [data.locality, ...adminNames].find((name) => name && name !== city);
+
+    return {
+      address: area || city || `${lat.toFixed(4)}°, ${lng.toFixed(4)}°`,
+      city,
+      lat,
+      lng,
+    };
+  } catch {
+    return { address: `${lat.toFixed(4)}°, ${lng.toFixed(4)}°`, city: '', lat, lng };
+  }
+};
 
 export const useLocationStore = create<LocationStore>()(
   persist(
@@ -45,15 +78,15 @@ export const useLocationStore = create<LocationStore>()(
         set({ isLoading: true, error: null });
 
         if (!('geolocation' in navigator)) {
-          const fallback = reverseGeocodeMock(19.076, 72.8777);
-          set({ location: fallback, isLoading: false });
+          const fallback = get().location ?? FALLBACK_LOCATION;
+          set({ location: fallback, isLoading: false, error: 'Geolocation not supported' });
           return fallback;
         }
 
         return new Promise((resolve) => {
           navigator.geolocation.getCurrentPosition(
-            (position) => {
-              const resolved = reverseGeocodeMock(position.coords.latitude, position.coords.longitude);
+            async (position) => {
+              const resolved = await reverseGeocode(position.coords.latitude, position.coords.longitude);
               set({ location: resolved, isLoading: false });
               resolve(resolved);
             },
@@ -62,7 +95,7 @@ export const useLocationStore = create<LocationStore>()(
               set({ isLoading: false, error: 'Location unavailable' });
               resolve(get().location);
             },
-            { timeout: 8000 },
+            { timeout: 8000, enableHighAccuracy: true },
           );
         });
       },

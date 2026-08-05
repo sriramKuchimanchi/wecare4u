@@ -86,7 +86,7 @@ export const SchedulePage = () => {
             </div>
 
             {slot.reqId && (
-              <Button variant="outline" size="sm" onClick={() => navigate(`/portal/care-provider/requests/${slot.reqId}`)}>
+              <Button variant="outline" size="sm" onClick={() => navigate(`/portal/care-provider/bookings/${slot.reqId}`)}>
                 <icons.Eye className="mr-1.5 h-3.5 w-3.5" /> View Visit
               </Button>
             )}

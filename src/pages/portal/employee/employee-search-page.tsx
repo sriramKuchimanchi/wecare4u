@@ -47,14 +47,14 @@ export const EmployeeSearchPage = () => {
         {/* Requests Search Result */}
         <div className="rounded-2xl bg-surface p-6 border border-border/60 shadow-xs space-y-4">
           <h2 className="text-base font-bold text-foreground flex items-center gap-2">
-            <icons.ClipboardList className="h-5 w-5 text-primary" /> Assigned Care Requests ({filteredRequests.length})
+            <icons.ClipboardList className="h-5 w-5 text-primary" /> Assigned Care Bookings ({filteredRequests.length})
           </h2>
 
           <div className="space-y-2">
             {filteredRequests.map((r) => (
               <div
                 key={r.id}
-                onClick={() => navigate(`/portal/employee/requests/${r.id}`)}
+                onClick={() => navigate(`/portal/employee/bookings/${r.id}`)}
                 className="cursor-pointer rounded-xl bg-muted/40 p-3 text-xs flex items-center justify-between border hover:border-primary/40"
               >
                 <div>

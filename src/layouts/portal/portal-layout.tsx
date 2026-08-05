@@ -13,6 +13,11 @@ import { FloatingEmergencyButton } from '@/components/care-coordination/Floating
 import { EmergencyConfirmationSheet } from '@/components/care-coordination/EmergencyConfirmationSheet';
 import type { UserRole } from '@/types';
 
+// Path segments whose title-cased slug doesn't match the page's actual on-screen title.
+const BREADCRUMB_LABEL_OVERRIDES: Record<string, string> = {
+  'request-care': 'Request Service',
+};
+
 const buildBreadcrumbs = (role: string, pathname: string): BreadcrumbItem[] => {
   const items: BreadcrumbItem[] = [
     { label: PORTAL_LABELS[role as keyof typeof PORTAL_LABELS] ?? 'Portal', to: portalPathForRole(role as never) },
@@ -22,7 +27,7 @@ const buildBreadcrumbs = (role: string, pathname: string): BreadcrumbItem[] => {
     const isLast = idx === segments.length - 1;
     const path = `/${['portal', role, ...segments.slice(0, idx + 1)].join('/')}`;
     items.push({
-      label: seg
+      label: BREADCRUMB_LABEL_OVERRIDES[seg] ?? seg
         .split('-')
         .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
         .join(' '),

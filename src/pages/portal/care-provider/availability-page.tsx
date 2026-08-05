@@ -188,7 +188,7 @@ export const AvailabilityPage = () => {
                 onChange={(e) => setConfig((prev) => (prev ? { ...prev, coverageRadiusKm: Number(e.target.value) } : null))}
                 className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
               />
-              <p className="text-2xs text-muted-foreground">Requests beyond {config.coverageRadiusKm} KM will be flagged as out-of-bounds.</p>
+              <p className="text-2xs text-muted-foreground">Bookings beyond {config.coverageRadiusKm} KM will be flagged as out-of-bounds.</p>
             </div>
           </div>
         </div>

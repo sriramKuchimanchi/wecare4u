@@ -49,10 +49,10 @@ export const CareProviderDashboard = () => {
         </div>
         <div className="flex flex-wrap gap-2.5">
           <Button
-            onClick={() => navigate('/portal/care-provider/requests')}
+            onClick={() => navigate('/portal/care-provider/bookings')}
             className="bg-white text-slate-900 hover:bg-slate-100 font-bold shadow-md text-sm"
           >
-            <icons.ClipboardList className="mr-2 h-4 w-4 text-primary" /> Incoming Requests ({todayOverview.pendingCount})
+            <icons.ClipboardList className="mr-2 h-4 w-4 text-primary" /> Incoming Bookings ({todayOverview.pendingCount})
           </Button>
         </div>
       </div>
@@ -61,11 +61,11 @@ export const CareProviderDashboard = () => {
       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Pending Requests */}
         <div
-          onClick={() => navigate('/portal/care-provider/requests')}
+          onClick={() => navigate('/portal/care-provider/bookings')}
           className="group cursor-pointer rounded-2xl bg-surface p-5 border border-border/60 shadow-xs hover:border-amber-500/50 hover:shadow-md transition-all"
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Pending Requests</span>
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Pending Bookings</span>
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600">
               <icons.Clock className="h-5 w-5" />
             </div>
@@ -79,11 +79,11 @@ export const CareProviderDashboard = () => {
 
         {/* Active Requests */}
         <div
-          onClick={() => navigate('/portal/care-provider/requests')}
+          onClick={() => navigate('/portal/care-provider/bookings')}
           className="group cursor-pointer rounded-2xl bg-surface p-5 border border-border/60 shadow-xs hover:border-sky-500/50 hover:shadow-md transition-all"
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Active Requests</span>
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Active Bookings</span>
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-500/10 text-sky-600">
               <icons.Activity className="h-5 w-5 animate-pulse" />
             </div>
@@ -97,7 +97,7 @@ export const CareProviderDashboard = () => {
 
         {/* Completed Requests */}
         <div
-          onClick={() => navigate('/portal/care-provider/requests')}
+          onClick={() => navigate('/portal/care-provider/bookings')}
           className="group cursor-pointer rounded-2xl bg-surface p-5 border border-border/60 shadow-xs hover:border-emerald-500/50 hover:shadow-md transition-all"
         >
           <div className="flex items-center justify-between">
@@ -259,8 +259,8 @@ export const CareProviderDashboard = () => {
               <p className="text-xs text-muted-foreground">Live updates on care requests & dispatching</p>
             </div>
           </div>
-          <Button variant="outline" size="sm" onClick={() => navigate('/portal/care-provider/requests')}>
-            Manage Requests
+          <Button variant="outline" size="sm" onClick={() => navigate('/portal/care-provider/bookings')}>
+            Manage Bookings
           </Button>
         </div>
 

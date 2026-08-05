@@ -39,7 +39,7 @@ export const EmployeeSchedulePage = () => {
         {requests.map((r) => (
           <div
             key={r.id}
-            onClick={() => navigate(`/portal/employee/requests/${r.id}`)}
+            onClick={() => navigate(`/portal/employee/bookings/${r.id}`)}
             className="cursor-pointer rounded-2xl bg-surface p-5 border border-border/60 shadow-xs hover:border-primary/40 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4"
           >
             <div className="flex items-start gap-4">

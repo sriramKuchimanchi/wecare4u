@@ -38,7 +38,7 @@ export const CareRequestDetailPage = () => {
     if (!nextStep) return;
     try {
       await updateStatusMutation.mutateAsync({ id: req.id, status: nextStep.key });
-      toast({ title: 'Status Updated', description: `Request marked as "${nextStep.label}". Family notified.` });
+      toast({ title: 'Status Updated', description: `Booking marked as "${nextStep.label}". Family notified.` });
       refetch();
     } catch {
       toast({ title: 'Error', description: 'Failed to update status.', variant: 'destructive' });
@@ -48,7 +48,7 @@ export const CareRequestDetailPage = () => {
   const handleCancel = async () => {
     try {
       await updateStatusMutation.mutateAsync({ id: req.id, status: 'cancelled', note: 'Provider was unable to fulfill request.' });
-      toast({ title: 'Request Cancelled', description: 'Family has been notified.' });
+      toast({ title: 'Booking Cancelled', description: 'Family has been notified.' });
       refetch();
     } catch {
       toast({ title: 'Error', description: 'Failed to cancel request.', variant: 'destructive' });
@@ -91,12 +91,12 @@ export const CareRequestDetailPage = () => {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b pb-4">
         <div className="flex items-center gap-3">
-          <Button variant="outline" size="icon" onClick={() => navigate('/portal/care-provider/requests')}>
+          <Button variant="outline" size="icon" onClick={() => navigate('/portal/care-provider/bookings')}>
             <icons.ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl font-bold text-foreground">Request #{req.id}</h1>
+              <h1 className="text-xl font-bold text-foreground">Booking #{req.id}</h1>
               <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-primary/10 text-primary">
                 {req.categoryLabel || req.category}
               </span>
@@ -227,7 +227,7 @@ export const CareRequestDetailPage = () => {
         <div className="space-y-6">
           <div className="rounded-2xl bg-surface p-6 border border-border/60 shadow-xs space-y-4">
             <h2 className="text-base font-bold text-foreground flex items-center gap-2">
-              <icons.Activity className="h-5 w-5 text-primary" /> Request Progress
+              <icons.Activity className="h-5 w-5 text-primary" /> Booking Progress
             </h2>
 
             {req.status === 'cancelled' ? (
@@ -243,7 +243,7 @@ export const CareRequestDetailPage = () => {
                 )}
                 {req.status !== 'completed' && (
                   <Button variant="ghost" onClick={handleCancel} disabled={updateStatusMutation.isPending} className="w-full text-destructive hover:text-destructive">
-                    Cancel Request
+                    Cancel Booking
                   </Button>
                 )}
               </>

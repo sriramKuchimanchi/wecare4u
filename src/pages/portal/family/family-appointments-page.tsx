@@ -28,7 +28,7 @@ export const FamilyAppointmentsPage = () => {
       <PageHeader
         title="Appointments"
         description="All scheduled and past care visits"
-        actions={<Button size="sm" onClick={() => navigate('/portal/family/request-care')}>Request care</Button>}
+        actions={<Button size="sm" onClick={() => navigate('/portal/family/request-care')}>Request Service</Button>}
       />
 
       {isLoading ? (
@@ -41,7 +41,7 @@ export const FamilyAppointmentsPage = () => {
             icon={Calendar}
             title="No appointments"
             description="Request care to schedule your first appointment."
-            action={<Button size="sm" onClick={() => navigate('/portal/family/request-care')}>Request care</Button>}
+            action={<Button size="sm" onClick={() => navigate('/portal/family/request-care')}>Request Service</Button>}
           />
         </Card>
       ) : (

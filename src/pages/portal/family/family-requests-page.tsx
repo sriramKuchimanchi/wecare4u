@@ -10,7 +10,7 @@ import { formatDate, formatTime } from '@/utils/date';
 import type { CareRequest } from '@/types';
 
 const STATUS_TABS = [
-  { id: 'all', label: 'All Requests' },
+  { id: 'all', label: 'All Bookings' },
   { id: 'requested', label: 'Requested' },
   { id: 'accepted', label: 'Accepted' },
   { id: 'in_progress', label: 'Active' },
@@ -81,11 +81,11 @@ export const FamilyRequestsPage = () => {
   return (
     <div className="space-y-5 pb-8">
       <PageHeader
-        title="My Requests"
-        description="Track all your family care requests and their live progress"
+        title="My Bookings"
+        description="Track all your family care bookings and their live progress"
         actions={
           <Button onClick={() => navigate('/portal/family/request-care')} className="bg-primary text-primary-foreground font-bold shadow-sm">
-            <Plus className="mr-1.5 h-4 w-4" /> New Request
+            <Plus className="mr-1.5 h-4 w-4" /> New Booking
           </Button>
         }
       />
@@ -96,7 +96,7 @@ export const FamilyRequestsPage = () => {
         <input
           value={search}
           onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-          placeholder="Search requests, providers..."
+          placeholder="Search bookings, providers..."
           className="w-full rounded-lg border border-border bg-background pl-9 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
         />
       </div>
@@ -139,7 +139,7 @@ export const FamilyRequestsPage = () => {
         columns={[
           {
             key: 'categoryLabel',
-            header: 'Request',
+            header: 'Booking',
             render: (row: CareRequest) => (
               <div className="space-y-1">
                 <div className="flex flex-wrap items-center gap-2">
@@ -211,8 +211,8 @@ export const FamilyRequestsPage = () => {
         ]}
         data={pagedRequests as any}
         isLoading={isLoading}
-        emptyTitle="No requests found"
-        emptyDescription={activeTab === 'all' ? "You haven't submitted any care requests yet." : `No ${activeTab.replace('_', ' ')} requests match your search.`}
+        emptyTitle="No bookings found"
+        emptyDescription={activeTab === 'all' ? "You haven't made any care bookings yet." : `No ${activeTab.replace('_', ' ')} bookings match your search.`}
         page={page}
         pageSize={PAGE_SIZE}
         total={filteredRequests.length}

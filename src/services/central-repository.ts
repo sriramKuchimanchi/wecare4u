@@ -797,7 +797,7 @@ export const searchRepository = {
 
     // Care Requests
     db.requests.filter((r) => r.patientName?.toLowerCase().includes(q) || r.categoryLabel?.toLowerCase().includes(q) || r.providerName?.toLowerCase().includes(q))
-      .slice(0, 5).forEach((r) => results.push({ type: 'request', id: r.id, title: `${r.categoryLabel} — ${r.patientName}`, subtitle: `${r.status} · ₹${r.estimatedCost}`, url: `/portal/admin/requests` }));
+      .slice(0, 5).forEach((r) => results.push({ type: 'request', id: r.id, title: `${r.categoryLabel} — ${r.patientName}`, subtitle: `${r.status} · ₹${r.estimatedCost}`, url: `/portal/admin/bookings` }));
 
     // Timeline
     db.timeline.filter((t) => t.title.toLowerCase().includes(q) || t.description?.toLowerCase().includes(q))

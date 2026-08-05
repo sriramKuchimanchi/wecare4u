@@ -9,6 +9,8 @@ type MedicationReminderState = {
 type MedicationReminderActions = {
   setReminders: (reminders: MedicationReminder[]) => void;
   updateStatus: (id: string, status: MedicationStatus) => void;
+  addReminder: (reminder: Omit<MedicationReminder, 'id' | 'createdAt' | 'updatedAt' | 'status'>) => void;
+  removeReminder: (id: string) => void;
 };
 
 export type MedicationReminderStore = MedicationReminderState & MedicationReminderActions;
@@ -69,6 +71,21 @@ export const useMedicationReminderStore = create<MedicationReminderStore>((set) 
         m.id === id ? { ...m, status, lastActionAt: new Date().toISOString() } : m
       ),
     })),
+  addReminder: (reminder) =>
+    set((s) => ({
+      reminders: [
+        {
+          ...reminder,
+          id: `med_${Date.now()}`,
+          status: 'pending',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+        ...s.reminders,
+      ],
+    })),
+  removeReminder: (id) =>
+    set((s) => ({ reminders: s.reminders.filter((m) => m.id !== id) })),
 }));
 
 export default useMedicationReminderStore;

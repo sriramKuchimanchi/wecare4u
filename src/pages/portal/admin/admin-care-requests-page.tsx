@@ -51,7 +51,7 @@ export const AdminCareRequestsPage = () => {
   };
 
   const tabs = [
-    { id: 'all', label: 'All Requests' },
+    { id: 'all', label: 'All Bookings' },
     { id: 'pending', label: 'Pending' },
     { id: 'accepted', label: 'Accepted' },
     { id: 'in_progress', label: 'In Progress' },
@@ -66,10 +66,10 @@ export const AdminCareRequestsPage = () => {
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
             <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              <icons.ClipboardList className="h-4 w-4" /> Care Requests Master Log
+              <icons.ClipboardList className="h-4 w-4" /> Service Bookings Master Log
             </div>
-            <h1 className="mt-1 text-2xl font-extrabold tracking-tight">Care Requests</h1>
-            <p className="mt-1 text-sm text-muted-foreground">{requests.length} care requests tracked platform-wide</p>
+            <h1 className="mt-1 text-2xl font-extrabold tracking-tight">Service Bookings</h1>
+            <p className="mt-1 text-sm text-muted-foreground">{requests.length} care bookings tracked platform-wide</p>
           </div>
         </div>
       </div>
@@ -106,7 +106,7 @@ export const AdminCareRequestsPage = () => {
         columns={[
           {
             key: 'categoryLabel',
-            header: 'Request',
+            header: 'Booking',
             render: (row: any) => (
               <div className="space-y-1">
                 <div className="flex flex-wrap items-center gap-2">
@@ -148,7 +148,7 @@ export const AdminCareRequestsPage = () => {
           <div className="w-full max-w-xl rounded-2xl border border-border bg-background p-5 shadow-2xl">
             <div className="mb-4 flex items-center justify-between gap-3">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Care Request</p>
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Service Booking</p>
                 <h3 className="text-lg font-bold text-foreground">{selectedRequest.categoryLabel ?? selectedRequest.category}</h3>
               </div>
               <Button variant="outline" size="sm" onClick={() => setSelectedRequest(null)}>

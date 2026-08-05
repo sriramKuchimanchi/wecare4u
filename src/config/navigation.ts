@@ -38,8 +38,9 @@ export const NAV_CONFIG: Record<UserRole, NavConfig> = {
         label: 'Overview',
         items: [
           placeholder('Home', '/portal/family', 'Home'),
-          placeholder('Request Care', '/portal/family/request-care', 'HandHeart'),
-          placeholder('My Requests', '/portal/family/requests', 'ClipboardList'),
+          placeholder('Request Service', '/portal/family/request-care', 'HandHeart'),
+          placeholder('My Bookings', '/portal/family/bookings', 'ClipboardList'),
+          placeholder('Health Reminders', '/portal/family/health-reminders', 'Pill'),
           placeholder('Notifications', '/portal/family/notifications', 'Bell'),
           placeholder('Profile', '/portal/family/profile', 'User'),
         ],
@@ -62,7 +63,7 @@ export const NAV_CONFIG: Record<UserRole, NavConfig> = {
         label: 'Operations',
         items: [
           placeholder('Dashboard', '/portal/care-provider', 'LayoutDashboard'),
-          placeholder('Care Requests', '/portal/care-provider/requests', 'ClipboardList'),
+          placeholder('Service Bookings', '/portal/care-provider/bookings', 'ClipboardList'),
           placeholder('Services', '/portal/care-provider/services', 'Stethoscope'),
           placeholder('Availability', '/portal/care-provider/availability', 'Clock'),
           placeholder('Schedule', '/portal/care-provider/schedule', 'CalendarDays'),
@@ -88,7 +89,7 @@ export const NAV_CONFIG: Record<UserRole, NavConfig> = {
         label: 'Field Portal',
         items: [
           placeholder('Dashboard', '/portal/employee', 'LayoutDashboard'),
-          placeholder('Assigned Requests', '/portal/employee/requests', 'ListChecks'),
+          placeholder('Assigned Bookings', '/portal/employee/bookings', 'ListChecks'),
           placeholder('Today\'s Schedule', '/portal/employee/schedule', 'CalendarDays'),
           placeholder('My Availability', '/portal/employee/availability', 'UserCheck'),
           placeholder('Notifications', '/portal/employee/notifications', 'Bell'),
@@ -113,7 +114,7 @@ export const NAV_CONFIG: Record<UserRole, NavConfig> = {
         id: 'operations',
         label: 'Operations',
         items: [
-          placeholder('Care Requests', '/portal/admin/requests', 'ClipboardList'),
+          placeholder('Service Bookings', '/portal/admin/bookings', 'ClipboardList'),
           placeholder('Emergency Center', '/portal/admin/emergency', 'Siren'),
         ],
       },

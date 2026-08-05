@@ -27,7 +27,9 @@ export const LocationCard = ({ className }: { className?: string }) => {
         <div className="flex min-w-0 flex-col leading-tight">
           <span className="text-2xs font-medium uppercase tracking-wide text-muted-foreground">Current Location</span>
           <span className="truncate text-sm font-semibold text-foreground">
-            {location ? `${location.address}, ${location.city}` : isLoading ? 'Detecting…' : 'Location not set'}
+            {location
+              ? [...new Set([location.address, location.city].filter(Boolean))].join(', ')
+              : isLoading ? 'Detecting…' : 'Location not set'}
           </span>
         </div>
       </div>
