@@ -165,7 +165,7 @@ const PortalNavbar = ({ onToggleSidebar, isSidebarOpen = false, role: routeRole,
           </Button>
           <Link to="/" className="flex items-center gap-2.5">
             <img src="/logo2.png" alt="We Care For You" className="h-9 w-auto object-contain" />
-            <span className="hidden text-base font-bold tracking-tight text-primary sm:block">{APP_NAME}</span>
+            <span className="text-base font-bold tracking-tight text-primary">{APP_NAME}</span>
           </Link>
           {role && (
             <Badge variant="secondary" className="hidden md:inline-flex">
