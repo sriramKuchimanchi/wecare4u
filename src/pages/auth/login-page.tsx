@@ -15,6 +15,7 @@ import {
 } from '@/hooks/use-auth-mutations';
 import { ROUTES } from '@/constants/routes';
 import { ROLE_LABELS } from '@/constants';
+import { cn } from '@/lib/utils';
 import type { UserRole } from '@/types';
 
 type LoginRole = Extract<UserRole, 'care-provider' | 'family' | 'admin'>;
@@ -193,7 +194,10 @@ export const LoginPage = () => {
               key={card.role}
               type="button"
               onClick={() => handleRoleCardClick(card.role)}
-              className="flex items-center gap-3 rounded-xl border border-border bg-surface p-4 text-left transition-all hover:border-primary hover:shadow-soft group"
+              className={cn(
+                'items-center gap-3 rounded-xl border border-border bg-surface p-4 text-left transition-all hover:border-primary hover:shadow-soft group',
+                card.role === 'admin' ? 'hidden sm:flex' : 'flex',
+              )}
             >
               <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
                 <card.icon className="h-5 w-5" />
